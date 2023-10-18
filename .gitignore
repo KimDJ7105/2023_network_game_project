@@ -43,3 +43,6 @@
 *.suo
 *.db
 
+# directory
+ZombieGame/.idea/
+ZombieGame/__pycache__/
