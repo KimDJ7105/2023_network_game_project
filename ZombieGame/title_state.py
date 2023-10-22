@@ -16,9 +16,10 @@ def enter():
     pass
 
 def exit():
-    global image
-    del image
+    global image, titlebgm
     titlebgm.stop()
+    del image
+    del titlebgm
     pass
 
 def handle_events():
