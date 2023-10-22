@@ -13,6 +13,22 @@ from items_class import Itembox
 import game_world
 import schedule
 
+player = None
+gamemap = None
+running = True
+n_zombie = None
+tennisball = None
+cola = None
+item = None
+tennis_mag = 30
+cola_mag = 7
+bowling_mag = 5
+killcount = 0
+juggernaut = 0 # 저거넛 카운트, 30킬마다 해금, 30킬 달성 시 증가하지 않음.
+stagelev = 1 # 스테이지 레벨 전역 변수, 3단계까지 존재.
+spawnleft = True # True이면 왼쪽, False이면 오른쪽에서 스폰
+start = 0
+end = 0
 
 def handle_events():
     global running, tennis_mag, cola_mag, bulletmod, juggernaut
@@ -46,23 +62,6 @@ def handle_events():
         else:
             player.handle_event(event)
 
-
-player = None
-gamemap = None
-running = True
-n_zombie = None
-tennisball = None
-cola = None
-item = None
-tennis_mag = 30
-cola_mag = 7
-bowling_mag = 5
-killcount = 0
-juggernaut = 0 # 저거넛 카운트, 30킬마다 해금, 30킬 달성 시 증가하지 않음.
-stagelev = 1 # 스테이지 레벨 전역 변수, 3단계까지 존재.
-spawnleft = True # True이면 왼쪽, False이면 오른쪽에서 스폰
-start = 0
-end = 0
 
 def enter():
 
