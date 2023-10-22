@@ -65,16 +65,9 @@ def handle_events():
 
 def enter():
 
-    global player, gamemap, n_zombie, running, tennis_mag, cola_mag, bowling_mag, killcount, juggernaut, stagelev, spawnleft, start
+    global player, gamemap, running, start
 
     start = time.time()
-    tennis_mag = 30
-    cola_mag = 7
-    bowling_mag = 5
-    killcount = 0
-    juggernaut = 0  # 저거넛 카운트, 30킬마다 해금, 30킬 달성 시 증가하지 않음.
-    stagelev = 1  # 스테이지 레벨 전역 변수, 3단계까지 존재.
-    spawnleft = True  # True이면 왼쪽, False이면 오른쪽에서 스폰
 
     gamemap = Map()
     player = Player()
