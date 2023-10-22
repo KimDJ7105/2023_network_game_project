@@ -246,7 +246,3 @@ def stagelevel():
 
 zstart = schedule.every(7).seconds.do(enemyspawn) # 7초마다 5마리씩 스폰
 istart = schedule.every(2).seconds.do(itemspawn) # 2초마다 보급 떨어짐, 최대 4개까지만 스폰
-
-
-
-

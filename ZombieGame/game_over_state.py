@@ -20,9 +20,11 @@ def enter():
 
 def exit():
     game_world.clear()
-    gameoverbgm.stop()
-    global image
+    global image, gameoverbgm
+
+    gameoverbgm.stop()   
     del image
+    del gameoverbgm
 
 def update():
     pass
