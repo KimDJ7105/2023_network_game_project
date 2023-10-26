@@ -1,0 +1,77 @@
+1. 탱크 게임
+
+2. 멀티 구조 
+2인 플레이, 한명은 포신을 한명은 이동을 담당
+
+3. 서버 클라 역할
+
+s -> c
+객체 생성 {
+객체 ID
+객체 위치
+객체 타입
+}
+
+객체 이동 {
+객체 id
+객체 위치
+}
+
+객체 삭제 {
+객체 id 
+}
+
+충돌 {
+객체1 id
+객체2 id
+}
+
+c -> s
+이동 {
+키 타입
+}
+
+발사 {
+현재 포신 각도
+}
+
+4. 상세
+전차 이동 :
+이동 방향키가 눌림(cs) -> 변하는 좌표 계산 후 전송(sc) -> 받은 좌표를 행렬로 만들어서 화면에 그리기(클라이언트)
+
+포탄 발사:
+현재 포신의 회전각과 발사키가 눌림을 알림(cs) -> 총알의 방향을 저장하고 총알 객체 생성을 알림(sc) -> 총알을 화면에 그림(클라이언트)
+주기적으로 총알의 위치를 최신화하여 전달(sc), 오브젝트와 총알 충돌 시 충돌 패킷 전송(sc)
+
+피격 :
+적 포탄과 플레이어 전차의 충돌을 감지 후 전송(sc) -> 플레이어 전차의 체력 감소(클라이언트)
+
+폭격 :
+폭격 위치를 정하고 미사일 객체 생성 및 이동 전송(sc) -> 미사일 그리기(클라이언트)
+
+
+5. 필요한 상수 값
+패킷 구별용
+constexpr int SC_CREATE_OBJECT 0
+constexpr int SC_OBJECT_MOVE 1
+constexpr int SC_DELETE_OBJECT 2
+constexpr int SC_COLIISION_OBJECT 3
+
+constexpr int CS_PLAYER_MOVE 0
+constexpr int CS_PLAYER_SHOT 1
+
+객체 구별용
+constexpr int PlAYER 0
+constexpr int ENEMY 1
+constexpr int BULLET 2
+constexpr int MISSILE 3
+constexpr int TREE 4
+
+6. 변수
+변환 행렬
+
+7. 서버 동작 개요
+accept -> 플레이어 접속(2명) -> 몸체와 포탑 지정 후(서순) 객체 생성 패킷 전송 -> 이후 루프를 돌면서 이벤트 처리
+
+
+
