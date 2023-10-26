@@ -2,22 +2,26 @@
 constexpr int PORT_NUM = 9000;
 
 //Object ID
-constexpr int PLAYER 0;
-constexpr int ENEMY 1;
-constexpr int BULLET 2;
-constexpr int MISSILE 3;
-constexpr int TREE 4;
+constexpr int PLAYER = 0;
+constexpr int ENEMY = 1;
+constexpr int BULLET = 2;
+constexpr int MISSILE = 3;
+constexpr int TREE = 4;
+
+constexpr int TURRET = 0;
+constexpr int BODY = 1;
 
 // Packet ID
 // ----Server to Client
-constexpr int SC_CREATE_OBJECT 0
-constexpr int SC_MOVE_OBJECT 1
-constexpr int SC_DELETE_OBJECT 2
-constexpr int SC_COLLISION_OBJECT 3
+constexpr int SC_CREATE_OBJECT = 0;
+constexpr int SC_MOVE_OBJECT = 1;
+constexpr int SC_DELETE_OBJECT = 2;
+constexpr int SC_COLLISION_OBJECT = 3;
+constexpr int SC_PLAYER_ROLE = 4;
 
 // ----Client to Server
-constexpr int CS_PLAYER_MOVE 0
-constexpr int CS_PLAYER_SHOT 1
+constexpr int CS_PLAYER_MOVE = 0;
+constexpr int CS_PLAYER_SHOT = 1;
 
 
 //Packet
@@ -26,7 +30,7 @@ constexpr int CS_PLAYER_SHOT 1
 //Server to client
 struct SC_CREATE_OBJECT_PACKET{
 	int packet_type;
-	int type;
+	int object_type;
 	float pos; //must changed	
 };
 
@@ -46,6 +50,12 @@ struct SC_COLLISION_OBJECT_PACKET {
 	int object_id1;
 	int object_id2;
 };
+
+struct SC_PLAYER_ROLE_PACKET {
+	int packet_type;
+	int role;
+}
+
 //client to server
 struct CS_PLAYER_MOVE_PACKET {
 	int packet_type;
