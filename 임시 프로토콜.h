@@ -11,6 +11,13 @@ constexpr int TREE = 4;
 constexpr int TURRET = 0;
 constexpr int BODY = 1;
 
+//Key ID
+constexpr int KEY_UP = 0;
+constexpr int KEY_DOWN = 1;
+constexpr int KEY_LEFT = 2;
+constexpr int KEY_RIGHT = 3;
+constexpr int KEY_SHOT = 4;
+
 // Packet ID
 // ----Server to Client
 constexpr int SC_CREATE_OBJECT = 0;
@@ -59,7 +66,7 @@ struct sc_player_role_packet {
 //client to server
 struct cs_player_move_packet {
 	int packet_type;
-	int pressed_key; // must changed
+	int pressed_key;
 };
 
 struct cs_player_shot_packet {
