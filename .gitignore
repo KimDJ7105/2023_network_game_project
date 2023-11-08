@@ -46,3 +46,5 @@
 # directory
 server/Project/.vs
 server/Project/x64
+client/Project/.vs
+client/Project/x64
