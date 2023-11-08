@@ -44,4 +44,5 @@
 *.db
 
 # directory
-*/x64
+server/Project/.vs
+server/Project/x64
