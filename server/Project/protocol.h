@@ -17,10 +17,14 @@ constexpr int SC_MOVE_OBJECT = 1;
 constexpr int SC_DELETE_OBJECT = 2;
 constexpr int SC_COLLISION_OBJECT = 3;
 
+constexpr int CS_PLAYER_INPUT = 4;
+
 
 #pragma pack(push, 1)
 
 // 패킷 구조체
+
+//s -> c
 struct sc_parent_packet {
 	int packet_type;
 };
@@ -39,17 +43,15 @@ struct sc_delete_object_packet : public sc_parent_packet {
 	int object_id;
 };
 
-struct sc_player_role_packet : public sc_parent_packet {
-	int role;
-};
-
-struct cs_player_move_packet : public sc_parent_packet {
-	int input_event;
-};
-
 struct sc_collision_object_packet : public sc_parent_packet {
 	int object_id1;
 	int object_id2;
 };
+
+//c -> s
+struct cs_player_input_packet : public sc_parent_packet {
+	int input_event;
+};
+
 
 #pragma pack(pop)
