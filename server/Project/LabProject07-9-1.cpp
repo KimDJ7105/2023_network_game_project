@@ -1,11 +1,24 @@
 // LabProject07-9-1.cpp : 응용 프로그램에 대한 진입점을 정의합니다.
 //
 
+//-------------------------------------------------------
+// Worker Thread와 Recv Thread 생성 구현,
+// Worker Thread에서 인자를 넘겨받는 부분 동우가 확인 필요
+// Recv Thread 만들때 Handle 을 arry로 관리했음. 개선 할 수 있으면 할것
+//-------------------------------------------------------
+
+
+#include <WinSock2.h>
+#include <array>
+#include <WS2tcpip.h>
+
 #include "stdafx.h"
 #include "LabProject07-9-1.h"
 #include "GameFramework.h"
+#include "protocol.h"
 
 #define MAX_LOADSTRING 100
+#pragma comment(lib,"ws2_32")
 
 HINSTANCE						ghAppInstance;
 TCHAR							szTitle[MAX_LOADSTRING];
@@ -18,8 +31,54 @@ BOOL InitInstance(HINSTANCE, int);
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK About(HWND, UINT, WPARAM, LPARAM);
 
-int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow)
+typedef struct threadarg
 {
+	HINSTANCE *hInstance;
+	HINSTANCE *hPrevInstance;
+	LPTSTR *lpCmdLine;
+	int *nCmdShow;
+} threadarg;
+
+//----전역 변수
+std::array<SOCKET, 2> client_socket;
+
+void err_quit(const char* msg)
+{
+	LPVOID lpMsgBuf;
+	FormatMessageA(
+		FORMAT_MESSAGE_ALLOCATE_BUFFER
+		| FORMAT_MESSAGE_FROM_SYSTEM,
+		NULL, WSAGetLastError(),
+		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+		(char*)&lpMsgBuf, 0, NULL);
+	printf("[%s] %s\n", msg, (char*)lpMsgBuf);
+	LocalFree(lpMsgBuf);
+	exit(1);
+}
+
+void err_display(const char* msg)
+{
+	LPVOID lpMsgBuf;
+	FormatMessageA(
+		FORMAT_MESSAGE_ALLOCATE_BUFFER
+		| FORMAT_MESSAGE_FROM_SYSTEM,
+		NULL, WSAGetLastError(),
+		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+		(char*)&lpMsgBuf, 0, NULL);
+	printf("[%s] %s\n", msg, (char*)lpMsgBuf);
+	LocalFree(lpMsgBuf);
+}
+
+DWORD WINAPI WorkerThread(LPVOID arg)
+{
+	struct threadarg *th_arg = (threadarg*)arg;
+
+	HINSTANCE hInstance = *(th_arg->hInstance);
+	HINSTANCE hPrevInstance = *(th_arg->hPrevInstance);
+	LPTSTR lpCmdLine = *(th_arg->lpCmdLine);
+	int nCmdShow = *(th_arg->nCmdShow);
+
+
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
@@ -53,6 +112,88 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	gGameFramework.OnDestroy();
 
 	return((int)msg.wParam);
+}
+
+DWORD WINAPI RecvThread(LPVOID arg) {
+
+}
+
+int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow)
+{
+	int retval;
+
+	WSADATA wsa;
+	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) return 1;
+	
+	//소켓 생성
+	SOCKET listen_sock = socket(AF_INET, SOCK_STREAM, 0);
+	if (listen_sock == INVALID_SOCKET) err_quit("socket()");
+
+	//바인드
+	struct sockaddr_in serveraddr;
+	memset(&serveraddr, 0, sizeof(serveraddr));
+	serveraddr.sin_family = AF_INET;
+	serveraddr.sin_addr.s_addr = htonl(INADDR_ANY);
+	serveraddr.sin_port = htons(SERVERPORT);
+	retval = bind(listen_sock, (struct sockaddr*)&serveraddr, sizeof(serveraddr));
+	if (retval == SOCKET_ERROR) err_quit("bind()");
+
+	// 리슨
+	retval = listen(listen_sock, SOMAXCONN);
+	if (retval == SOCKET_ERROR) err_quit("listen()");
+
+	//accpet에 필요한 변수
+	int addrlen;
+	struct sockaddr_in clientaddr;
+	int numOfclient = 0;
+	std::array<HANDLE, 2> handle_arry;
+
+	while (numOfclient < 2) {
+		//accept
+		addrlen = sizeof(clientaddr);
+		client_socket[numOfclient] = accept(listen_sock, (struct sockaddr*)&clientaddr, &addrlen);
+		if (client_socket[numOfclient] == INVALID_SOCKET) {
+			err_display("accept()");
+			break;
+		}
+
+		// 접속한 클라이언트 정보 출력
+		char addr[INET_ADDRSTRLEN];
+		inet_ntop(AF_INET, &clientaddr.sin_addr, addr, sizeof(addr));
+		printf("\n[TCP 서버] 클라이언트 접속: IP 주소=%s, 포트 번호=%d\n",
+			addr, ntohs(clientaddr.sin_port));
+
+		//클라이언트 전용 RecvThread 생성
+		handle_arry[numOfclient] = CreateThread(NULL, 0, RecvThread, &numOfclient, 0, NULL);
+
+		if (handle_arry[numOfclient] == NULL) {
+			printf("RecvThread Fail");
+			return numOfclient;
+		}
+
+		//접속한 클라이언트 수 증가
+		++numOfclient;
+	}
+
+	struct threadarg arg;
+	arg.hInstance = &hInstance;
+	arg.hPrevInstance = &hPrevInstance;
+	arg.lpCmdLine = &lpCmdLine;
+	arg.nCmdShow = &nCmdShow;
+
+	HANDLE WorkerHandle = CreateThread(NULL, 0, WorkerThread, &arg, 0, NULL);
+	if (WorkerHandle == NULL) {
+		printf("WorkerThread Fail");
+		return 1;
+	}
+
+	WaitForSingleObject(WorkerHandle, INFINITE);
+	WaitForSingleObject(handle_arry[0], INFINITE);
+	WaitForSingleObject(handle_arry[1], INFINITE);
+
+	closesocket(listen_sock);
+	WSACleanup();
+	return 0;
 }
 
 ATOM MyRegisterClass(HINSTANCE hInstance)
