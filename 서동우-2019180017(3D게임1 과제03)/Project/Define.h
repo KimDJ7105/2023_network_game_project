@@ -19,7 +19,7 @@ public: // Framework
 	static CInput* Input;
 
 public:
-	static list<CGameObject*> GameObjectList;
+	//static list<CGameObject*> GameObjectList;
 	static list<CCollider*> ColliderList;
 	static CCamera* MainCamera;
 	static CPlayer* Player;

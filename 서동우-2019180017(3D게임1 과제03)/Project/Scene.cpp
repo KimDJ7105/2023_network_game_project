@@ -8,10 +8,13 @@
 CScene::CScene(int index)
 {
 	Define::SceneManager->AddScene(this, index);
+
+	objectManager = new ObjectManager();
 }
 
 CScene::~CScene()
 {
+	delete objectManager;
 }
 
 void CScene::BuildDefaultLightsAndMaterials()
@@ -72,9 +75,9 @@ void CScene::ReleaseObjects()
 {
 	if (m_pd3dGraphicsRootSignature) m_pd3dGraphicsRootSignature->Release();
 
-	for (const auto& obj : Define::GameObjectList)
-		obj->Release();
-	Define::GameObjectList.clear();
+	//for (const auto& obj : Define::GameObjectList)
+	//	obj->Release();
+	//Define::GameObjectList.clear();
 
 	ReleaseShaderVariables();
 
@@ -148,8 +151,10 @@ void CScene::ReleaseShaderVariables()
 
 void CScene::ReleaseUploadBuffers()
 {
-	for (const auto& obj : Define::GameObjectList)
-		obj->ReleaseUploadBuffers();
+	//for (const auto& obj : Define::GameObjectList)
+	//	obj->ReleaseUploadBuffers();
+
+	objectManager->AllReleaseUploadBuffers();
 }
 
 bool CScene::ProcessInput(UCHAR *pKeysBuffer)
@@ -161,16 +166,20 @@ void CScene::AnimateObjects(float fTimeElapsed)
 {
 	m_fElapsedTime = fTimeElapsed;
 
-	for (const auto& obj : Define::GameObjectList)
-		obj->transform->UpdateTransform(NULL);
+	//for (const auto& obj : Define::GameObjectList)
+	//	obj->transform->UpdateTransform(NULL);
+	objectManager->AllGameObjectUpdateTransform();
 
 	for (const auto& collider : Define::ColliderList)
 		collider->UpdateBoundingBox();
 
-	for (const auto& obj : Define::GameObjectList)
-		obj->Update();
-	for (const auto& obj : Define::GameObjectList)
-		obj->LateUpdate();
+	objectManager->AllGameObjectUpdate();
+	objectManager->AllGameObjectLateUpdate();
+
+	//for (const auto& obj : Define::GameObjectList)
+	//	obj->Update();
+	//for (const auto& obj : Define::GameObjectList)
+	//	obj->LateUpdate();
 
 	for (auto colliderA : Define::ColliderList)
 	{
@@ -200,6 +209,7 @@ void CScene::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera
 	D3D12_GPU_VIRTUAL_ADDRESS d3dcbLightsGpuVirtualAddress = m_pd3dcbLights->GetGPUVirtualAddress();
 	pd3dCommandList->SetGraphicsRootConstantBufferView(2, d3dcbLightsGpuVirtualAddress); //Lights
 
-	for (const auto& obj : Define::GameObjectList)
- 		obj->Render(pd3dCommandList, pCamera);
+	objectManager->AllGameObjectRender(pd3dCommandList, pCamera);
+	//for (const auto& obj : Define::GameObjectList)
+ //		obj->Render(pd3dCommandList, pCamera);
 }

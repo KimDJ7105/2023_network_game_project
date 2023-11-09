@@ -144,6 +144,9 @@
     <ClInclude Include="BigMissile.h">
       <Filter>Componet</Filter>
     </ClInclude>
+    <ClInclude Include="ObjectManager.h">
+      <Filter>Framework\Manager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LabProject07-9-1.cpp">
@@ -232,6 +235,9 @@
     </ClCompile>
     <ClCompile Include="BigMissile.cpp">
       <Filter>Componet</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectManager.cpp">
+      <Filter>Framework\Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

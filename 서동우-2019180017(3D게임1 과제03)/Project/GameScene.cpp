@@ -39,8 +39,10 @@ void CGameScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 		obj->AddComponet(bigMissile);
 	}
 
-	for (const auto& obj : Define::GameObjectList)
-		obj->Start();
+	objectManager->AllGameObjectStart();
+
+	//for (const auto& obj : Define::GameObjectList)
+	//	obj->Start();
 }
 
 void CGameScene::AnimateObjects(float fTimeElapsed)
