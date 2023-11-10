@@ -15,10 +15,18 @@ ObjectManager::~ObjectManager()
 void ObjectManager::AddGameObject(CGameObject* obj)
 {
 	_GameObjectList.emplace_back(obj);
+	obj->Start();
 }
 
-bool ObjectManager::DeletGameObject(CGameObject* obj)
+bool ObjectManager::DeleteGameObject(CGameObject* obj)
 {
+	if (DeleteObjectToList(obj))
+	{
+		obj->Release();
+		delete obj;
+		return true;
+	}
+
 	return false;
 }
 
@@ -47,6 +55,34 @@ bool ObjectManager::DeleteObjectToList(CGameObject* obj)
 	}
 
 	return false;
+}
+
+void ObjectManager::GameObjectTransformUpdate(int id)
+{
+	auto obj = FindGameObject(id);
+	if (obj != nullptr)
+		obj->transform->UpdateTransform(NULL);
+}
+
+void ObjectManager::GameObjectStart(int id)
+{
+	auto obj = FindGameObject(id);
+	if (obj != nullptr)
+		obj->Start();
+}
+
+void ObjectManager::GameObjectUpdate(int id)
+{
+	auto obj = FindGameObject(id);
+	if (obj != nullptr)
+		obj->Update();
+}
+
+void ObjectManager::GameObjectLateUpdate(int id)
+{
+	auto obj = FindGameObject(id);
+	if (obj != nullptr)
+		obj->LateUpdate();
 }
 
 void ObjectManager::AllReleaseUploadBuffers()

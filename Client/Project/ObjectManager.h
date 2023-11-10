@@ -10,10 +10,10 @@ public:
 
 	deque<CGameObject*>* GetList() { return &_GameObjectList; }
 
-	CGameObject* GetGameObject(int id) { return _GameObjectList[id]; }
 	void AddGameObject(CGameObject* obj);
-	bool DeletGameObject(CGameObject* obj);
-	CGameObject* FindGameObject(int id);
+	bool DeleteGameObject(CGameObject* obj);
+	bool DeleteGameObject(int id) { return	DeleteGameObject(FindGameObject(id)); }
+	CGameObject* FindGameObject(int id) { return _GameObjectList[id]; }
 	CGameObject* FindGameObject(string name);
 	CGameObject* FindGameObject(CGameObject* obj);
 
@@ -21,6 +21,9 @@ public:
 	
 public:
 	void GameObjectTransformUpdate(int id);
+	void GameObjectStart(int id);
+	void GameObjectUpdate(int id);
+	void GameObjectLateUpdate(int id);
 
 public:
 	void AllReleaseUploadBuffers();

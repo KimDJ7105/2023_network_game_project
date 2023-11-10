@@ -71,6 +71,13 @@ using Microsoft::WRL::ComPtr;
 #include "Define.h"
 #include "Input.h"
 #include "SceneManager.h"
+#include "CGameObjectContainer.h"
+#include "Common.h"
+#include "NetworkProtocol.h"
+
+char* SERVERIP = (char*)"127.0.0.1";
+#define SERVERPORT 9000
+#define BUFSIZE    1024
 
 extern UINT gnCbvSrvDescriptorIncrementSize;
 

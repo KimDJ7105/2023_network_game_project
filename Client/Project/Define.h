@@ -24,6 +24,9 @@ public:
 	static CCamera* MainCamera;
 	static CPlayer* Player;
 
+public: // Server Sock
+	static SOCKET sock;
+
 public:
 	Define() {}
 	~Define();

@@ -21,5 +21,6 @@ public:
 	CCamera* mainCamera;
 
 private:
-	CTankPlayer* player;
+	CTankPlayer* localPlayer;
+	CTankPlayer* remotePlayer;
 };
