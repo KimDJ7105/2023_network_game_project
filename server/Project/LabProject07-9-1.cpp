@@ -77,6 +77,22 @@ void err_display(const char* msg)
 	LocalFree(lpMsgBuf);
 }
 
+void HandleInputEvent(queue<EVENT> q)
+{
+	while (!q.empty()) {
+		EVENT event = q.front();
+		q.pop();
+		switch (event.event_id) 
+		{
+		case KEY_UP:
+			break;
+		case KEY_DOWN:
+			break;
+		}
+	}
+}
+
+
 DWORD WINAPI WorkerThread(LPVOID arg)
 {
 	struct threadarg *th_arg = (threadarg*)arg;
@@ -103,6 +119,11 @@ DWORD WINAPI WorkerThread(LPVOID arg)
 
 	while (1)
 	{
+
+		// 11.11 추가 - 임계영역 진입 필요
+		HandleInputEvent(InputEventQueue);
+		// 임계영역 탈출 필요
+
 		if (::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 		{
 			if (msg.message == WM_QUIT) break;
