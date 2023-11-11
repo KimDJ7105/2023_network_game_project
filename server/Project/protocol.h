@@ -1,6 +1,7 @@
 #pragma once
 
 constexpr int SERVERPORT = 9000;
+constexpr int BUFSIZE = 256;
 
 // Object ID
 constexpr int PLAYER = 0;
@@ -10,13 +11,13 @@ constexpr int BULLET = 1;
 constexpr int KEY_UP = 0;
 constexpr int KEY_DOWN = 1;
 constexpr int KEY_LEFT = 2;
+constexpr int KEY_RIGHT = 3;
 
 // Packet ID
 constexpr int SC_CREATE_OBJECT = 0;
 constexpr int SC_MOVE_OBJECT = 1;
 constexpr int SC_DELETE_OBJECT = 2;
 constexpr int SC_COLLISION_OBJECT = 3;
-
 constexpr int CS_PLAYER_INPUT = 4;
 
 

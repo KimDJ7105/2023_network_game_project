@@ -9,8 +9,9 @@
 
 
 #include <WinSock2.h>
-#include <array>
 #include <WS2tcpip.h>
+#include <array>
+#include <queue>
 
 #include "stdafx.h"
 #include "LabProject07-9-1.h"
@@ -39,8 +40,15 @@ typedef struct threadarg
 	int *nCmdShow;
 } threadarg;
 
+typedef struct event {
+	int event_id;
+	int client_id;
+} EVENT;
+
 //----傈开 函荐
 std::array<SOCKET, 2> client_socket;
+std::queue<EVENT> InputEventQueue;
+CRITICAL_SECTION cs;
 
 void err_quit(const char* msg)
 {
@@ -114,8 +122,20 @@ DWORD WINAPI WorkerThread(LPVOID arg)
 	return((int)msg.wParam);
 }
 
-DWORD WINAPI RecvThread(LPVOID arg) {
+DWORD WINAPI RecvThread(LPVOID arg) 
+{
+	int c_id = *((int*)arg);
 
+	while (true) {
+		char buf[BUFSIZE];
+
+		int retval = recv(client_socket[c_id], buf, BUFSIZE, MSG_WAITALL);
+		if (retval == 0) return 0;
+
+		EnterCriticalSection(&cs);
+		InputEventQueue.push({ (int)buf, c_id });
+		LeaveCriticalSection(&cs);
+	}
 }
 
 int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow)
@@ -125,6 +145,8 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	WSADATA wsa;
 	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) return 1;
 	
+	InitializeCriticalSection(&cs);
+
 	//家南 积己
 	SOCKET listen_sock = socket(AF_INET, SOCK_STREAM, 0);
 	if (listen_sock == INVALID_SOCKET) err_quit("socket()");
@@ -190,6 +212,8 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	WaitForSingleObject(WorkerHandle, INFINITE);
 	WaitForSingleObject(handle_arry[0], INFINITE);
 	WaitForSingleObject(handle_arry[1], INFINITE);
+
+	DeleteCriticalSection(&cs);
 
 	closesocket(listen_sock);
 	WSACleanup();
