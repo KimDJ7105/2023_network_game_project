@@ -44,5 +44,7 @@
 *.db
 
 # directory
-ZombieGame/.idea/
-ZombieGame/__pycache__/
+server/Project/.vs
+server/Project/x64
+client/Project/.vs
+client/Project/x64
