@@ -120,3 +120,12 @@ void ObjectManager::AllGameObjectRender(ID3D12GraphicsCommandList* pd3dCommandLi
 	for (const auto& obj : _GameObjectList)
 		obj->Render(pd3dCommandList, pCamera);
 }
+
+vector<sc_object_transform_packet> ObjectManager::AllTrnasformToPacket()
+{
+	const unsigned int size = _GameObjectList.size();
+	
+	vector<sc_object_transform_packet> packList(size);
+
+	return packList;
+}

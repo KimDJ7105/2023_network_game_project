@@ -7,16 +7,9 @@
 // Recv Thread 만들때 Handle 을 arry로 관리했음. 개선 할 수 있으면 할것
 //-------------------------------------------------------
 
-
-#include <WinSock2.h>
-#include <WS2tcpip.h>
-#include <array>
-#include <queue>
-
 #include "stdafx.h"
 #include "LabProject07-9-1.h"
 #include "GameFramework.h"
-#include "protocol.h"
 
 #define MAX_LOADSTRING 100
 #pragma comment(lib,"ws2_32")

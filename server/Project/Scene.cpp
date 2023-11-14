@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include "Scene.h"
+#include "CGameObjectContainer.h"
 
 CScene::CScene(int index)
 {
@@ -169,30 +170,36 @@ void CScene::AnimateObjects(float fTimeElapsed)
 {
 	m_fElapsedTime = fTimeElapsed;
 
-	int numCount[4] = 0;
-	recv(Define::sock, (char*)numCount, sizeof(int) * 4, 0);
+	int numCount[4]{0};
 
-	for (int i = 0; i < 4; i++)
-	{
-		for (int j = 0; j < numCount[i]; j++)
-		{
-			switch (i) {
-			case SC_CREATE_OBJECT:
-				objectManager->AddGameObject(CGameObjectContainer::CreateGameObject(0));
-				break;
-			case SC_DELETE_OBJECT:
-				objectManager->DeleteGameObject(0);
-				break;
-			case SC_MOVE_OBJECT:
-				objectManager->GameObjectTransformUpdate(0);
-			default:
-				break;
-			}
-		}
-	}
+	// handle event 처리
 
-	//for (const auto& obj : Define::GameObjectList)
-	//	obj->transform->UpdateTransform(NULL);
+	//send 함수 만들기
+
+
+
+
+	//recv(Define::sock, (char*)numCount, sizeof(int) * 4, 0);
+
+	//for (int i = 0; i < 4; i++)
+	//{
+	//	for (int j = 0; j < numCount[i]; j++)
+	//	{
+	//		switch (i) {
+	//		case SC_CREATE_OBJECT:
+	//			objectManager->AddGameObject(CGameObjectContainer::CreateGameObject(0));
+	//			break;
+	//		case SC_DELETE_OBJECT:
+	//			objectManager->DeleteGameObject(0);
+	//			break;
+	//		case SC_MOVE_OBJECT:
+	//			objectManager->GameObjectTransformUpdate(0);
+	//		default:
+	//			break;
+	//		}
+	//	}
+	//}
+
 	objectManager->AllGameObjectUpdateTransform();
 
 	for (const auto& collider : Define::ColliderList)
@@ -201,40 +208,43 @@ void CScene::AnimateObjects(float fTimeElapsed)
 	objectManager->AllGameObjectUpdate();
 	objectManager->AllGameObjectLateUpdate();
 
-	//for (const auto& obj : Define::GameObjectList)
-	//	obj->Update();
-	//for (const auto& obj : Define::GameObjectList)
-	//	obj->LateUpdate();
+	auto transformPacket = objectManager->AllTrnasformToPacket();
 
-	for (auto colliderA : Define::ColliderList)
-	{
-		if (colliderA->gameObject->GetActive() == false) continue;
-		for (auto colliderB : Define::ColliderList)
-		{
-			if (colliderB->gameObject->GetActive() == false) continue;
-			if (colliderA->tag == colliderB->tag) continue;
-			if (colliderA == colliderB) continue;
-			if (colliderA->gameObject->CheckCollision(*colliderB) == false) continue;
+	auto packList = objectManager->AllTrnasformToPacket();
+	int objectSize = packList.size();
+	send(Define::sock, (char*)objectSize, sizeof(int), 0);
+	send(Define::sock, (char*) )
 
- 			if(colliderA->gameObject->root) colliderA->gameObject->root->Collision(*colliderB);
-			else colliderA->gameObject->Collision(*colliderB);
-		}
-	}
+
+	//for (auto colliderA : Define::ColliderList)
+	//{
+	//	if (colliderA->gameObject->GetActive() == false) continue;
+	//	for (auto colliderB : Define::ColliderList)
+	//	{
+	//		if (colliderB->gameObject->GetActive() == false) continue;
+	//		if (colliderA->tag == colliderB->tag) continue;
+	//		if (colliderA == colliderB) continue;
+	//		if (colliderA->gameObject->CheckCollision(*colliderB) == false) continue;
+
+ //			if(colliderA->gameObject->root) colliderA->gameObject->root->Collision(*colliderB);
+	//		else colliderA->gameObject->Collision(*colliderB);
+	//	}
+	//}
 }
 
-void CScene::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera)
-{
-	pd3dCommandList->SetGraphicsRootSignature(m_pd3dGraphicsRootSignature);
-
-	pCamera->SetViewportsAndScissorRects(pd3dCommandList);
-	pCamera->UpdateShaderVariables(pd3dCommandList);
-
-	UpdateShaderVariables(pd3dCommandList);
-
-	D3D12_GPU_VIRTUAL_ADDRESS d3dcbLightsGpuVirtualAddress = m_pd3dcbLights->GetGPUVirtualAddress();
-	pd3dCommandList->SetGraphicsRootConstantBufferView(2, d3dcbLightsGpuVirtualAddress); //Lights
-
-	objectManager->AllGameObjectRender(pd3dCommandList, pCamera);
-	//for (const auto& obj : Define::GameObjectList)
- //		obj->Render(pd3dCommandList, pCamera);
-}
+//void CScene::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera)
+//{
+//	pd3dCommandList->SetGraphicsRootSignature(m_pd3dGraphicsRootSignature);
+//
+//	pCamera->SetViewportsAndScissorRects(pd3dCommandList);
+//	pCamera->UpdateShaderVariables(pd3dCommandList);
+//
+//	UpdateShaderVariables(pd3dCommandList);
+//
+//	D3D12_GPU_VIRTUAL_ADDRESS d3dcbLightsGpuVirtualAddress = m_pd3dcbLights->GetGPUVirtualAddress();
+//	pd3dCommandList->SetGraphicsRootConstantBufferView(2, d3dcbLightsGpuVirtualAddress); //Lights
+//
+//	objectManager->AllGameObjectRender(pd3dCommandList, pCamera);
+//	//for (const auto& obj : Define::GameObjectList)
+// //		obj->Render(pd3dCommandList, pCamera);
+//}

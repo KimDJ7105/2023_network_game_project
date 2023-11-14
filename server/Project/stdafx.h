@@ -68,9 +68,14 @@ using Microsoft::WRL::ComPtr;
 
 // TODO: 프로그램에 필요한 추가 헤더는 여기에서 참조합니다.
 #include <map>
+#include <WS2tcpip.h>
+#include <WinSock2.h>
 #include "Define.h"
 #include "Input.h"
 #include "SceneManager.h"
+#include "protocol.h"
+#include <array>
+#include <queue>
 
 extern UINT gnCbvSrvDescriptorIncrementSize;
 

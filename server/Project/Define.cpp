@@ -7,10 +7,12 @@ CGameFramework* Define::Framework = nullptr;
 CGameTimer* Define::GameTimer = nullptr;
 CInput* Define::Input = nullptr;
 
-list<CGameObject*> Define::GameObjectList;
+//list<CGameObject*> Define::GameObjectList;
 list<CCollider*> Define::ColliderList;
 CCamera* Define::MainCamera = nullptr;
 CPlayer* Define::Player = nullptr;
+
+SOCKET Define::sock;
 
 Define::~Define()
 {

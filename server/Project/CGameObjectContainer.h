@@ -1,7 +1,7 @@
 #pragma once
 #include "stdafx.h"
 
-class CGameObject{};
+class CGameObject;
 
 class CGameObjectContainer
 {
@@ -10,4 +10,3 @@ public:
 	~CGameObjectContainer(){}
 	static CGameObject* CreateGameObject(int typeID);
 };
-

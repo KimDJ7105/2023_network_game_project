@@ -1,5 +1,6 @@
 #pragma once
 #include "Scene.h"
+#include "ObjectManager.h"
 
 class CTankPlayer;
 
@@ -17,8 +18,9 @@ public:
 	virtual void LoadScene();
 
 public:
-	CCamera* mainCamera;
+	//CCamera* mainCamera;
 
 private:
-	CTankPlayer* player;
+	CTankPlayer* localPlayer;
+	CTankPlayer* remotePlayer;
 };

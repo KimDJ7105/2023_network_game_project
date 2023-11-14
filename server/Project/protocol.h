@@ -35,9 +35,9 @@ struct sc_create_object_packet : public sc_parent_packet {
 	XMVECTOR pos;
 };
 
-struct sc_move_object_packet : public sc_parent_packet {
+struct sc_object_transform_packet : public sc_parent_packet {
 	int object_id;
-	XMVECTOR pos;
+	XMMATRIX matrix;
 };
 
 struct sc_delete_object_packet : public sc_parent_packet {
