@@ -43,6 +43,10 @@ std::array<SOCKET, 2> client_socket;
 std::queue<EVENT> InputEventQueue;
 CRITICAL_SECTION cs;
 
+//sendthread와 workerthread의 순서를 제어하기 위한 이벤트 핸들
+HANDLE hSendEvent;
+HANDLE hWorkerEvent;
+
 void err_quit(const char* msg)
 {
 	LPVOID lpMsgBuf;
@@ -110,12 +114,17 @@ DWORD WINAPI WorkerThread(LPVOID arg)
 
 	hAccelTable = ::LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_LABPROJECT0791));
 
+	int retval;
+
 	while (1)
 	{
 
 		// 11.11 추가 - 임계영역 진입 필요
 		HandleInputEvent(InputEventQueue);
 		// 임계영역 탈출 필요
+
+		retval = WaitForSingleObject(hSendEvent, INFINITE); //무제한 대기가 과연 적합한가?
+		if (retval == WAIT_OBJECT_0) break;
 
 		if (::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 		{
@@ -129,6 +138,7 @@ DWORD WINAPI WorkerThread(LPVOID arg)
 		else
 		{
 			gGameFramework.FrameAdvance();
+			SetEvent(hWorkerEvent);
 		}
 	}
 	gGameFramework.OnDestroy();
@@ -152,6 +162,21 @@ DWORD WINAPI RecvThread(LPVOID arg)
 	}
 }
 
+DWORD WINAPI SendThread(LPVOID arg)
+{
+	int c_id = *((int*)arg);
+	int retval;
+
+	while (true) {
+		retval = WaitForSingleObject(hWorkerEvent, INFINITE);
+		if (retval == WAIT_OBJECT_0) break;
+
+		// 이 공간에 전송 기능 구현
+
+		SetEvent(hSendEvent);
+	}
+}
+
 int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow)
 {
 	int retval;
@@ -159,7 +184,10 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	WSADATA wsa;
 	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) return 1;
 	
+	//동기화를 위한 초기화들
 	InitializeCriticalSection(&cs);
+	hSendEvent = CreateEvent(NULL, false, false, NULL); //workerthread가 처음 시작시 block 되면 안됨. 시작시 신호 상태로 설정되게 수정 필요
+	hWorkerEvent = CreateEvent(NULL, false, false, NULL);
 
 	//소켓 생성
 	SOCKET listen_sock = socket(AF_INET, SOCK_STREAM, 0);
@@ -201,6 +229,9 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 
 		//클라이언트 전용 RecvThread 생성
 		handle_arry[numOfclient] = CreateThread(NULL, 0, RecvThread, &numOfclient, 0, NULL);
+
+		//클라이언트 전용 SendThread 생성
+		CreateThread(NULL, 0, SendThread, &numOfclient, 0, NULL);
 
 		if (handle_arry[numOfclient] == NULL) {
 			printf("RecvThread Fail");
