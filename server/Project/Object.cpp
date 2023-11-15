@@ -7,6 +7,7 @@
 #include "Shader.h"
 #include "GameFramework.h"
 #include "SceneManager.h"
+#include "ObjectManager.h"
 
 int ReadIntegerFromFile(FILE* pInFile)
 {
@@ -92,7 +93,8 @@ CGameObject::CGameObject() : CComponent(this)
 {
 	transform = new CTransform(this);
 
-	Define::GameObjectList.emplace_back(this);
+	Define::SceneManager->GetCurrentScene()->objectManager->AddGameObject(this);
+	//Define::GameObjectList.emplace_back(this);
 }
 
 CGameObject::~CGameObject()
@@ -138,8 +140,12 @@ void CGameObject::SetChild(CGameObject* pChild, bool bReferenceUpdate)
 		pChild->root = root;
 		pChild->SetRoot();
 		if (bReferenceUpdate) pChild->AddRef();
-		auto p = find(Define::GameObjectList.begin(), Define::GameObjectList.end(), pChild);
-		if(p != Define::GameObjectList.end())Define::GameObjectList.erase(p);
+		auto* objMgr = Define::SceneManager->GetCurrentScene()->objectManager;
+		if (objMgr->FindGameObject(pChild) != nullptr)
+			objMgr->DeleteObjectToList(pChild);
+		
+		//auto p = find(Define::GameObjectList.begin(), Define::GameObjectList.end(), pChild);
+		//if (p != Define::GameObjectList.end())Define::GameObjectList.erase(p);
 	}
 	if (m_pChild)
 	{
@@ -587,9 +593,7 @@ void CGameObject::PrintFrameInfo(CGameObject *pGameObject, CGameObject *pParent)
 
 CGameObject* CGameObject::FindObject(string name)
 {
-	auto p = find_if(Define::GameObjectList.begin(), Define::GameObjectList.end(), [name](const CGameObject* obj) {return obj->name._Equal(name); });
-	if (p == Define::GameObjectList.end()) return nullptr;
-	else return *p;
+	return Define::SceneManager->GetCurrentScene()->objectManager->FindGameObject(name);
 }
 
 void CGameObject::Start()

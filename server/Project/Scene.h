@@ -6,6 +6,7 @@
 
 #include "Shader.h"
 #include "Player.h"
+#include "ObjectManager.h"
 
 #define MAX_LIGHTS			16 
 
@@ -66,7 +67,7 @@ public:
 
 	bool ProcessInput(UCHAR *pKeysBuffer);
     virtual void AnimateObjects(float fTimeElapsed);
-    virtual void Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera=NULL);
+    //virtual void Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera=NULL);
 
 	void ReleaseUploadBuffers();
 	virtual void LoadScene() {}
@@ -86,4 +87,8 @@ public:
 	LIGHTS						*m_pcbMappedLights = NULL;
 
 	float						m_fElapsedTime = 0.0f;
+
+public:
+	ObjectManager* objectManager;
+
 };

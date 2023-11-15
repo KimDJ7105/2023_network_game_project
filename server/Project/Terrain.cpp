@@ -400,7 +400,7 @@ void CTerrain::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCame
 
 void CTerrain::Update()
 {
-	for (const auto& obj : Define::GameObjectList)
+	for (const auto& obj : *Define::SceneManager->GetCurrentScene()->objectManager->GetList())
 	{
 		if (typeid(*obj) == typeid(CTerrain)) continue;
 		if (typeid(*obj) == typeid(CCamera)) continue;

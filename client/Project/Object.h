@@ -174,6 +174,7 @@ public:
 	static void PrintFrameInfo(CGameObject* pGameObject, CGameObject* pParent);
 
 public: // 내가 만든거
+	int id;
 	string name;
 
 	CTransform* transform = NULL;

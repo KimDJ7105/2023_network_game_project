@@ -438,41 +438,41 @@ void CGameFramework::ReleaseObjects()
 
 void CGameFramework::ProcessInput()
 {
-	static UCHAR pKeysBuffer[256];
-	bool bProcessedByScene = false;
-	if (GetKeyboardState(pKeysBuffer) && Define::SceneManager->GetCurrentScene()) bProcessedByScene = Define::SceneManager->GetCurrentScene()->ProcessInput(pKeysBuffer);
-	if (!bProcessedByScene)
-	{
-		DWORD dwDirection = 0;
-		if (pKeysBuffer[VK_UP] & 0xF0) dwDirection |= DIR_FORWARD;
-		if (pKeysBuffer[VK_DOWN] & 0xF0) dwDirection |= DIR_BACKWARD;
-		if (pKeysBuffer[VK_LEFT] & 0xF0) dwDirection |= DIR_LEFT;
-		if (pKeysBuffer[VK_RIGHT] & 0xF0) dwDirection |= DIR_RIGHT;
-		if (pKeysBuffer[VK_PRIOR] & 0xF0) dwDirection |= DIR_UP;
-		if (pKeysBuffer[VK_NEXT] & 0xF0) dwDirection |= DIR_DOWN;
+	//static UCHAR pKeysBuffer[256];
+	//bool bProcessedByScene = false;
+	//if (GetKeyboardState(pKeysBuffer) && Define::SceneManager->GetCurrentScene()) bProcessedByScene = Define::SceneManager->GetCurrentScene()->ProcessInput(pKeysBuffer);
+	//if (!bProcessedByScene)
+	//{
+	//	DWORD dwDirection = 0;
+	//	if (pKeysBuffer[VK_UP] & 0xF0) dwDirection |= DIR_FORWARD;
+	//	if (pKeysBuffer[VK_DOWN] & 0xF0) dwDirection |= DIR_BACKWARD;
+	//	if (pKeysBuffer[VK_LEFT] & 0xF0) dwDirection |= DIR_LEFT;
+	//	if (pKeysBuffer[VK_RIGHT] & 0xF0) dwDirection |= DIR_RIGHT;
+	//	if (pKeysBuffer[VK_PRIOR] & 0xF0) dwDirection |= DIR_UP;
+	//	if (pKeysBuffer[VK_NEXT] & 0xF0) dwDirection |= DIR_DOWN;
 
-		float cxDelta = 0.0f, cyDelta = 0.0f;
-		POINT ptCursorPos;
-		if (GetCapture() == m_hWnd)
-		{
-			SetCursor(NULL);
-			GetCursorPos(&ptCursorPos);
-			cxDelta = (float)(ptCursorPos.x - m_ptOldCursorPos.x) / 3.0f;
-			cyDelta = (float)(ptCursorPos.y - m_ptOldCursorPos.y) / 3.0f;
-			SetCursorPos(m_ptOldCursorPos.x, m_ptOldCursorPos.y);
-		}
+	//	float cxDelta = 0.0f, cyDelta = 0.0f;
+	//	POINT ptCursorPos;
+	//	if (GetCapture() == m_hWnd)
+	//	{
+	//		SetCursor(NULL);
+	//		GetCursorPos(&ptCursorPos);
+	//		cxDelta = (float)(ptCursorPos.x - m_ptOldCursorPos.x) / 3.0f;
+	//		cyDelta = (float)(ptCursorPos.y - m_ptOldCursorPos.y) / 3.0f;
+	//		SetCursorPos(m_ptOldCursorPos.x, m_ptOldCursorPos.y);
+	//	}
 
-		if ((dwDirection != 0) || (cxDelta != 0.0f) || (cyDelta != 0.0f))
-		{
-			//if (cxDelta || cyDelta)
-			//{
-			//	if (pKeysBuffer[VK_RBUTTON] & 0xF0)
-			//		dynamic_cast<CTankPlayer*>(Define::Player)->pivotObject->transform->Rotate(cyDelta, 0.0f, 0.0f);
-			//	else
-			//		dynamic_cast<CTankPlayer*>(Define::Player)->pivotObject->transform->Rotate(0.0f, cxDelta, 0.0f);
-			//}
-		}
-	}
+	//	if ((dwDirection != 0) || (cxDelta != 0.0f) || (cyDelta != 0.0f))
+	//	{
+	//		//if (cxDelta || cyDelta)
+	//		//{
+	//		//	if (pKeysBuffer[VK_RBUTTON] & 0xF0)
+	//		//		dynamic_cast<CTankPlayer*>(Define::Player)->pivotObject->transform->Rotate(cyDelta, 0.0f, 0.0f);
+	//		//	else
+	//		//		dynamic_cast<CTankPlayer*>(Define::Player)->pivotObject->transform->Rotate(0.0f, cxDelta, 0.0f);
+	//		//}
+	//	}
+	//}
 }
 
 void CGameFramework::AnimateObjects()
@@ -480,8 +480,8 @@ void CGameFramework::AnimateObjects()
 	float fTimeElapsed = m_GameTimer.GetTimeElapsed();
 
 	Define::SceneManager->GetCurrentScene()->AnimateObjects(fTimeElapsed);
-	Define::Input->KeyStateUpdate();
-	Define::Input->MouseStateUpdate();
+	//Define::Input->KeyStateUpdate();
+	//Define::Input->MouseStateUpdate();
 }
 
 void CGameFramework::WaitForGpuComplete()
@@ -544,7 +544,7 @@ void CGameFramework::FrameAdvance()
 
 	m_pd3dCommandList->OMSetRenderTargets(1, &d3dRtvCPUDescriptorHandle, TRUE, &d3dDsvCPUDescriptorHandle);
 
-	Define::SceneManager->GetCurrentScene()->Render(m_pd3dCommandList, Define::MainCamera);
+	//Define::SceneManager->GetCurrentScene()->Render(m_pd3dCommandList, Define::MainCamera);
 #ifdef _WITH_PLAYER_TOP
 	m_pd3dCommandList->ClearDepthStencilView(d3dDsvCPUDescriptorHandle, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, NULL);
 #endif

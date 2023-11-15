@@ -1,5 +1,6 @@
 #pragma once
 #include "Scene.h"
+#include "ObjectManager.h"
 
 class CTankPlayer;
 
@@ -20,5 +21,6 @@ public:
 	CCamera* mainCamera;
 
 private:
-	CTankPlayer* player;
+	CTankPlayer* localPlayer;
+	CTankPlayer* remotePlayer;
 };

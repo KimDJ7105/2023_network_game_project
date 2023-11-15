@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Particle.h"
 #include "Shader.h"
+#include "Scene.h"
 
 CParticleSystem::CParticleSystem(int index) : particleIndex(index)
 {
@@ -10,19 +11,8 @@ CParticleSystem::CParticleSystem(int index) : particleIndex(index)
 	particleObjects[0] = obj;
 	for (int i = 0; i < ObjectIndex; i++) {
 		particleObjects[i]->ReleaseUploadBuffers();
-		auto p = find(Define::GameObjectList.begin(), Define::GameObjectList.end(), particleObjects[i]);
-		if (p != Define::GameObjectList.end()) Define::GameObjectList.erase(p);
+		Define::SceneManager->GetCurrentScene()->objectManager->DeleteObjectToList(particleObjects[i]);
 	}
-
-	//particles = new CGameObject * [particleIndex];
-
-	//for (int i = 0; i < particleIndex; i++)
-	//{
-	//	CGameObject* obj = LoadGeometryFromFile("Model/Particle_Cube.bin");
-	//	SetChild(obj);
-	//	
-	//	particles[i] = obj;
-	//}
 
 	transforms = new CTransform * [particleIndex];
 	for (int i = 0; i < particleIndex; i++) transforms[i] = new CTransform(this);

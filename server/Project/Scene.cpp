@@ -4,44 +4,51 @@
 
 #include "stdafx.h"
 #include "Scene.h"
+#include "CGameObjectContainer.h"
 
 CScene::CScene(int index)
 {
 	Define::SceneManager->AddScene(this, index);
+
+	objectManager = new ObjectManager();
 }
 
 CScene::~CScene()
 {
+	delete objectManager;
 }
 
 void CScene::BuildDefaultLightsAndMaterials()
 {
-	m_nLights = 5;
+	m_nLights = 6;
 	m_pLights = new LIGHT[m_nLights];
 	::ZeroMemory(m_pLights, sizeof(LIGHT) * m_nLights);
 
 	m_xmf4GlobalAmbient = XMFLOAT4(0.15f, 0.15f, 0.15f, 1.0f);
 
-	m_pLights[0].m_bEnable = true;
-	m_pLights[0].m_nType = SPOT_LIGHT;
-	m_pLights[0].m_fRange = 20.0f;
-	m_pLights[0].m_xmf4Ambient = XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f);
-	m_pLights[0].m_xmf4Diffuse = XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f);
-	m_pLights[0].m_xmf4Specular = XMFLOAT4(0.3f, 0.3f, 0.3f, 0.0f);
-	m_pLights[0].m_xmf3Direction = XMFLOAT3(0.0f, 0.0f, 1.0f);
-	m_pLights[0].m_xmf3Attenuation = XMFLOAT3(1.0f, 0.01f, 0.0001f);
-	m_pLights[0].m_fFalloff = 4.0f;
-	m_pLights[0].m_fPhi = (float)cos(XMConvertToRadians(40.0f));
-	m_pLights[0].m_fTheta = (float)cos(XMConvertToRadians(20.0f));
+	for (int i = 0; i < 2; i++)
+	{
+		m_pLights[i].m_bEnable = true;
+		m_pLights[i].m_nType = SPOT_LIGHT;
+		m_pLights[i].m_fRange = 20.0f;
+		m_pLights[i].m_xmf4Ambient = XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f);
+		m_pLights[i].m_xmf4Diffuse = XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f);
+		m_pLights[i].m_xmf4Specular = XMFLOAT4(0.3f, 0.3f, 0.3f, 0.0f);
+		m_pLights[i].m_xmf3Direction = XMFLOAT3(0.0f, 0.0f, 1.0f);
+		m_pLights[i].m_xmf3Attenuation = XMFLOAT3(1.0f, 0.01f, 0.0001f);
+		m_pLights[i].m_fFalloff = 4.0f;
+		m_pLights[i].m_fPhi = (float)cos(XMConvertToRadians(40.0f));
+		m_pLights[i].m_fTheta = (float)cos(XMConvertToRadians(20.0f));
+	}
 
-	m_pLights[1].m_bEnable = true;
-	m_pLights[1].m_nType = DIRECTIONAL_LIGHT;
-	m_pLights[1].m_xmf4Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	m_pLights[1].m_xmf4Diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	m_pLights[1].m_xmf4Specular = XMFLOAT4(0.4f, 0.4f, 0.4f, 0.0f);
-	m_pLights[1].m_xmf3Direction = XMFLOAT3(0.0f, -1.0f, 0.0f);
+	m_pLights[2].m_bEnable = true;
+	m_pLights[2].m_nType = DIRECTIONAL_LIGHT;
+	m_pLights[2].m_xmf4Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	m_pLights[2].m_xmf4Diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	m_pLights[2].m_xmf4Specular = XMFLOAT4(0.4f, 0.4f, 0.4f, 0.0f);
+	m_pLights[2].m_xmf3Direction = XMFLOAT3(0.0f, -1.0f, 0.0f);
 
-	for (int i = 2; i < 5; i++)
+	for (int i = 3; i < 6; i++)
 	{
 		m_pLights[i].m_bEnable = false;
 		m_pLights[i].m_nType = SPOT_LIGHT;
@@ -72,9 +79,9 @@ void CScene::ReleaseObjects()
 {
 	if (m_pd3dGraphicsRootSignature) m_pd3dGraphicsRootSignature->Release();
 
-	for (const auto& obj : Define::GameObjectList)
-		obj->Release();
-	Define::GameObjectList.clear();
+	//for (const auto& obj : Define::GameObjectList)
+	//	obj->Release();
+	//Define::GameObjectList.clear();
 
 	ReleaseShaderVariables();
 
@@ -148,8 +155,10 @@ void CScene::ReleaseShaderVariables()
 
 void CScene::ReleaseUploadBuffers()
 {
-	for (const auto& obj : Define::GameObjectList)
-		obj->ReleaseUploadBuffers();
+	//for (const auto& obj : Define::GameObjectList)
+	//	obj->ReleaseUploadBuffers();
+
+	objectManager->AllReleaseUploadBuffers();
 }
 
 bool CScene::ProcessInput(UCHAR *pKeysBuffer)
@@ -161,45 +170,97 @@ void CScene::AnimateObjects(float fTimeElapsed)
 {
 	m_fElapsedTime = fTimeElapsed;
 
-	for (const auto& obj : Define::GameObjectList)
-		obj->transform->UpdateTransform(NULL);
+	int numCount[4]{0};
+
+	// handle event 처리
+
+	//send 함수 만들기
+
+	//recv(Define::sock, (char*)numCount, sizeof(int) * 4, 0);
+
+	//for (int i = 0; i < 4; i++)
+	//{
+	//	for (int j = 0; j < numCount[i]; j++)
+	//	{
+	//		switch (i) {
+	//		case SC_CREATE_OBJECT:
+	//			objectManager->AddGameObject(CGameObjectContainer::CreateGameObject(0));
+	//			break;
+	//		case SC_DELETE_OBJECT:
+	//			objectManager->DeleteGameObject(0);
+	//			break;
+	//		case SC_MOVE_OBJECT:
+	//			objectManager->GameObjectTransformUpdate(0);
+	//		default:
+	//			break;
+	//		}
+	//	}
+	//}
+
+	objectManager->AllGameObjectUpdateTransform();
 
 	for (const auto& collider : Define::ColliderList)
 		collider->UpdateBoundingBox();
 
-	for (const auto& obj : Define::GameObjectList)
-		obj->Update();
-	for (const auto& obj : Define::GameObjectList)
-		obj->LateUpdate();
+	objectManager->AllGameObjectUpdate();
+	objectManager->AllGameObjectLateUpdate();
 
-	for (auto colliderA : Define::ColliderList)
 	{
-		if (colliderA->gameObject->GetActive() == false) continue;
-		for (auto colliderB : Define::ColliderList)
-		{
-			if (colliderB->gameObject->GetActive() == false) continue;
-			if (colliderA->tag == colliderB->tag) continue;
-			if (colliderA == colliderB) continue;
-			if (colliderA->gameObject->CheckCollision(*colliderB) == false) continue;
-
- 			if(colliderA->gameObject->root) colliderA->gameObject->root->Collision(*colliderB);
-			else colliderA->gameObject->Collision(*colliderB);
-		}
+		auto createPack = objectManager->GetCreatePack();
+		int createPackSize = createPack.size();
+		send(Define::sock, (char*)createPackSize, sizeof(int), 0);
+		for (auto pack : createPack)
+			send(Define::sock, (char*)&pack, sizeof(sc_create_object_packet));
+		createPack.clear();
 	}
+
+	{
+		auto deletePack = objectManager->GetDeletePack();
+		int deletePackSize = deletePack.size();
+		send(Define::sock, (char*)deletePackSize, sizeof(int), 0);
+		for (auto pack : deletePack)
+			send(Define::sock, (char*)&pack, sizeof(sc_delete_object_packet));
+		deletePack.clear();
+	}
+
+	{
+		auto packList = objectManager->AllTrnasformToPacket();
+		int objectSize = packList.size();
+		send(Define::sock, (char*)objectSize, sizeof(int), 0);
+		for (auto pack : packList)
+			send(Define::sock, (char*)&pack, sizeof(sc_object_transform_packet));
+	}
+
+
+	//for (auto colliderA : Define::ColliderList)
+	//{
+	//	if (colliderA->gameObject->GetActive() == false) continue;
+	//	for (auto colliderB : Define::ColliderList)
+	//	{
+	//		if (colliderB->gameObject->GetActive() == false) continue;
+	//		if (colliderA->tag == colliderB->tag) continue;
+	//		if (colliderA == colliderB) continue;
+	//		if (colliderA->gameObject->CheckCollision(*colliderB) == false) continue;
+
+ //			if(colliderA->gameObject->root) colliderA->gameObject->root->Collision(*colliderB);
+	//		else colliderA->gameObject->Collision(*colliderB);
+	//	}
+	//}
 }
 
-void CScene::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera)
-{
-	pd3dCommandList->SetGraphicsRootSignature(m_pd3dGraphicsRootSignature);
-
-	pCamera->SetViewportsAndScissorRects(pd3dCommandList);
-	pCamera->UpdateShaderVariables(pd3dCommandList);
-
-	UpdateShaderVariables(pd3dCommandList);
-
-	D3D12_GPU_VIRTUAL_ADDRESS d3dcbLightsGpuVirtualAddress = m_pd3dcbLights->GetGPUVirtualAddress();
-	pd3dCommandList->SetGraphicsRootConstantBufferView(2, d3dcbLightsGpuVirtualAddress); //Lights
-
-	for (const auto& obj : Define::GameObjectList)
- 		obj->Render(pd3dCommandList, pCamera);
-}
+//void CScene::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera)
+//{
+//	pd3dCommandList->SetGraphicsRootSignature(m_pd3dGraphicsRootSignature);
+//
+//	pCamera->SetViewportsAndScissorRects(pd3dCommandList);
+//	pCamera->UpdateShaderVariables(pd3dCommandList);
+//
+//	UpdateShaderVariables(pd3dCommandList);
+//
+//	D3D12_GPU_VIRTUAL_ADDRESS d3dcbLightsGpuVirtualAddress = m_pd3dcbLights->GetGPUVirtualAddress();
+//	pd3dCommandList->SetGraphicsRootConstantBufferView(2, d3dcbLightsGpuVirtualAddress); //Lights
+//
+//	objectManager->AllGameObjectRender(pd3dCommandList, pCamera);
+//	//for (const auto& obj : Define::GameObjectList)
+// //		obj->Render(pd3dCommandList, pCamera);
+//}
