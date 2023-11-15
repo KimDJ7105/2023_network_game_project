@@ -153,6 +153,23 @@ void CScene::ReleaseShaderVariables()
 	}
 }
 
+void CScene::HandleInputEvent(queue<EVENT> q)
+{
+
+	while (!q.empty()) {
+		EVENT event = q.front();
+		q.pop();
+		switch (event.event_id)
+		{
+		case KEY_UP:
+			break;
+		case KEY_DOWN:
+			break;
+		}
+	}
+
+}
+
 void CScene::ReleaseUploadBuffers()
 {
 	//for (const auto& obj : Define::GameObjectList)

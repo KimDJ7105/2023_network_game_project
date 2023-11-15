@@ -66,5 +66,9 @@ struct cs_player_input_packet : public sc_parent_packet {
 	cs_player_input_packet() : sc_parent_packet(4){}
 };
 
+typedef struct event {
+	int event_id;
+	int client_id;
+} EVENT;
 
 #pragma pack(pop)

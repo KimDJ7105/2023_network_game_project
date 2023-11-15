@@ -33,11 +33,6 @@ typedef struct threadarg
 	int *nCmdShow;
 } threadarg;
 
-typedef struct event {
-	int event_id;
-	int client_id;
-} EVENT;
-
 //----전역 변수
 std::array<SOCKET, 2> client_socket;
 std::queue<EVENT> InputEventQueue;
@@ -70,22 +65,6 @@ void err_display(const char* msg)
 	LocalFree(lpMsgBuf);
 }
 
-void HandleInputEvent(queue<EVENT> q)
-{
-	while (!q.empty()) {
-		EVENT event = q.front();
-		q.pop();
-		switch (event.event_id) 
-		{
-		case KEY_UP:
-			break;
-		case KEY_DOWN:
-			break;
-		}
-	}
-}
-
-
 DWORD WINAPI WorkerThread(LPVOID arg)
 {
 	struct threadarg *th_arg = (threadarg*)arg;
@@ -94,7 +73,6 @@ DWORD WINAPI WorkerThread(LPVOID arg)
 	HINSTANCE hPrevInstance = *(th_arg->hPrevInstance);
 	LPTSTR lpCmdLine = *(th_arg->lpCmdLine);
 	int nCmdShow = *(th_arg->nCmdShow);
-
 
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
@@ -112,10 +90,6 @@ DWORD WINAPI WorkerThread(LPVOID arg)
 
 	while (1)
 	{
-
-		// 11.11 추가 - 임계영역 진입 필요
-		HandleInputEvent(InputEventQueue);
-		// 임계영역 탈출 필요
 
 		if (::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 		{
