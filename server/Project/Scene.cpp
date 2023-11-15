@@ -176,9 +176,6 @@ void CScene::AnimateObjects(float fTimeElapsed)
 
 	//send 함수 만들기
 
-
-
-
 	//recv(Define::sock, (char*)numCount, sizeof(int) * 4, 0);
 
 	//for (int i = 0; i < 4; i++)
@@ -208,12 +205,31 @@ void CScene::AnimateObjects(float fTimeElapsed)
 	objectManager->AllGameObjectUpdate();
 	objectManager->AllGameObjectLateUpdate();
 
-	auto transformPacket = objectManager->AllTrnasformToPacket();
+	{
+		auto createPack = objectManager->GetCreatePack();
+		int createPackSize = createPack.size();
+		send(Define::sock, (char*)createPackSize, sizeof(int), 0);
+		for (auto pack : createPack)
+			send(Define::sock, (char*)&pack, sizeof(sc_create_object_packet));
+		createPack.clear();
+	}
 
-	auto packList = objectManager->AllTrnasformToPacket();
-	int objectSize = packList.size();
-	send(Define::sock, (char*)objectSize, sizeof(int), 0);
-	send(Define::sock, (char*) )
+	{
+		auto deletePack = objectManager->GetDeletePack();
+		int deletePackSize = deletePack.size();
+		send(Define::sock, (char*)deletePackSize, sizeof(int), 0);
+		for (auto pack : deletePack)
+			send(Define::sock, (char*)&pack, sizeof(sc_delete_object_packet));
+		deletePack.clear();
+	}
+
+	{
+		auto packList = objectManager->AllTrnasformToPacket();
+		int objectSize = packList.size();
+		send(Define::sock, (char*)objectSize, sizeof(int), 0);
+		for (auto pack : packList)
+			send(Define::sock, (char*)&pack, sizeof(sc_object_transform_packet));
+	}
 
 
 	//for (auto colliderA : Define::ColliderList)

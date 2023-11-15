@@ -8,8 +8,11 @@ public:
 	ObjectManager();
 	~ObjectManager();
 
+public: //getter setter
 	deque<CGameObject*>* GetList() { return &_GameObjectList; }
-
+	vector<sc_create_object_packet> GetCreatePack() { return _CreatePack; }
+	vector<sc_delete_object_packet> GetDeletePack() { return _DeletePack; }
+public:
 	void AddGameObject(CGameObject* obj);
 	bool DeleteGameObject(CGameObject* obj);
 	bool DeleteGameObject(int id) { return	DeleteGameObject(FindGameObject(id)); }
@@ -39,4 +42,6 @@ public:
 
 private:
 	deque<CGameObject*> _GameObjectList;
+	vector<sc_create_object_packet> _CreatePack;
+	vector<sc_delete_object_packet> _DeletePack;
 };
