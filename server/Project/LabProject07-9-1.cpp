@@ -36,7 +36,7 @@ typedef struct threadarg
 //----전역 변수
 std::array<SOCKET, 2> client_socket;
 std::queue<EVENT> InputEventQueue;
-CRITICAL_SECTION cs;
+extern CRITICAL_SECTION cs;
 
 void err_quit(const char* msg)
 {

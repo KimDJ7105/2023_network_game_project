@@ -6,6 +6,8 @@
 #include "Scene.h"
 #include "CGameObjectContainer.h"
 
+CRITICAL_SECTION cs;
+
 CScene::CScene(int index)
 {
 	Define::SceneManager->AddScene(this, index);
@@ -155,7 +157,7 @@ void CScene::ReleaseShaderVariables()
 
 void CScene::HandleInputEvent(queue<EVENT> q)
 {
-
+	EnterCriticalSection(&cs);
 	while (!q.empty()) {
 		EVENT event = q.front();
 		q.pop();
@@ -167,7 +169,7 @@ void CScene::HandleInputEvent(queue<EVENT> q)
 			break;
 		}
 	}
-
+	LeaveCriticalSection(&cs);
 }
 
 void CScene::ReleaseUploadBuffers()
