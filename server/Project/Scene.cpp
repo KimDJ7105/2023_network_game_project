@@ -15,12 +15,14 @@ DWORD WINAPI SendThread(LPVOID arg)
 	int c_id = *((int*)arg);
 	int retval;
 
+	auto objmgr = Define::SceneManager->GetCurrentScene()->objectManager;
+
 	while (true) {
 		retval = WaitForSingleObject(hWorkerEvent, INFINITE);
 		if (retval == WAIT_OBJECT_0) break;
 
 		{
-			auto createPack = Define::SceneManager->GetCurrentScene()->objectManager->GetCreatePack();
+			auto createPack = objmgr->GetCreatePack();
 			int createPackSize = createPack.size();
 			send(Define::sock[c_id], (char*)createPackSize, sizeof(int), 0);
 			for (auto pack : createPack)
@@ -29,7 +31,7 @@ DWORD WINAPI SendThread(LPVOID arg)
 		}
 
 		{
-			auto deletePack = Define::SceneManager->GetCurrentScene()->objectManager->GetDeletePack();
+			auto deletePack = objmgr->GetDeletePack();
 			int deletePackSize = deletePack.size();
 			send(Define::sock[c_id], (char*)deletePackSize, sizeof(int), 0);
 			for (auto pack : deletePack)
@@ -38,7 +40,7 @@ DWORD WINAPI SendThread(LPVOID arg)
 		}
 
 		{
-			auto packList = Define::SceneManager->GetCurrentScene()->objectManager->AllTrnasformToPacket();
+			auto packList = objmgr->AllTrnasformToPacket();
 			int objectSize = packList.size();
 			send(Define::sock[c_id], (char*)objectSize, sizeof(int), 0);
 			for (auto pack : packList)
