@@ -1,10 +1,10 @@
-// LabProject07-9-1.cpp : ÀÀ¿ë ÇÁ·Î±×·¥¿¡ ´ëÇÑ ÁøÀÔÁ¡À» Á¤ÀÇÇÕ´Ï´Ù.
+// LabProject07-9-1.cpp : ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Î±×·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
 //
 
 //-------------------------------------------------------
-// Worker Thread¿Í Recv Thread »ý¼º ±¸Çö,
-// Worker Thread¿¡¼­ ÀÎÀÚ¸¦ ³Ñ°Ü¹Þ´Â ºÎºÐ µ¿¿ì°¡ È®ÀÎ ÇÊ¿ä
-// Recv Thread ¸¸µé¶§ Handle À» arry·Î °ü¸®ÇßÀ½. °³¼± ÇÒ ¼ö ÀÖÀ¸¸é ÇÒ°Í
+// Worker Threadï¿½ï¿½ Recv Thread ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½,
+// Worker Threadï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ú¸ï¿½ ï¿½Ñ°Ü¹Þ´ï¿½ ï¿½Îºï¿½ ï¿½ï¿½ï¿½ì°¡ È®ï¿½ï¿½ ï¿½Ê¿ï¿½
+// Recv Thread ï¿½ï¿½ï¿½é¶§ Handle ï¿½ï¿½ arryï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½. ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ò°ï¿½
 //-------------------------------------------------------
 
 #include "stdafx.h"
@@ -33,17 +33,12 @@ typedef struct threadarg
 	int *nCmdShow;
 } threadarg;
 
-typedef struct event {
-	int event_id;
-	int client_id;
-} EVENT;
-
-//----Àü¿ª º¯¼ö
+//----ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 std::array<SOCKET, 2> client_socket;
 std::queue<EVENT> InputEventQueue;
-CRITICAL_SECTION cs;
+extern CRITICAL_SECTION cs;
 
-//sendthread¿Í workerthreadÀÇ ¼ø¼­¸¦ Á¦¾îÇÏ±â À§ÇÑ ÀÌº¥Æ® ÇÚµé
+//sendthreadï¿½ï¿½ workerthreadï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ìºï¿½Æ® ï¿½Úµï¿½
 HANDLE hSendEvent;
 HANDLE hWorkerEvent;
 
@@ -74,22 +69,6 @@ void err_display(const char* msg)
 	LocalFree(lpMsgBuf);
 }
 
-void HandleInputEvent(queue<EVENT> q)
-{
-	while (!q.empty()) {
-		EVENT event = q.front();
-		q.pop();
-		switch (event.event_id) 
-		{
-		case KEY_UP:
-			break;
-		case KEY_DOWN:
-			break;
-		}
-	}
-}
-
-
 DWORD WINAPI WorkerThread(LPVOID arg)
 {
 	struct threadarg *th_arg = (threadarg*)arg;
@@ -98,7 +77,6 @@ DWORD WINAPI WorkerThread(LPVOID arg)
 	HINSTANCE hPrevInstance = *(th_arg->hPrevInstance);
 	LPTSTR lpCmdLine = *(th_arg->lpCmdLine);
 	int nCmdShow = *(th_arg->nCmdShow);
-
 
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
@@ -119,13 +97,12 @@ DWORD WINAPI WorkerThread(LPVOID arg)
 	while (1)
 	{
 
-		// 11.11 Ãß°¡ - ÀÓ°è¿µ¿ª ÁøÀÔ ÇÊ¿ä
-		HandleInputEvent(InputEventQueue);
-		// ÀÓ°è¿µ¿ª Å»Ãâ ÇÊ¿ä
+		// 11.11 ï¿½ß°ï¿½ - ï¿½Ó°è¿µï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½
+		//HandleInputEvent(InputEventQueue);
+		// ï¿½Ó°è¿µï¿½ï¿½ Å»ï¿½ï¿½ ï¿½Ê¿ï¿½
 
-		retval = WaitForSingleObject(hSendEvent, INFINITE); //¹«Á¦ÇÑ ´ë±â°¡ °ú¿¬ ÀûÇÕÇÑ°¡?
-		if (retval == WAIT_OBJECT_0) break;
-
+		retval = WaitForSingleObject(hSendEvent, INFINITE); //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½â°¡ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ°ï¿½?
+		if (retval == WAIT_OBJECT_0)
 		if (::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 		{
 			if (msg.message == WM_QUIT) break;
@@ -171,7 +148,7 @@ DWORD WINAPI SendThread(LPVOID arg)
 		retval = WaitForSingleObject(hWorkerEvent, INFINITE);
 		if (retval == WAIT_OBJECT_0) break;
 
-		// ÀÌ °ø°£¿¡ Àü¼Û ±â´É ±¸Çö
+		// ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
 		SetEvent(hSendEvent);
 	}
@@ -184,16 +161,16 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	WSADATA wsa;
 	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) return 1;
 	
-	//µ¿±âÈ­¸¦ À§ÇÑ ÃÊ±âÈ­µé
+	//ï¿½ï¿½ï¿½ï¿½È­ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­ï¿½ï¿½
 	InitializeCriticalSection(&cs);
-	hSendEvent = CreateEvent(NULL, false, false, NULL); //workerthread°¡ Ã³À½ ½ÃÀÛ½Ã block µÇ¸é ¾ÈµÊ. ½ÃÀÛ½Ã ½ÅÈ£ »óÅÂ·Î ¼³Á¤µÇ°Ô ¼öÁ¤ ÇÊ¿ä
+	hSendEvent = CreateEvent(NULL, false, false, NULL); //workerthreadï¿½ï¿½ Ã³ï¿½ï¿½ ï¿½ï¿½ï¿½Û½ï¿½ block ï¿½Ç¸ï¿½ ï¿½Èµï¿½. ï¿½ï¿½ï¿½Û½ï¿½ ï¿½ï¿½È£ ï¿½ï¿½ï¿½Â·ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½
 	hWorkerEvent = CreateEvent(NULL, false, false, NULL);
 
-	//¼ÒÄÏ »ý¼º
+	//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	SOCKET listen_sock = socket(AF_INET, SOCK_STREAM, 0);
 	if (listen_sock == INVALID_SOCKET) err_quit("socket()");
 
-	//¹ÙÀÎµå
+	//ï¿½ï¿½ï¿½Îµï¿½
 	struct sockaddr_in serveraddr;
 	memset(&serveraddr, 0, sizeof(serveraddr));
 	serveraddr.sin_family = AF_INET;
@@ -202,11 +179,11 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	retval = bind(listen_sock, (struct sockaddr*)&serveraddr, sizeof(serveraddr));
 	if (retval == SOCKET_ERROR) err_quit("bind()");
 
-	// ¸®½¼
+	// ï¿½ï¿½ï¿½ï¿½
 	retval = listen(listen_sock, SOMAXCONN);
 	if (retval == SOCKET_ERROR) err_quit("listen()");
 
-	//accpet¿¡ ÇÊ¿äÇÑ º¯¼ö
+	//accpetï¿½ï¿½ ï¿½Ê¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	int addrlen;
 	struct sockaddr_in clientaddr;
 	int numOfclient = 0;
@@ -221,16 +198,16 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 			break;
 		}
 
-		// Á¢¼ÓÇÑ Å¬¶óÀÌ¾ðÆ® Á¤º¸ Ãâ·Â
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
 		char addr[INET_ADDRSTRLEN];
 		inet_ntop(AF_INET, &clientaddr.sin_addr, addr, sizeof(addr));
-		printf("\n[TCP ¼­¹ö] Å¬¶óÀÌ¾ðÆ® Á¢¼Ó: IP ÁÖ¼Ò=%s, Æ÷Æ® ¹øÈ£=%d\n",
+		printf("\n[TCP ï¿½ï¿½ï¿½ï¿½] Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ® ï¿½ï¿½ï¿½ï¿½: IP ï¿½Ö¼ï¿½=%s, ï¿½ï¿½Æ® ï¿½ï¿½È£=%d\n",
 			addr, ntohs(clientaddr.sin_port));
 
-		//Å¬¶óÀÌ¾ðÆ® Àü¿ë RecvThread »ý¼º
+		//Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ RecvThread ï¿½ï¿½ï¿½ï¿½
 		handle_arry[numOfclient] = CreateThread(NULL, 0, RecvThread, &numOfclient, 0, NULL);
 
-		//Å¬¶óÀÌ¾ðÆ® Àü¿ë SendThread »ý¼º
+		//Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ SendThread ï¿½ï¿½ï¿½ï¿½
 		CreateThread(NULL, 0, SendThread, &numOfclient, 0, NULL);
 
 		if (handle_arry[numOfclient] == NULL) {
@@ -238,7 +215,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 			return numOfclient;
 		}
 
-		//Á¢¼ÓÇÑ Å¬¶óÀÌ¾ðÆ® ¼ö Áõ°¡
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ® ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		++numOfclient;
 	}
 
