@@ -1,12 +1,3 @@
-// LabProject07-9-1.cpp : ���� ���α׷��� ���� �������� �����մϴ�.
-//
-
-//-------------------------------------------------------
-// Worker Thread�� Recv Thread ���� ����,
-// Worker Thread���� ���ڸ� �Ѱܹ޴� �κ� ���찡 Ȯ�� �ʿ�
-// Recv Thread ���鶧 Handle �� arry�� ��������. ���� �� �� ������ �Ұ�
-//-------------------------------------------------------
-
 #include "stdafx.h"
 #include "LabProject07-9-1.h"
 #include "GameFramework.h"
@@ -33,12 +24,12 @@ typedef struct threadarg
 	int *nCmdShow;
 } threadarg;
 
-//----���� ����
+//----전역변수
 std::array<SOCKET, 2> client_socket;
 std::queue<EVENT> InputEventQueue;
 extern CRITICAL_SECTION cs;
 
-//sendthread�� workerthread�� ������ �����ϱ� ���� �̺�Ʈ �ڵ�
+//sendthread와 workerthread 동기화를 위한 이벤트 핸들
 HANDLE hSendEvent;
 HANDLE hWorkerEvent;
 
@@ -97,11 +88,7 @@ DWORD WINAPI WorkerThread(LPVOID arg)
 	while (1)
 	{
 
-		// 11.11 �߰� - �Ӱ迵�� ���� �ʿ�
-		//HandleInputEvent(InputEventQueue);
-		// �Ӱ迵�� Ż�� �ʿ�
-
-		retval = WaitForSingleObject(hSendEvent, INFINITE); //������ ��Ⱑ ���� �����Ѱ�?
+		retval = WaitForSingleObject(hSendEvent, INFINITE); //무한 대기가 올바를까?
 		if (retval == WAIT_OBJECT_0)
 		if (::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 		{
@@ -148,7 +135,6 @@ DWORD WINAPI SendThread(LPVOID arg)
 		retval = WaitForSingleObject(hWorkerEvent, INFINITE);
 		if (retval == WAIT_OBJECT_0) break;
 
-		// �� ������ ���� ��� ����
 
 		SetEvent(hSendEvent);
 	}
@@ -161,16 +147,16 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	WSADATA wsa;
 	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) return 1;
 	
-	//����ȭ�� ���� �ʱ�ȭ��
+	//동기화 객체 생성
 	InitializeCriticalSection(&cs);
-	hSendEvent = CreateEvent(NULL, false, false, NULL); //workerthread�� ó�� ���۽� block �Ǹ� �ȵ�. ���۽� ��ȣ ���·� �����ǰ� ���� �ʿ�
+	hSendEvent = CreateEvent(NULL, false, false, NULL); //workerthread가 처음 실행 될 수 있도록 처음엔 신호 상태로 생성해야함
 	hWorkerEvent = CreateEvent(NULL, false, false, NULL);
 
-	//���� ����
+	//소켓 생성
 	SOCKET listen_sock = socket(AF_INET, SOCK_STREAM, 0);
 	if (listen_sock == INVALID_SOCKET) err_quit("socket()");
 
-	//���ε�
+	//bind
 	struct sockaddr_in serveraddr;
 	memset(&serveraddr, 0, sizeof(serveraddr));
 	serveraddr.sin_family = AF_INET;
@@ -179,11 +165,11 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	retval = bind(listen_sock, (struct sockaddr*)&serveraddr, sizeof(serveraddr));
 	if (retval == SOCKET_ERROR) err_quit("bind()");
 
-	// ����
+	// listen
 	retval = listen(listen_sock, SOMAXCONN);
 	if (retval == SOCKET_ERROR) err_quit("listen()");
 
-	//accpet�� �ʿ��� ����
+	//accpet에 필요한 변수들
 	int addrlen;
 	struct sockaddr_in clientaddr;
 	int numOfclient = 0;
@@ -198,16 +184,16 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 			break;
 		}
 
-		// ������ Ŭ���̾�Ʈ ���� ���
+		// 접속한 클라이언트 정보 출력
 		char addr[INET_ADDRSTRLEN];
 		inet_ntop(AF_INET, &clientaddr.sin_addr, addr, sizeof(addr));
 		printf("\n[TCP ����] Ŭ���̾�Ʈ ����: IP �ּ�=%s, ��Ʈ ��ȣ=%d\n",
 			addr, ntohs(clientaddr.sin_port));
 
-		//Ŭ���̾�Ʈ ���� RecvThread ����
+		//클라이언트 전용 RecvThread 생성
 		handle_arry[numOfclient] = CreateThread(NULL, 0, RecvThread, &numOfclient, 0, NULL);
 
-		//Ŭ���̾�Ʈ ���� SendThread ����
+		//클라이언트 전용 SendThread 생성
 		CreateThread(NULL, 0, SendThread, &numOfclient, 0, NULL);
 
 		if (handle_arry[numOfclient] == NULL) {
@@ -215,7 +201,6 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 			return numOfclient;
 		}
 
-		//������ Ŭ���̾�Ʈ �� ����
 		++numOfclient;
 	}
 
