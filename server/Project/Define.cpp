@@ -12,7 +12,7 @@ list<CCollider*> Define::ColliderList;
 CCamera* Define::MainCamera = nullptr;
 CPlayer* Define::Player = nullptr;
 
-SOCKET Define::sock;
+SOCKET Define::sock[2];
 
 Define::~Define()
 {

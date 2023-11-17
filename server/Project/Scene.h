@@ -92,5 +92,4 @@ public:
 
 public:
 	ObjectManager* objectManager;
-
 };

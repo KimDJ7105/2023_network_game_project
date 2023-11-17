@@ -7,6 +7,47 @@
 #include "CGameObjectContainer.h"
 
 CRITICAL_SECTION cs;
+HANDLE hSendEvent;
+HANDLE hWorkerEvent;
+
+DWORD WINAPI SendThread(LPVOID arg)
+{
+	int c_id = *((int*)arg);
+	int retval;
+
+	while (true) {
+		retval = WaitForSingleObject(hWorkerEvent, INFINITE);
+		if (retval == WAIT_OBJECT_0) break;
+
+		{
+			auto createPack = Define::SceneManager->GetCurrentScene()->objectManager->GetCreatePack();
+			int createPackSize = createPack.size();
+			send(Define::sock[c_id], (char*)createPackSize, sizeof(int), 0);
+			for (auto pack : createPack)
+				send(Define::sock[c_id], (char*)&pack, sizeof(sc_create_object_packet),0);
+			createPack.clear();
+		}
+
+		{
+			auto deletePack = Define::SceneManager->GetCurrentScene()->objectManager->GetDeletePack();
+			int deletePackSize = deletePack.size();
+			send(Define::sock[c_id], (char*)deletePackSize, sizeof(int), 0);
+			for (auto pack : deletePack)
+				send(Define::sock[c_id], (char*)&pack, sizeof(sc_delete_object_packet),0);
+			deletePack.clear();
+		}
+
+		{
+			auto packList = Define::SceneManager->GetCurrentScene()->objectManager->AllTrnasformToPacket();
+			int objectSize = packList.size();
+			send(Define::sock[c_id], (char*)objectSize, sizeof(int), 0);
+			for (auto pack : packList)
+				send(Define::sock[c_id], (char*)&pack, sizeof(sc_object_transform_packet),0);
+		}
+
+		SetEvent(hSendEvent);
+	}
+}
 
 CScene::CScene(int index)
 {
@@ -224,31 +265,8 @@ void CScene::AnimateObjects(float fTimeElapsed)
 	objectManager->AllGameObjectUpdate();
 	objectManager->AllGameObjectLateUpdate();
 
-	{
-		auto createPack = objectManager->GetCreatePack();
-		int createPackSize = createPack.size();
-		send(Define::sock, (char*)createPackSize, sizeof(int), 0);
-		for (auto pack : createPack)
-			send(Define::sock, (char*)&pack, sizeof(sc_create_object_packet));
-		createPack.clear();
-	}
-
-	{
-		auto deletePack = objectManager->GetDeletePack();
-		int deletePackSize = deletePack.size();
-		send(Define::sock, (char*)deletePackSize, sizeof(int), 0);
-		for (auto pack : deletePack)
-			send(Define::sock, (char*)&pack, sizeof(sc_delete_object_packet));
-		deletePack.clear();
-	}
-
-	{
-		auto packList = objectManager->AllTrnasformToPacket();
-		int objectSize = packList.size();
-		send(Define::sock, (char*)objectSize, sizeof(int), 0);
-		for (auto pack : packList)
-			send(Define::sock, (char*)&pack, sizeof(sc_object_transform_packet));
-	}
+	//패킷을 전송하기 위해서 workerthread 이벤트 신호를 발생
+	SetEvent(hWorkerEvent);
 
 
 	//for (auto colliderA : Define::ColliderList)

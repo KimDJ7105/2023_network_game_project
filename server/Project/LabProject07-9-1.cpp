@@ -25,13 +25,12 @@ typedef struct threadarg
 } threadarg;
 
 //----전역변수
-std::array<SOCKET, 2> client_socket;
 std::queue<EVENT> InputEventQueue;
 extern CRITICAL_SECTION cs;
 
 //sendthread와 workerthread 동기화를 위한 이벤트 핸들
-HANDLE hSendEvent;
-HANDLE hWorkerEvent;
+extern HANDLE hSendEvent;
+extern HANDLE hWorkerEvent;
 
 void err_quit(const char* msg)
 {
@@ -102,7 +101,6 @@ DWORD WINAPI WorkerThread(LPVOID arg)
 		else
 		{
 			gGameFramework.FrameAdvance();
-			SetEvent(hWorkerEvent);
 		}
 	}
 	gGameFramework.OnDestroy();
@@ -117,29 +115,16 @@ DWORD WINAPI RecvThread(LPVOID arg)
 	while (true) {
 		char buf[BUFSIZE];
 
-		int retval = recv(client_socket[c_id], buf, BUFSIZE, MSG_WAITALL);
+		int retval = recv(Define::sock[c_id], buf, BUFSIZE, MSG_WAITALL);
 		if (retval == 0) return 0;
-
+		
 		EnterCriticalSection(&cs);
 		InputEventQueue.push({ (int)buf, c_id });
 		LeaveCriticalSection(&cs);
 	}
 }
 
-DWORD WINAPI SendThread(LPVOID arg)
-{
-	int c_id = *((int*)arg);
-	int retval;
-
-	while (true) {
-		retval = WaitForSingleObject(hWorkerEvent, INFINITE);
-		if (retval == WAIT_OBJECT_0) break;
-
-
-		SetEvent(hSendEvent);
-	}
-}
-
+DWORD WINAPI SendThread(LPVOID arg);
 
 int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow)
 {
@@ -179,8 +164,8 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	while (numOfclient < 2) {
 		//accept
 		addrlen = sizeof(clientaddr);
-		client_socket[numOfclient] = accept(listen_sock, (struct sockaddr*)&clientaddr, &addrlen);
-		if (client_socket[numOfclient] == INVALID_SOCKET) {
+		Define::sock[numOfclient] = accept(listen_sock, (struct sockaddr*)&clientaddr, &addrlen);
+		if (Define::sock[numOfclient] == INVALID_SOCKET) {
 			err_display("accept()");
 			break;
 		}
@@ -196,7 +181,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 
 		//클라이언트 전용 SendThread 생성
 		CreateThread(NULL, 0, SendThread, &numOfclient, 0, NULL);
-
+		
 		if (handle_arry[numOfclient] == NULL) {
 			printf("RecvThread Fail");
 			return numOfclient;
