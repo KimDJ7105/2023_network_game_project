@@ -97,6 +97,25 @@ void ObjectManager::AllGameObjectUpdateTransform()
 		obj->transform->UpdateTransform(NULL);
 }
 
+void ObjectManager::AllCreatePackUpdate()
+{
+	for (auto pack : _CretaePack) 
+	{
+		auto obj = CGameObjectContainer::CreateGameObject(pack.object_type);
+		AddGameObject(obj);
+	}
+}
+
+void ObjectManager::AllTransformPackUpdate()
+{
+	for (auto pack : _TransformPack)
+	{
+		auto obj = FindGameObject(pack.object_id);
+		obj->transform->UpdateTransform(NULL);
+	}
+	_TransformPack.clear();
+}
+
 void ObjectManager::AllGameObjectStart()
 {
 	for (const auto& obj : _GameObjectList)
