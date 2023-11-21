@@ -169,37 +169,49 @@ void CScene::AnimateObjects(float fTimeElapsed)
 {
 	m_fElapsedTime = fTimeElapsed;
 
-	int numCount[4] = 0;
-	recv(Define::sock, (char*)numCount, sizeof(int) * 4, 0);
-
-	for (int i = 0; i < 4; i++)
 	{
-		for (int j = 0; j < numCount[i]; j++)
+		int createPackSize = 0;
+		recv(Define::sock, (char*)createPackSize, sizeof(int), 0);
+		for (int i = 0; i < createPackSize; i++)
 		{
-			switch (i) {
-			case SC_CREATE_OBJECT:
-				objectManager->AddGameObject(CGameObjectContainer::CreateGameObject(0));
-				break;
-			case SC_DELETE_OBJECT:
-				objectManager->DeleteGameObject(0);
-				break;
-			case SC_MOVE_OBJECT:
-				objectManager->GameObjectTransformUpdate(0);
-			default:
-				break;
-			}
+			sc_create_object_packet pack;
+			recv(Define::sock, (char*)&pack, sizeof(sc_create_object_packet), 0);
+			objectManager->AddCreatePack(pack);
 		}
 	}
 
-	//for (const auto& obj : Define::GameObjectList)
-	//	obj->transform->UpdateTransform(NULL);
-	objectManager->AllGameObjectUpdateTransform();
+	{
+		int deletePackSize = 0;
+		recv(Define::sock, (char*)deletePackSize, sizeof(int), 0);
+		for (int i = 0; i < deletePackSize; i++)
+		{
+			sc_delete_obejct_packet pack;
+			recv(Define::sock, (char*)&pack, sizeof(sc_create_object_packet), 0);
+			objectManager->AddDeletePack(pack);
+		}
+	}
 
+	{
+		int transformPackSize = 0;
+		recv(Define::sock, (char*)transformPackSize, sizeof(int), 0);
+		for (int i = 0; i < transformPackSize; i++)
+		{
+			sc_move_object_packet pack;
+			recv(Define::sock, (char*)&pack, sizeof(sc_move_object_packet), 0);
+			objectManager->AddTransformPack(pack);
+		}
+	}
+
+	objectManager->AllTransformPackUpdate();
 	for (const auto& collider : Define::ColliderList)
 		collider->UpdateBoundingBox();
 
-	objectManager->AllGameObjectUpdate();
-	objectManager->AllGameObjectLateUpdate();
+	//for (const auto& obj : Define::GameObjectList)
+	//	obj->transform->UpdateTransform(NULL);
+	//objectManager->AllGameObjectUpdateTransform();
+
+	//objectManager->AllGameObjectUpdate();
+	//objectManager->AllGameObjectLateUpdate();
 
 	//for (const auto& obj : Define::GameObjectList)
 	//	obj->Update();
