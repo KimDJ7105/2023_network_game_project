@@ -136,7 +136,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	//동기화 객체 생성
 	InitializeCriticalSection(&cs);
 	hSendEvent = CreateEvent(NULL, false, false, NULL); //workerthread가 처음 실행 될 수 있도록 처음엔 신호 상태로 생성해야함
-	hWorkerEvent = CreateEvent(NULL, false, false, NULL);
+	hWorkerEvent = CreateEvent(NULL, false, true, NULL);
 
 	//소켓 생성
 	SOCKET listen_sock = socket(AF_INET, SOCK_STREAM, 0);
