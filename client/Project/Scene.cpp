@@ -185,7 +185,7 @@ void CScene::AnimateObjects(float fTimeElapsed)
 		recv(Define::sock, (char*)deletePackSize, sizeof(int), 0);
 		for (int i = 0; i < deletePackSize; i++)
 		{
-			sc_delete_obejct_packet pack;
+			sc_delete_object_packet pack;
 			recv(Define::sock, (char*)&pack, sizeof(sc_create_object_packet), 0);
 			objectManager->AddDeletePack(pack);
 		}
@@ -196,8 +196,8 @@ void CScene::AnimateObjects(float fTimeElapsed)
 		recv(Define::sock, (char*)transformPackSize, sizeof(int), 0);
 		for (int i = 0; i < transformPackSize; i++)
 		{
-			sc_move_object_packet pack;
-			recv(Define::sock, (char*)&pack, sizeof(sc_move_object_packet), 0);
+			sc_object_transform_packet pack;
+			recv(Define::sock, (char*)&pack, sizeof(sc_object_transform_packet), 0);
 			objectManager->AddTransformPack(pack);
 		}
 	}

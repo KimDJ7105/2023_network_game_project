@@ -56,14 +56,14 @@ struct sc_collision_object_packet : public sc_parent_packet {
 	int object_id1;
 	int object_id2;
 
-	sc_collision_object_packet() : sc_parent_packet(3){}
+	sc_collision_object_packet() : sc_parent_packet(3) {}
 };
 
 //c -> s
 struct cs_player_input_packet : public sc_parent_packet {
 	int input_event;
 
-	cs_player_input_packet() : sc_parent_packet(4){}
+	cs_player_input_packet() : sc_parent_packet(4) {}
 };
 
 typedef struct event {

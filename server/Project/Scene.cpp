@@ -49,6 +49,7 @@ DWORD WINAPI SendThread(LPVOID arg)
 
 		SetEvent(hSendEvent);
 	}
+	return 0;
 }
 
 CScene::CScene(int index)

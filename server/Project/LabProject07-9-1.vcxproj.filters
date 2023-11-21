@@ -248,6 +248,9 @@
     <ClCompile Include="CGameObjectContainer.cpp">
       <Filter>Object\Contain</Filter>
     </ClCompile>
+    <ClCompile Include="protocol.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="LabProject07-9-1.rc">

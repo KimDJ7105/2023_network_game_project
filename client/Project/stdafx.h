@@ -68,21 +68,19 @@ using Microsoft::WRL::ComPtr;
 
 // TODO: 프로그램에 필요한 추가 헤더는 여기에서 참조합니다.
 #include <map>
+#include <WS2tcpip.h>
+#include <WinSock2.h>
 #include "Define.h"
 #include "Input.h"
 #include "SceneManager.h"
-#include "CGameObjectContainer.h"
-#include "Common.h"
-#include "NetworkProtocol.h"
-
-char* SERVERIP = (char*)"127.0.0.1";
-#define SERVERPORT 9000
-#define BUFSIZE    1024
+#include "protocol.h"
+#include <array>
+#include <queue>
 
 extern UINT gnCbvSrvDescriptorIncrementSize;
 
-extern ID3D12Resource *CreateBufferResource(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, void *pData, UINT nBytes, D3D12_HEAP_TYPE d3dHeapType = D3D12_HEAP_TYPE_UPLOAD, D3D12_RESOURCE_STATES d3dResourceStates = D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, ID3D12Resource **ppd3dUploadBuffer = NULL);
-extern ID3D12Resource *CreateTextureResourceFromDDSFile(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, wchar_t *pszFileName, ID3D12Resource **ppd3dUploadBuffer, D3D12_RESOURCE_STATES d3dResourceStates = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+extern ID3D12Resource* CreateBufferResource(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, void* pData, UINT nBytes, D3D12_HEAP_TYPE d3dHeapType = D3D12_HEAP_TYPE_UPLOAD, D3D12_RESOURCE_STATES d3dResourceStates = D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, ID3D12Resource** ppd3dUploadBuffer = NULL);
+extern ID3D12Resource* CreateTextureResourceFromDDSFile(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandList* pd3dCommandList, wchar_t* pszFileName, ID3D12Resource** ppd3dUploadBuffer, D3D12_RESOURCE_STATES d3dResourceStates = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
 
 #define RANDOM_COLOR			XMFLOAT4(rand() / float(RAND_MAX), rand() / float(RAND_MAX), rand() / float(RAND_MAX), rand() / float(RAND_MAX))
 
@@ -91,13 +89,13 @@ extern ID3D12Resource *CreateTextureResourceFromDDSFile(ID3D12Device *pd3dDevice
 inline bool IsZero(float fValue) { return((fabsf(fValue) < EPSILON)); }
 inline bool IsEqual(float fA, float fB) { return(::IsZero(fA - fB)); }
 inline float InverseSqrt(float fValue) { return 1.0f / sqrtf(fValue); }
-inline void Swap(float *pfS, float *pfT) { float fTemp = *pfS; *pfS = *pfT; *pfT = fTemp; }
+inline void Swap(float* pfS, float* pfT) { float fTemp = *pfS; *pfS = *pfT; *pfT = fTemp; }
 
 extern mt19937 gen;
 
 inline float fRandom(float min, float max)
 {
-	
+
 	std::uniform_real_distribution<float> dis(min, max);
 
 	return dis(gen);
@@ -178,7 +176,7 @@ namespace Vector3
 			XMLoadFloat3(&v1),
 			XMLoadFloat3(&v2),
 			t
-			);
+		);
 		XMFLOAT3 f3;
 		XMStoreFloat3(&f3, value);
 		return f3;
@@ -326,7 +324,7 @@ namespace Matrix4x4
 		value.r[3] = XMVectorLerp(matrix1.r[3], matrix2.r[3], t);
 
 		XMFLOAT4X4 returnValue;
-		XMStoreFloat4x4(&returnValue,value);
+		XMStoreFloat4x4(&returnValue, value);
 		return returnValue;
 	}
 

@@ -12,8 +12,8 @@ public: // List function
 	deque<CGameObject*>* GetList() { return &_GameObjectList; }
 
 	void AddCreatePack(sc_create_object_packet pack) { _CretaePack.emplace_back(pack); }
-	void AddDeletePack(sc_delete_obejct_packet pack) { _DeletePack.emplace_back(pack); }
-	void AddTransformPack(sc_move_object_packet pack) { _TransformPack.emplace_back(pack); }
+	void AddDeletePack(sc_delete_object_packet pack) { _DeletePack.emplace_back(pack); }
+	void AddTransformPack(sc_object_transform_packet pack) { _TransformPack.emplace_back(pack); }
 
 	void AllCreatePackUpdate();
 	void AllTransformPackUpdate();
@@ -46,6 +46,6 @@ public:
 private:
 	deque<CGameObject*> _GameObjectList;
 	vector<sc_create_object_packet> _CretaePack;
-	vector<sc_delete_obejct_packet> _DeletePack;
-	vector<sc_move_object_packet> _TransformPack;
+	vector<sc_delete_object_packet> _DeletePack;
+	vector<sc_object_transform_packet> _TransformPack;
 };

@@ -1,7 +1,7 @@
 #pragma once
 #include "stdafx.h"
 
-class CGameObject{};
+class CGameObject;
 
 class CGameObjectContainer
 {
