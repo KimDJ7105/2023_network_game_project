@@ -29,8 +29,8 @@ std::queue<EVENT> InputEventQueue;
 extern CRITICAL_SECTION cs;
 
 //sendthread와 workerthread 동기화를 위한 이벤트 핸들
-extern HANDLE hSendEvent;
-extern HANDLE hWorkerEvent;
+HANDLE hWorkerEvent;
+HANDLE hSendEvent;
 
 void err_quit(const char* msg)
 {
@@ -124,7 +124,47 @@ DWORD WINAPI RecvThread(LPVOID arg)
 	}
 }
 
-DWORD WINAPI SendThread(LPVOID arg);
+DWORD WINAPI SendThread(LPVOID arg)
+{
+	int c_id = *((int*)arg);
+	int retval;
+
+	auto objmgr = Define::SceneManager->GetCurrentScene()->objectManager;
+
+	while (true) {
+		retval = WaitForSingleObject(hWorkerEvent, INFINITE);
+		if (retval == WAIT_OBJECT_0) break;
+
+		{
+			auto createPack = objmgr->GetCreatePack();
+			int createPackSize = createPack.size();
+			send(Define::sock[c_id], (char*)createPackSize, sizeof(int), 0);
+			for (auto pack : createPack)
+				send(Define::sock[c_id], (char*)&pack, sizeof(sc_create_object_packet), 0);
+			createPack.clear();
+		}
+
+		{
+			auto deletePack = objmgr->GetDeletePack();
+			int deletePackSize = deletePack.size();
+			send(Define::sock[c_id], (char*)deletePackSize, sizeof(int), 0);
+			for (auto pack : deletePack)
+				send(Define::sock[c_id], (char*)&pack, sizeof(sc_delete_object_packet), 0);
+			deletePack.clear();
+		}
+
+		{
+			auto packList = objmgr->AllTrnasformToPacket();
+			int objectSize = packList.size();
+			send(Define::sock[c_id], (char*)objectSize, sizeof(int), 0);
+			for (auto pack : packList)
+				send(Define::sock[c_id], (char*)&pack, sizeof(sc_object_transform_packet), 0);
+		}
+
+		SetEvent(hSendEvent);
+	}
+	return 0;
+}
 
 int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow)
 {

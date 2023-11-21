@@ -7,50 +7,7 @@
 #include "CGameObjectContainer.h"
 
 CRITICAL_SECTION cs;
-HANDLE hSendEvent;
-HANDLE hWorkerEvent;
-
-DWORD WINAPI SendThread(LPVOID arg)
-{
-	int c_id = *((int*)arg);
-	int retval;
-
-	auto objmgr = Define::SceneManager->GetCurrentScene()->objectManager;
-
-	while (true) {
-		retval = WaitForSingleObject(hWorkerEvent, INFINITE);
-		if (retval == WAIT_OBJECT_0) break;
-
-		{
-			auto createPack = objmgr->GetCreatePack();
-			int createPackSize = createPack.size();
-			send(Define::sock[c_id], (char*)createPackSize, sizeof(int), 0);
-			for (auto pack : createPack)
-				send(Define::sock[c_id], (char*)&pack, sizeof(sc_create_object_packet),0);
-			createPack.clear();
-		}
-
-		{
-			auto deletePack = objmgr->GetDeletePack();
-			int deletePackSize = deletePack.size();
-			send(Define::sock[c_id], (char*)deletePackSize, sizeof(int), 0);
-			for (auto pack : deletePack)
-				send(Define::sock[c_id], (char*)&pack, sizeof(sc_delete_object_packet),0);
-			deletePack.clear();
-		}
-
-		{
-			auto packList = objmgr->AllTrnasformToPacket();
-			int objectSize = packList.size();
-			send(Define::sock[c_id], (char*)objectSize, sizeof(int), 0);
-			for (auto pack : packList)
-				send(Define::sock[c_id], (char*)&pack, sizeof(sc_object_transform_packet),0);
-		}
-
-		SetEvent(hSendEvent);
-	}
-	return 0;
-}
+extern HANDLE hWorkerEvent;
 
 CScene::CScene(int index)
 {
