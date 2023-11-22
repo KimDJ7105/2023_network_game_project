@@ -1,3 +1,5 @@
+#pragma comment(linker, "/entry:wWinMainCRTStartup /subsystem:console")
+
 #include "stdafx.h"
 #include "LabProject07-9-1.h"
 #include "GameFramework.h"
@@ -166,7 +168,7 @@ DWORD WINAPI SendThread(LPVOID arg)
 	return 0;
 }
 
-int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow)
+int main(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow)
 {
 	int retval;
 
@@ -213,19 +215,18 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 		// 접속한 클라이언트 정보 출력
 		char addr[INET_ADDRSTRLEN];
 		inet_ntop(AF_INET, &clientaddr.sin_addr, addr, sizeof(addr));
-		printf("\n[TCP] 클라이언트 주소: IP 주소=%s, 포트 번호=%d\n",
+		printf("\n[TCP] client addr: IP addr=%s, port num=%d\n",
 			addr, ntohs(clientaddr.sin_port));
 
 		//클라이언트 전용 RecvThread 생성
 		handle_arry[numOfclient] = CreateThread(NULL, 0, RecvThread, &numOfclient, 0, NULL);
-
-		//클라이언트 전용 SendThread 생성
-		CreateThread(NULL, 0, SendThread, &numOfclient, 0, NULL);
-		
 		if (handle_arry[numOfclient] == NULL) {
 			printf("RecvThread Fail");
 			return numOfclient;
 		}
+
+		//클라이언트 전용 SendThread 생성
+		CreateThread(NULL, 0, SendThread, &numOfclient, 0, NULL);
 
 		++numOfclient;
 	}
