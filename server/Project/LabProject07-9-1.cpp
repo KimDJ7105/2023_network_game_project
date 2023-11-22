@@ -32,7 +32,7 @@ extern CRITICAL_SECTION cs;
 
 //sendthread와 workerthread 동기화를 위한 이벤트 핸들
 HANDLE hWorkerEvent;
-HANDLE hSendEvent;
+HANDLE hSendEvent[2];
 
 void err_quit(const char* msg)
 {
@@ -105,8 +105,7 @@ DWORD WINAPI WorkerThread(LPVOID arg)
 		//}
 
 		gGameFramework.FrameAdvance();
-		retval = WaitForSingleObject(hSendEvent, INFINITE); //무한 대기가 올바를까?
-		if (retval == WAIT_OBJECT_0) continue;
+		WaitForMultipleObjects(2, hSendEvent,true, INFINITE);
 	}
 	gGameFramework.OnDestroy();
 
@@ -137,9 +136,8 @@ DWORD WINAPI SendThread(LPVOID arg)
 	auto objmgr = Define::SceneManager->GetCurrentScene()->objectManager;
 
 	while (true) {
-		retval = WaitForSingleObject(hWorkerEvent, INFINITE);
-		if (retval == WAIT_OBJECT_0) break;
-
+		WaitForSingleObject(hWorkerEvent, INFINITE);
+		
 		{
 			auto createPack = objmgr->GetCreatePack();
 			int createPackSize = createPack.size();
@@ -166,7 +164,7 @@ DWORD WINAPI SendThread(LPVOID arg)
 				send(Define::sock[c_id], (char*)&pack, sizeof(sc_object_transform_packet), 0);
 		}
 
-		SetEvent(hSendEvent);
+		SetEvent(hSendEvent[c_id]);
 	}
 	return 0;
 }
@@ -180,8 +178,9 @@ int main(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCm
 	
 	//동기화 객체 생성
 	InitializeCriticalSection(&cs);
-	hSendEvent = CreateEvent(NULL, false, false, NULL); //workerthread가 처음 실행 될 수 있도록 처음엔 신호 상태로 생성해야함
-	hWorkerEvent = CreateEvent(NULL, false, true, NULL);
+	hSendEvent[1] = CreateEvent(NULL, false, true, NULL); //workerthread가 처음 실행 될 수 있도록 처음엔 신호 상태로 생성해야함
+	hSendEvent[0] = CreateEvent(NULL, false, true, NULL); //workerthread가 처음 실행 될 수 있도록 처음엔 신호 상태로 생성해야함
+	hWorkerEvent = CreateEvent(NULL, false, false, NULL);
 
 	//소켓 생성
 	SOCKET listen_sock = socket(AF_INET, SOCK_STREAM, 0);
