@@ -169,32 +169,32 @@ CHeightMapGridMesh::CHeightMapGridMesh(ID3D12Device* pd3dDevice, ID3D12GraphicsC
 		}
 	}
 	
-	m_pd3dVertexBuffer = ::CreateBufferResource(pd3dDevice, pd3dCommandList, pVertices,
-		m_nStride * m_nVertices, D3D12_HEAP_TYPE_DEFAULT,
-		D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, &m_pd3dVertexUploadBuffer);
+	//m_pd3dVertexBuffer = ::CreateBufferResource(pd3dDevice, pd3dCommandList, pVertices,
+	//	m_nStride * m_nVertices, D3D12_HEAP_TYPE_DEFAULT,
+	//	D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, &m_pd3dVertexUploadBuffer);
 
-	m_d3dVertexBufferView.BufferLocation = m_pd3dVertexBuffer->GetGPUVirtualAddress();
-	m_d3dVertexBufferView.StrideInBytes = sizeof(XMFLOAT3);
-	m_d3dVertexBufferView.SizeInBytes = sizeof(XMFLOAT3) * m_nVertices;
-	delete[] pVertices;
+	//m_d3dVertexBufferView.BufferLocation = m_pd3dVertexBuffer->GetGPUVirtualAddress();
+	//m_d3dVertexBufferView.StrideInBytes = sizeof(XMFLOAT3);
+	//m_d3dVertexBufferView.SizeInBytes = sizeof(XMFLOAT3) * m_nVertices;
+	//delete[] pVertices;
 
-	m_pd3dNormalBuffer = ::CreateBufferResource(pd3dDevice, pd3dCommandList, pNormals,
-		m_nStride * m_nVertices, D3D12_HEAP_TYPE_DEFAULT, 
-		D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, &m_pd3dNormalUploadBuffer);
+	//m_pd3dNormalBuffer = ::CreateBufferResource(pd3dDevice, pd3dCommandList, pNormals,
+	//	m_nStride * m_nVertices, D3D12_HEAP_TYPE_DEFAULT, 
+	//	D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, &m_pd3dNormalUploadBuffer);
 
-	m_d3dNormalBufferView.BufferLocation = m_pd3dNormalBuffer->GetGPUVirtualAddress();
-	m_d3dNormalBufferView.StrideInBytes = sizeof(XMFLOAT3);
-	m_d3dNormalBufferView.SizeInBytes = sizeof(XMFLOAT3) * m_nVertices;
-	delete[] pNormals;
+	//m_d3dNormalBufferView.BufferLocation = m_pd3dNormalBuffer->GetGPUVirtualAddress();
+	//m_d3dNormalBufferView.StrideInBytes = sizeof(XMFLOAT3);
+	//m_d3dNormalBufferView.SizeInBytes = sizeof(XMFLOAT3) * m_nVertices;
+	//delete[] pNormals;
 
-	m_pd3dColorBuffer = ::CreateBufferResource(pd3dDevice, pd3dCommandList, xmf4Colors,
-		sizeof(XMFLOAT4) * m_nVertices, D3D12_HEAP_TYPE_DEFAULT,
-		D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, &m_pd3dColorUploadBuffer);
+	//m_pd3dColorBuffer = ::CreateBufferResource(pd3dDevice, pd3dCommandList, xmf4Colors,
+	//	sizeof(XMFLOAT4) * m_nVertices, D3D12_HEAP_TYPE_DEFAULT,
+	//	D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, &m_pd3dColorUploadBuffer);
 
-	m_d3dColorBufferView.BufferLocation = m_pd3dNormalBuffer->GetGPUVirtualAddress();
-	m_d3dColorBufferView.StrideInBytes = sizeof(XMFLOAT4);
-	m_d3dColorBufferView.SizeInBytes = sizeof(XMFLOAT4) * m_nVertices;
-	delete[] xmf4Colors;
+	//m_d3dColorBufferView.BufferLocation = m_pd3dNormalBuffer->GetGPUVirtualAddress();
+	//m_d3dColorBufferView.StrideInBytes = sizeof(XMFLOAT4);
+	//m_d3dColorBufferView.SizeInBytes = sizeof(XMFLOAT4) * m_nVertices;
+	//delete[] xmf4Colors;
 
 	m_nIndices = ((nWidth * 2) * (nLength - 1)) + ((nLength - 1) - 1);
 	UINT* pnIndices = new UINT[m_nIndices];
@@ -225,38 +225,38 @@ CHeightMapGridMesh::CHeightMapGridMesh(ID3D12Device* pd3dDevice, ID3D12GraphicsC
 			}
 		}
 	}
-	m_pd3dIndexBuffer = ::CreateBufferResource(pd3dDevice, pd3dCommandList, pnIndices, sizeof(UINT) * m_nIndices, D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_INDEX_BUFFER, &m_pd3dIndexUploadBuffer);
-	m_d3dIndexBufferView.BufferLocation = m_pd3dIndexBuffer->GetGPUVirtualAddress();
-	m_d3dIndexBufferView.Format = DXGI_FORMAT_R32_UINT;
-	m_d3dIndexBufferView.SizeInBytes = sizeof(UINT) * m_nIndices;
-	delete[] pnIndices;
+	//m_pd3dIndexBuffer = ::CreateBufferResource(pd3dDevice, pd3dCommandList, pnIndices, sizeof(UINT) * m_nIndices, D3D12_HEAP_TYPE_DEFAULT, D3D12_RESOURCE_STATE_INDEX_BUFFER, &m_pd3dIndexUploadBuffer);
+	//m_d3dIndexBufferView.BufferLocation = m_pd3dIndexBuffer->GetGPUVirtualAddress();
+	//m_d3dIndexBufferView.Format = DXGI_FORMAT_R32_UINT;
+	//m_d3dIndexBufferView.SizeInBytes = sizeof(UINT) * m_nIndices;
+	//delete[] pnIndices;
 }
 CHeightMapGridMesh::~CHeightMapGridMesh()
 {
-	if (m_pd3dVertexBuffer) m_pd3dVertexBuffer->Release();
-	if (m_pd3dVertexUploadBuffer) m_pd3dVertexUploadBuffer->Release();
+	//if (m_pd3dVertexBuffer) m_pd3dVertexBuffer->Release();
+	//if (m_pd3dVertexUploadBuffer) m_pd3dVertexUploadBuffer->Release();
 
-	if (m_pd3dNormalBuffer) m_pd3dNormalBuffer->Release();
-	if (m_pd3dNormalUploadBuffer) m_pd3dNormalUploadBuffer->Release();
+	//if (m_pd3dNormalBuffer) m_pd3dNormalBuffer->Release();
+	//if (m_pd3dNormalUploadBuffer) m_pd3dNormalUploadBuffer->Release();
 
-	if (m_pd3dColorBuffer) m_pd3dColorBuffer->Release();
-	if (m_pd3dColorUploadBuffer) m_pd3dColorUploadBuffer->Release();
+	//if (m_pd3dColorBuffer) m_pd3dColorBuffer->Release();
+	//if (m_pd3dColorUploadBuffer) m_pd3dColorUploadBuffer->Release();
 
-	if (m_pd3dIndexBuffer) m_pd3dIndexBuffer->Release();
-	if (m_pd3dIndexUploadBuffer) m_pd3dIndexUploadBuffer->Release();
+	//if (m_pd3dIndexBuffer) m_pd3dIndexBuffer->Release();
+	//if (m_pd3dIndexUploadBuffer) m_pd3dIndexUploadBuffer->Release();
 }
 
 void CHeightMapGridMesh::ReleaseUploadBuffers()
 {
 	//정점 버퍼를 위한 업로드 버퍼를 소멸시킨다. 
-	if (m_pd3dVertexUploadBuffer) m_pd3dVertexUploadBuffer->Release();
-	m_pd3dVertexUploadBuffer = NULL;
-	if (m_pd3dNormalUploadBuffer) m_pd3dNormalUploadBuffer->Release();
-	m_pd3dNormalUploadBuffer = NULL;
-	if (m_pd3dColorUploadBuffer) m_pd3dColorUploadBuffer->Release();
-	m_pd3dColorUploadBuffer = NULL;
-	if (m_pd3dIndexUploadBuffer) m_pd3dIndexUploadBuffer->Release();
-	m_pd3dIndexUploadBuffer = NULL;
+	//if (m_pd3dVertexUploadBuffer) m_pd3dVertexUploadBuffer->Release();
+	//m_pd3dVertexUploadBuffer = NULL;
+	//if (m_pd3dNormalUploadBuffer) m_pd3dNormalUploadBuffer->Release();
+	//m_pd3dNormalUploadBuffer = NULL;
+	//if (m_pd3dColorUploadBuffer) m_pd3dColorUploadBuffer->Release();
+	//m_pd3dColorUploadBuffer = NULL;
+	//if (m_pd3dIndexUploadBuffer) m_pd3dIndexUploadBuffer->Release();
+	//m_pd3dIndexUploadBuffer = NULL;
 }
 
 void CHeightMapGridMesh::Render(ID3D12GraphicsCommandList* pd3dCommandList, int nSubSet)
@@ -345,9 +345,9 @@ CTerrain::CTerrain(string filePath)
 	}
 
 	transform->SetPosition(XMFLOAT3(GetWidth() * -0.5f, 0, GetLength() * -0.5f));
-	CTerrainShader* pShader = new CTerrainShader();
-	pShader->CreateShader(Define::Framework->m_pd3dDevice, Define::Framework->m_pd3dCommandList, Define::SceneManager->GetCurrentScene()->m_pd3dGraphicsRootSignature);
-	SetShader(pShader);
+	//CTerrainShader* pShader = new CTerrainShader();
+	//pShader->CreateShader(Define::Framework->m_pd3dDevice, Define::Framework->m_pd3dCommandList, Define::SceneManager->GetCurrentScene()->m_pd3dGraphicsRootSignature);
+	//SetShader(pShader);
 
 	collider = new CCollider(this);
 	collider->tag = "Terrain";

@@ -153,6 +153,9 @@
     <ClInclude Include="CGameObjectContainer.h">
       <Filter>Object\Contain</Filter>
     </ClInclude>
+    <ClInclude Include="CMountineTerrain.h">
+      <Filter>Object\Contain</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LabProject07-9-1.cpp">
@@ -250,6 +253,9 @@
     </ClCompile>
     <ClCompile Include="protocol.cpp">
       <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CMountineTerrain.cpp">
+      <Filter>Object\Contain</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -63,47 +63,50 @@ void err_display(const char* msg)
 
 DWORD WINAPI WorkerThread(LPVOID arg)
 {
-	struct threadarg *th_arg = (threadarg*)arg;
+	//struct threadarg *th_arg = (threadarg*)arg;
 
-	HINSTANCE hInstance = *(th_arg->hInstance);
-	HINSTANCE hPrevInstance = *(th_arg->hPrevInstance);
-	LPTSTR lpCmdLine = *(th_arg->lpCmdLine);
-	int nCmdShow = *(th_arg->nCmdShow);
+	//HINSTANCE hInstance = *(th_arg->hInstance);
+	//HINSTANCE hPrevInstance = *(th_arg->hPrevInstance);
+	//LPTSTR lpCmdLine = *(th_arg->lpCmdLine);
+	//int nCmdShow = *(th_arg->nCmdShow);
 
-	UNREFERENCED_PARAMETER(hPrevInstance);
-	UNREFERENCED_PARAMETER(lpCmdLine);
+	//UNREFERENCED_PARAMETER(hPrevInstance);
+	//UNREFERENCED_PARAMETER(lpCmdLine);
 
 	MSG msg;
-	HACCEL hAccelTable;
+	//HACCEL hAccelTable;
 
-	::LoadString(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
-	::LoadString(hInstance, IDC_LABPROJECT0791, szWindowClass, MAX_LOADSTRING);
-	MyRegisterClass(hInstance);
+	//::LoadString(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
+	//::LoadString(hInstance, IDC_LABPROJECT0791, szWindowClass, MAX_LOADSTRING);
+	//MyRegisterClass(hInstance);
 
-	if (!InitInstance(hInstance, nCmdShow)) return(FALSE);
+	//if (!InitInstance(hInstance, nCmdShow)) return(FALSE);
 
-	hAccelTable = ::LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_LABPROJECT0791));
+	//hAccelTable = ::LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_LABPROJECT0791));
 
 	int retval;
 
+	gGameFramework.BuildObjects();
 	while (1)
 	{
 
+		//if (::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+		//{
+		//	if (msg.message == WM_QUIT) break;
+		//	if (!::TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
+		//	{
+		//		::TranslateMessage(&msg);
+		//		::DispatchMessage(&msg);
+		//	}
+		//}
+		//else
+		//{
+		//	
+		//}
+
+		gGameFramework.FrameAdvance();
 		retval = WaitForSingleObject(hSendEvent, INFINITE); //무한 대기가 올바를까?
-		if (retval == WAIT_OBJECT_0)
-		if (::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-		{
-			if (msg.message == WM_QUIT) break;
-			if (!::TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
-			{
-				::TranslateMessage(&msg);
-				::DispatchMessage(&msg);
-			}
-		}
-		else
-		{
-			gGameFramework.FrameAdvance();
-		}
+		if (retval == WAIT_OBJECT_0) continue;
 	}
 	gGameFramework.OnDestroy();
 
@@ -231,13 +234,14 @@ int main(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCm
 		++numOfclient;
 	}
 
+
 	struct threadarg arg;
 	arg.hInstance = &hInstance;
 	arg.hPrevInstance = &hPrevInstance;
 	arg.lpCmdLine = &lpCmdLine;
 	arg.nCmdShow = &nCmdShow;
-
 	HANDLE WorkerHandle = CreateThread(NULL, 0, WorkerThread, &arg, 0, NULL);
+
 	if (WorkerHandle == NULL) {
 		printf("WorkerThread Fail");
 		return 1;

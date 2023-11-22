@@ -1,11 +1,11 @@
 #include "stdafx.h"
 #include "GameScene.h"
-#include "Terrain.h"
 #include "CameraController.h"
 #include "Tree.h"
 #include "CTankPlayer.h"
 #include "Enumy.h"
 #include "BigMissile.h"
+#include "CMountineTerrain.h"
 
 CGameScene::CGameScene(int index) : CScene(index)
 {
@@ -18,13 +18,12 @@ void CGameScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 	//mainCamera = new CCamera();
 	//mainCamera->AddComponet(new CCameraController(mainCamera));
 
-	//CTerrain* terrain = new CTerrain("Image/terrain.raw");
-	//terrain->name = "Terrain";
+	CTerrain* terrain = new CMountineTerrain();
 
 	//player = new CTankPlayer();
 
 	//for (int i = 0; i < 6; i++)
-	//	new CEnumy();
+	//	new CEnumy(); 
 
 	//for (int i = 0; i < 10; i++)
 	//	CTree* tree = new CTree();
