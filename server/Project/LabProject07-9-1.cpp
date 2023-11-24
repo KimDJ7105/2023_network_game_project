@@ -1,5 +1,3 @@
-#pragma comment(linker, "/entry:wWinMainCRTStartup /subsystem:console")
-
 #include "stdafx.h"
 #include "LabProject07-9-1.h"
 #include "GameFramework.h"
@@ -141,6 +139,7 @@ DWORD WINAPI SendThread(LPVOID arg)
 		{
 			auto createPack = objmgr->GetCreatePack();
 			int createPackSize = createPack.size();
+			printf("(createpacket)%d socket : %d EA\n", c_id, createPackSize);
 			send(Define::sock[c_id], (char*)createPackSize, sizeof(int), 0);
 			for (auto pack : createPack)
 				send(Define::sock[c_id], (char*)&pack, sizeof(sc_create_object_packet), 0);
@@ -150,6 +149,7 @@ DWORD WINAPI SendThread(LPVOID arg)
 		{
 			auto deletePack = objmgr->GetDeletePack();
 			int deletePackSize = deletePack.size();
+			printf("(deletepacket)%d socket : %d EA\n", c_id, deletePackSize);
 			send(Define::sock[c_id], (char*)deletePackSize, sizeof(int), 0);
 			for (auto pack : deletePack)
 				send(Define::sock[c_id], (char*)&pack, sizeof(sc_delete_object_packet), 0);
@@ -159,6 +159,7 @@ DWORD WINAPI SendThread(LPVOID arg)
 		{
 			auto packList = objmgr->AllTrnasformToPacket();
 			int objectSize = packList.size();
+			printf("(transformpacket)%d socket : %d EA\n", c_id, objectSize);
 			send(Define::sock[c_id], (char*)objectSize, sizeof(int), 0);
 			for (auto pack : packList)
 				send(Define::sock[c_id], (char*)&pack, sizeof(sc_object_transform_packet), 0);
