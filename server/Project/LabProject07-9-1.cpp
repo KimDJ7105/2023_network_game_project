@@ -135,7 +135,7 @@ DWORD WINAPI SendThread(LPVOID arg)
 
 	while (true) {
 		WaitForSingleObject(hWorkerEvent, INFINITE);
-		
+
 		{
 			auto createPack = objmgr->GetCreatePack();
 			int createPackSize = createPack.size();
@@ -181,7 +181,7 @@ int main(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCm
 	InitializeCriticalSection(&cs);
 	hSendEvent[1] = CreateEvent(NULL, false, true, NULL); //workerthread가 처음 실행 될 수 있도록 처음엔 신호 상태로 생성해야함
 	hSendEvent[0] = CreateEvent(NULL, false, true, NULL); //workerthread가 처음 실행 될 수 있도록 처음엔 신호 상태로 생성해야함
-	hWorkerEvent = CreateEvent(NULL, false, false, NULL);
+	hWorkerEvent = CreateEvent(NULL, true, false, NULL);
 
 	//소켓 생성
 	SOCKET listen_sock = socket(AF_INET, SOCK_STREAM, 0);
