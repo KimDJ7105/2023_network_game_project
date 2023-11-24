@@ -122,7 +122,10 @@ DWORD WINAPI RecvThread(LPVOID arg)
 
 		int retval = recv(Define::sock[c_id], buf, BUFSIZE, MSG_WAITALL);
 		if (retval == 0) return 0;
-		
+		else if (retval != 0) {
+			cs_player_input_packet* p = reinterpret_cast<cs_player_input_packet*>(buf);
+			printf("%d : We got some msg of %d - %d\n", c_id, p->packet_type, p->input_event);
+		}
 		EnterCriticalSection(&cs);
 		InputEventQueue.push({ (int)buf, c_id });
 		LeaveCriticalSection(&cs);
