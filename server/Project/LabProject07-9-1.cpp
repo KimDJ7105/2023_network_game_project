@@ -31,6 +31,7 @@ extern CRITICAL_SECTION cs;
 //sendthread와 workerthread 동기화를 위한 이벤트 핸들
 HANDLE hWorkerEvent;
 HANDLE hSendEvent[2];
+HANDLE hRecvReadyEvent;
 
 void err_quit(const char* msg)
 {
@@ -114,6 +115,8 @@ DWORD WINAPI RecvThread(LPVOID arg)
 {
 	int c_id = *((int*)arg);
 
+	WaitForSingleObject(hRecvReadyEvent, INFINITE);
+
 	while (true) {
 		char buf[BUFSIZE];
 
@@ -139,7 +142,7 @@ DWORD WINAPI SendThread(LPVOID arg)
 		{
 			auto createPack = objmgr->GetCreatePack();
 			int createPackSize = createPack.size();
-			printf("(createpacket)%d socket : %d EA\n", c_id, createPackSize);
+			//printf("(createpacket)%d socket : %d EA\n", c_id, createPackSize);
 			send(Define::sock[c_id], (char*)createPackSize, sizeof(int), 0);
 			for (auto pack : createPack)
 				send(Define::sock[c_id], (char*)&pack, sizeof(sc_create_object_packet), 0);
@@ -149,7 +152,7 @@ DWORD WINAPI SendThread(LPVOID arg)
 		{
 			auto deletePack = objmgr->GetDeletePack();
 			int deletePackSize = deletePack.size();
-			printf("(deletepacket)%d socket : %d EA\n", c_id, deletePackSize);
+			//printf("(deletepacket)%d socket : %d EA\n", c_id, deletePackSize);
 			send(Define::sock[c_id], (char*)deletePackSize, sizeof(int), 0);
 			for (auto pack : deletePack)
 				send(Define::sock[c_id], (char*)&pack, sizeof(sc_delete_object_packet), 0);
@@ -159,7 +162,7 @@ DWORD WINAPI SendThread(LPVOID arg)
 		{
 			auto packList = objmgr->AllTrnasformToPacket();
 			int objectSize = packList.size();
-			printf("(transformpacket)%d socket : %d EA\n", c_id, objectSize);
+			//printf("(transformpacket)%d socket : %d EA\n", c_id, objectSize);
 			send(Define::sock[c_id], (char*)objectSize, sizeof(int), 0);
 			for (auto pack : packList)
 				send(Define::sock[c_id], (char*)&pack, sizeof(sc_object_transform_packet), 0);
@@ -182,6 +185,7 @@ int main(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCm
 	hSendEvent[1] = CreateEvent(NULL, false, true, NULL); //workerthread가 처음 실행 될 수 있도록 처음엔 신호 상태로 생성해야함
 	hSendEvent[0] = CreateEvent(NULL, false, true, NULL); //workerthread가 처음 실행 될 수 있도록 처음엔 신호 상태로 생성해야함
 	hWorkerEvent = CreateEvent(NULL, true, false, NULL);
+	hRecvReadyEvent = CreateEvent(NULL, true, false, NULL);
 
 	//소켓 생성
 	SOCKET listen_sock = socket(AF_INET, SOCK_STREAM, 0);
@@ -233,6 +237,7 @@ int main(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCm
 
 		++numOfclient;
 	}
+	SetEvent(hRecvReadyEvent);
 
 
 	struct threadarg arg;
