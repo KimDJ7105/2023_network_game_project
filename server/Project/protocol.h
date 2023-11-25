@@ -27,12 +27,7 @@ constexpr int CS_PLAYER_INPUT = 4;
 // 패킷 구조체
 
 //s -> c
-struct sc_parent_packet {
-	int packet_type;
-	sc_parent_packet(int type) : packet_type(type) {}
-};
-
-struct sc_create_object_packet : public sc_parent_packet {
+struct sc_create_object_packet {
 	int object_type;
 	XMFLOAT4X4 matrix;
 
@@ -40,31 +35,27 @@ struct sc_create_object_packet : public sc_parent_packet {
 	sc_create_object_packet(int type, XMFLOAT4X4 _matrix);
 };
 
-struct sc_object_transform_packet : public sc_parent_packet {
+struct sc_object_transform_packet {
 	int object_id;
 	XMFLOAT4X4 matrix;
 
 	sc_object_transform_packet();
 };
 
-struct sc_delete_object_packet : public sc_parent_packet {
+struct sc_delete_object_packet {
 	int object_id;
 
 	sc_delete_object_packet(int id = -1);
 };
 
-struct sc_collision_object_packet : public sc_parent_packet {
+struct sc_collision_object_packet {
 	int object_id1;
 	int object_id2;
-
-	sc_collision_object_packet() : sc_parent_packet(3){}
 };
 
 //c -> s
-struct cs_player_input_packet : public sc_parent_packet {
+struct cs_player_input_packet {
 	int input_event;
-
-	cs_player_input_packet() : sc_parent_packet(4){}
 };
 
 typedef struct event {

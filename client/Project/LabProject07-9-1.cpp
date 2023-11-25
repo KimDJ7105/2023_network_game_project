@@ -100,7 +100,9 @@ DWORD WINAPI RecvThread(LPVOID arg)
 		WaitForSingleObject(hRecvHandle, INFINITE);
 		{
 			int createPackSize = 0;
-			recv(Define::sock, (char*)createPackSize, sizeof(int), 0);
+			int s = recv(Define::sock, (char*)&createPackSize, sizeof(int), 0);
+			if (s == -1) err_display("recv()");
+
 			for (int i = 0; i < createPackSize; i++)
 			{
 				sc_create_object_packet pack;
@@ -111,7 +113,7 @@ DWORD WINAPI RecvThread(LPVOID arg)
 
 		{
 			int deletePackSize = 0;
-			recv(Define::sock, (char*)deletePackSize, sizeof(int), 0);
+			recv(Define::sock, (char*)&deletePackSize, sizeof(int), 0);
 			for (int i = 0; i < deletePackSize; i++)
 			{
 				sc_delete_object_packet pack;
@@ -122,7 +124,7 @@ DWORD WINAPI RecvThread(LPVOID arg)
 
 		{
 			int transformPackSize = 0;
-			recv(Define::sock, (char*)transformPackSize, sizeof(int), 0);
+			recv(Define::sock, (char*)&transformPackSize, sizeof(int), 0);
 			for (int i = 0; i < transformPackSize; i++)
 			{
 				sc_object_transform_packet pack;

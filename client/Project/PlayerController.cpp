@@ -30,14 +30,23 @@ void CPlayerController::Update()
 void CPlayerController::MoveMent()
 {
 	XMFLOAT3 dir = XMFLOAT3(0, 0, 0);
+	//if (Define::Input->GetKeyPress(KeyCode::W))
+	//	dir.z += 1;
+	//if (Define::Input->GetKeyPress(KeyCode::S))
+	//	dir.z -= 1;
+	//if (Define::Input->GetKeyPress(KeyCode::D))
+	//	dir.x += 1;
+	//if (Define::Input->GetKeyPress(KeyCode::A))
+	//	dir.x -= 1;
+
 	if (Define::Input->GetKeyPress(KeyCode::W))
-		dir.z += 1;
+		Define::RecvInputPack(KEY_UP);
 	if (Define::Input->GetKeyPress(KeyCode::S))
-		dir.z -= 1;
+		Define::RecvInputPack(KEY_DOWN);
 	if (Define::Input->GetKeyPress(KeyCode::D))
-		dir.x += 1;
+		Define::RecvInputPack(KEY_RIGHT);
 	if (Define::Input->GetKeyPress(KeyCode::A))
-		dir.x -= 1;
+		Define::RecvInputPack(KEY_LEFT);
 
 	if (Define::Input->GetKeyDown(KeyCode::Q))
 		status->speed += 1;

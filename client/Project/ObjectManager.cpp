@@ -15,12 +15,16 @@ ObjectManager::~ObjectManager()
 
 void ObjectManager::AddGameObject(CGameObject* obj)
 {
+	if (obj == nullptr) return;
+
 	_GameObjectList.emplace_back(obj);
 	obj->Start();
 }
 
 bool ObjectManager::DeleteGameObject(CGameObject* obj)
 {
+	if (obj == nullptr) return false;
+
 	if (DeleteObjectToList(obj))
 	{
 		obj->Release();
@@ -29,6 +33,13 @@ bool ObjectManager::DeleteGameObject(CGameObject* obj)
 	}
 
 	return false;
+}
+
+CGameObject* ObjectManager::FindGameObject(int id)
+{
+	if(_GameObjectList.size() > id) 
+		return _GameObjectList[id]; 
+	return nullptr;
 }
 
 CGameObject* ObjectManager::FindGameObject(string name)
@@ -102,6 +113,7 @@ void ObjectManager::AllCreatePackUpdate()
 {
 	for (auto pack : _CretaePack) 
 	{
+		if (pack.object_type < 0) continue;
 		auto obj = CGameObjectContainer::CreateGameObject(pack.object_type);
 		AddGameObject(obj);
 	}
@@ -119,6 +131,7 @@ void ObjectManager::AllTransformPackUpdate()
 {
 	for (auto pack : _TransformPack)
 	{
+		if (pack.object_id < 0) continue;
 		auto obj = FindGameObject(pack.object_id);
 		obj->transform->UpdateTransform(NULL);
 	}
