@@ -70,6 +70,12 @@ DWORD WINAPI WorkerThread(LPVOID arg)
 	{
 		gGameFramework.FrameAdvance();
 		WaitForMultipleObjects(2, hSendEvent,true, INFINITE);
+		{
+			auto objMgr = Define::SceneManager->GetCurrentScene()->objectManager;
+			objMgr->GetCreatePack().clear();
+			objMgr->GetDeletePack().clear();
+		}
+		
 	}
 	gGameFramework.OnDestroy();
 
@@ -87,7 +93,7 @@ DWORD WINAPI RecvThread(LPVOID arg)
 		int retval = recv(Define::sock[c_id], (char*)&pack, sizeof(cs_player_input_packet), MSG_WAITALL);
 		if (retval == 0) return 0;
 		else if (retval != 0) {
-			printf("id - %d : We got some msg of %d - %d\n", c_id, pack.packet_type, pack.input_event);
+			printf("id - %d : We got some msg of %d\n", c_id, pack.input_event);
 		}
 
 		struct sockaddr_in myaddr;
@@ -117,27 +123,25 @@ DWORD WINAPI SendThread(LPVOID arg)
 			auto createPack = objmgr->GetCreatePack();
 			int createPackSize = createPack.size();
 			//printf("(createpacket)%d socket : %d EA\n", c_id, createPackSize);
-			send(Define::sock[c_id], (char*)createPackSize, sizeof(int), 0);
+			send(Define::sock[c_id], (char*)&createPackSize, sizeof(int), 0);
 			for (auto pack : createPack)
 				send(Define::sock[c_id], (char*)&pack, sizeof(sc_create_object_packet), 0);
-			createPack.clear();
 		}
 
 		{
 			auto deletePack = objmgr->GetDeletePack();
 			int deletePackSize = deletePack.size();
 			//printf("(deletepacket)%d socket : %d EA\n", c_id, deletePackSize);
-			send(Define::sock[c_id], (char*)deletePackSize, sizeof(int), 0);
+			send(Define::sock[c_id], (char*)&deletePackSize, sizeof(int), 0);
 			for (auto pack : deletePack)
 				send(Define::sock[c_id], (char*)&pack, sizeof(sc_delete_object_packet), 0);
-			deletePack.clear();
 		}
 
 		{
 			auto packList = objmgr->AllTrnasformToPacket();
 			int objectSize = packList.size();
 			//printf("(transformpacket)%d socket : %d EA\n", c_id, objectSize);
-			send(Define::sock[c_id], (char*)objectSize, sizeof(int), 0);
+			send(Define::sock[c_id], (char*)&objectSize, sizeof(int), 0);
 			for (auto pack : packList)
 				send(Define::sock[c_id], (char*)&pack, sizeof(sc_object_transform_packet), 0);
 		}

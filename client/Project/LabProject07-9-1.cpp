@@ -100,7 +100,9 @@ DWORD WINAPI RecvThread(LPVOID arg)
 		WaitForSingleObject(hRecvHandle, INFINITE);
 		{
 			int createPackSize = 0;
-			recv(Define::sock, (char*)createPackSize, sizeof(int), 0);
+			int s = recv(Define::sock, (char*)createPackSize, sizeof(int), 0);
+			if (s == -1) err_display("recv()");
+
 			for (int i = 0; i < createPackSize; i++)
 			{
 				sc_create_object_packet pack;
