@@ -25,7 +25,6 @@ public:
 	static CPlayer* Player;
 
 public: // Server Sock
-	static SOCKET sock[2];
 
 public:
 	Define() {}

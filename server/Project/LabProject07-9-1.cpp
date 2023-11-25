@@ -27,6 +27,7 @@ typedef struct threadarg
 //----전역변수
 std::queue<EVENT> InputEventQueue;
 extern CRITICAL_SECTION cs;
+SOCKET sock[2];
 
 //sendthread와 workerthread 동기화를 위한 이벤트 핸들
 HANDLE hWorkerEvent;
@@ -65,11 +66,16 @@ DWORD WINAPI WorkerThread(LPVOID arg)
 	MSG msg;
 	int retval;
 
+	auto objmgr = Define::SceneManager->GetCurrentScene()->objectManager;
+
 	gGameFramework.BuildObjects();
 	while (1)
 	{
 		gGameFramework.FrameAdvance();
 		WaitForMultipleObjects(2, hSendEvent,true, INFINITE);
+
+		objmgr->GetDeletePack().clear();
+		objmgr->GetCreatePack().clear();
 	}
 	gGameFramework.OnDestroy();
 
@@ -84,18 +90,19 @@ DWORD WINAPI RecvThread(LPVOID arg)
 
 	while (true) {
 		cs_player_input_packet pack;
-		int retval = recv(Define::sock[c_id], (char*)&pack, sizeof(cs_player_input_packet), MSG_WAITALL);
+		int retval = recv(sock[c_id], (char*)&pack, sizeof(cs_player_input_packet), MSG_WAITALL);
 		if (retval == 0) return 0;
+		if (retval == SOCKET_ERROR) err_quit("recv()");
 		else if (retval != 0) {
-			printf("id - %d : We got some msg of %d - %d\n", c_id, pack.packet_type, pack.input_event);
+			printf("id - %d : We got some msg of %d - %d / size is : %d\n", c_id, pack.packet_type, pack.input_event, retval);
 		}
 
-		struct sockaddr_in myaddr;
+		/*struct sockaddr_in myaddr;
 		int client_len = sizeof(myaddr);
 		getpeername(Define::sock[c_id], (struct sockaddr*)&myaddr, &client_len);
 
 		printf("Port    : %d\n", ntohs(myaddr.sin_port));
-		printf("address : %s\n", inet_ntoa(myaddr.sin_addr));
+		printf("address : %s\n", inet_ntoa(myaddr.sin_addr));*/
 
 		EnterCriticalSection(&cs);
 		InputEventQueue.push({ pack.input_event, c_id });
@@ -117,29 +124,37 @@ DWORD WINAPI SendThread(LPVOID arg)
 			auto createPack = objmgr->GetCreatePack();
 			int createPackSize = createPack.size();
 			//printf("(createpacket)%d socket : %d EA\n", c_id, createPackSize);
-			send(Define::sock[c_id], (char*)createPackSize, sizeof(int), 0);
-			for (auto pack : createPack)
-				send(Define::sock[c_id], (char*)&pack, sizeof(sc_create_object_packet), 0);
-			createPack.clear();
+			retval = send(sock[c_id], (char*)createPackSize, sizeof(int), 0);
+			if (retval == SOCKET_ERROR) err_quit("send()1 - 1");
+
+			for (auto pack : createPack) {
+				retval = send(sock[c_id], (char*)&pack, sizeof(sc_create_object_packet), 0);
+				if (retval == SOCKET_ERROR) err_quit("send()1 - 2");
+			}
 		}
 
 		{
 			auto deletePack = objmgr->GetDeletePack();
 			int deletePackSize = deletePack.size();
 			//printf("(deletepacket)%d socket : %d EA\n", c_id, deletePackSize);
-			send(Define::sock[c_id], (char*)deletePackSize, sizeof(int), 0);
-			for (auto pack : deletePack)
-				send(Define::sock[c_id], (char*)&pack, sizeof(sc_delete_object_packet), 0);
-			deletePack.clear();
+			retval = send(sock[c_id], (char*)deletePackSize, sizeof(int), 0);
+			if(retval == SOCKET_ERROR) err_quit("send()2 - 1");
+			for (auto pack : deletePack) {
+				retval = send(sock[c_id], (char*)&pack, sizeof(sc_delete_object_packet), 0);
+				if (retval == SOCKET_ERROR) err_quit("send()2 - 2");
+			}
 		}
 
 		{
 			auto packList = objmgr->AllTrnasformToPacket();
 			int objectSize = packList.size();
 			//printf("(transformpacket)%d socket : %d EA\n", c_id, objectSize);
-			send(Define::sock[c_id], (char*)objectSize, sizeof(int), 0);
-			for (auto pack : packList)
-				send(Define::sock[c_id], (char*)&pack, sizeof(sc_object_transform_packet), 0);
+			retval = send(sock[c_id], (char*)objectSize, sizeof(int), 0);
+			if (retval == SOCKET_ERROR) err_quit("send()3 - 1");
+			for (auto pack : packList) {
+				retval = send(sock[c_id], (char*)&pack, sizeof(sc_object_transform_packet), 0);
+				if (retval == SOCKET_ERROR) err_quit("send()3 - 2");
+			}
 		}
 
 		SetEvent(hSendEvent[c_id]);
@@ -187,8 +202,8 @@ int main(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCm
 	{
 		//accept
 		addrlen = sizeof(clientaddr);
-		Define::sock[i] = accept(listen_sock, (struct sockaddr*)&clientaddr, &addrlen);
-		if (Define::sock[i] == INVALID_SOCKET) {
+		sock[i] = accept(listen_sock, (struct sockaddr*)&clientaddr, &addrlen);
+		if (sock[i] == INVALID_SOCKET) {
 			err_display("accept()");
 			break;
 		}
