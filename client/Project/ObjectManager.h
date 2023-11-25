@@ -22,7 +22,7 @@ public:
 	void AddGameObject(CGameObject* obj);
 	bool DeleteGameObject(CGameObject* obj);
 	bool DeleteGameObject(int id) { return	DeleteGameObject(FindGameObject(id)); }
-	CGameObject* FindGameObject(int id) { return _GameObjectList[id]; }
+	CGameObject* FindGameObject(int id);
 	CGameObject* FindGameObject(string name);
 	CGameObject* FindGameObject(CGameObject* obj);
 
