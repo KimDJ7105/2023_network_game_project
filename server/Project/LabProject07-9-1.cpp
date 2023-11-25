@@ -29,7 +29,7 @@ std::queue<EVENT> InputEventQueue;
 extern CRITICAL_SECTION cs;
 
 //sendthread와 workerthread 동기화를 위한 이벤트 핸들
-HANDLE hWorkerEvent;
+HANDLE hWorkerEvent[2];
 HANDLE hSendEvent[2];
 HANDLE hRecvReadyEvent;
 
@@ -69,11 +69,13 @@ DWORD WINAPI WorkerThread(LPVOID arg)
 	while (1)
 	{
 		gGameFramework.FrameAdvance();
+		SetEvent(hWorkerEvent[0]);
+		SetEvent(hWorkerEvent[1]);
 		WaitForMultipleObjects(2, hSendEvent,true, INFINITE);
 		{
 			auto objMgr = Define::SceneManager->GetCurrentScene()->objectManager;
-			objMgr->GetCreatePack().clear();
-			objMgr->GetDeletePack().clear();
+			objMgr->GetCreatePack()->clear();
+			objMgr->GetDeletePack()->clear();
 		}
 		
 	}
@@ -92,16 +94,6 @@ DWORD WINAPI RecvThread(LPVOID arg)
 		cs_player_input_packet pack;
 		int retval = recv(Define::sock[c_id], (char*)&pack, sizeof(cs_player_input_packet), MSG_WAITALL);
 		if (retval == 0) return 0;
-		else if (retval != 0) {
-			printf("id - %d : We got some msg of %d\n", c_id, pack.input_event);
-		}
-
-		struct sockaddr_in myaddr;
-		int client_len = sizeof(myaddr);
-		getpeername(Define::sock[c_id], (struct sockaddr*)&myaddr, &client_len);
-
-		printf("Port    : %d\n", ntohs(myaddr.sin_port));
-		printf("address : %s\n", inet_ntoa(myaddr.sin_addr));
 
 		EnterCriticalSection(&cs);
 		InputEventQueue.push({ pack.input_event, c_id });
@@ -117,23 +109,25 @@ DWORD WINAPI SendThread(LPVOID arg)
 	auto objmgr = Define::SceneManager->GetCurrentScene()->objectManager;
 
 	while (true) {
-		WaitForSingleObject(hWorkerEvent, INFINITE);
+		WaitForSingleObject(hWorkerEvent[c_id], INFINITE);
 
 		{
 			auto createPack = objmgr->GetCreatePack();
-			int createPackSize = createPack.size();
-			//printf("(createpacket)%d socket : %d EA\n", c_id, createPackSize);
+			int createPackSize = createPack->size();
 			send(Define::sock[c_id], (char*)&createPackSize, sizeof(int), 0);
-			for (auto pack : createPack)
+			for (auto pack : *createPack)
+			{
+				printf("(createpacket)%d socket : %d\n", c_id, pack.object_type);
 				send(Define::sock[c_id], (char*)&pack, sizeof(sc_create_object_packet), 0);
+			}
 		}
 
 		{
 			auto deletePack = objmgr->GetDeletePack();
-			int deletePackSize = deletePack.size();
+			int deletePackSize = deletePack->size();
 			//printf("(deletepacket)%d socket : %d EA\n", c_id, deletePackSize);
 			send(Define::sock[c_id], (char*)&deletePackSize, sizeof(int), 0);
-			for (auto pack : deletePack)
+			for (auto pack : *deletePack)
 				send(Define::sock[c_id], (char*)&pack, sizeof(sc_delete_object_packet), 0);
 		}
 
@@ -160,9 +154,10 @@ int main(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCm
 	
 	//동기화 객체 생성
 	InitializeCriticalSection(&cs);
-	hSendEvent[1] = CreateEvent(NULL, false, true, NULL); //workerthread가 처음 실행 될 수 있도록 처음엔 신호 상태로 생성해야함
-	hSendEvent[0] = CreateEvent(NULL, false, true, NULL); //workerthread가 처음 실행 될 수 있도록 처음엔 신호 상태로 생성해야함
-	hWorkerEvent = CreateEvent(NULL, true, false, NULL);
+	hSendEvent[1] = CreateEvent(NULL, false, false, NULL); //workerthread가 처음 실행 될 수 있도록 처음엔 신호 상태로 생성해야함
+	hSendEvent[0] = CreateEvent(NULL, false, false, NULL); //workerthread가 처음 실행 될 수 있도록 처음엔 신호 상태로 생성해야함
+	hWorkerEvent[0] = CreateEvent(NULL, false, false, NULL);
+	hWorkerEvent[1] = CreateEvent(NULL, false, false, NULL);
 	hRecvReadyEvent = CreateEvent(NULL, true, false, NULL);
 
 	//소켓 생성

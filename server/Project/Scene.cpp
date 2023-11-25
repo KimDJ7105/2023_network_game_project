@@ -225,9 +225,7 @@ void CScene::AnimateObjects(float fTimeElapsed)
 	objectManager->AllGameObjectUpdate();
 	objectManager->AllGameObjectLateUpdate();
 
-	//패킷을 전송하기 위해서 workerthread 이벤트 신호를 발생
-	SetEvent(hWorkerEvent);
-	ResetEvent(hWorkerEvent);
+
 
 	//for (auto colliderA : Define::ColliderList)
 	//{

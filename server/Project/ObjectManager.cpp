@@ -16,6 +16,7 @@ void ObjectManager::AddGameObject(CGameObject* obj)
 {
 	_GameObjectList.emplace_back(obj);
 	obj->Start();
+	obj->id = ++objectIndex;
 
 	_CreatePack.emplace_back(sc_create_object_packet{ obj->id, obj->transform->m_xmf4x4World });
 }
