@@ -124,8 +124,16 @@ DWORD WINAPI RecvThread(LPVOID arg)
 		if (retval == 0) return 0;
 		else if (retval != 0) {
 			cs_player_input_packet* p = reinterpret_cast<cs_player_input_packet*>(buf);
-			printf("%d : We got some msg of %d - %d\n", c_id, p->packet_type, p->input_event);
+			//printf("%d : We got some msg of %d - %d\n", c_id, p->packet_type, p->input_event);
 		}
+
+		struct sockaddr_in myaddr;
+		int client_len = sizeof(myaddr);
+		getpeername(Define::sock[c_id], (struct sockaddr*)&myaddr, &client_len);
+
+		printf("Port    : %d\n", ntohs(myaddr.sin_port));
+		printf("address : %s\n", inet_ntoa(myaddr.sin_addr));
+
 		EnterCriticalSection(&cs);
 		InputEventQueue.push({ (int)buf, c_id });
 		LeaveCriticalSection(&cs);
