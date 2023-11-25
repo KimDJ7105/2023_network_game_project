@@ -124,11 +124,11 @@ DWORD WINAPI SendThread(LPVOID arg)
 			auto createPack = objmgr->GetCreatePack();
 			int createPackSize = createPack.size();
 			//printf("(createpacket)%d socket : %d EA\n", c_id, createPackSize);
-			retval = send(sock[c_id], (char*)createPackSize, sizeof(int), 0);
+			retval = send(sock[c_id], reinterpret_cast<const char*>(&createPackSize), sizeof(int), 0);
 			if (retval == SOCKET_ERROR) err_quit("send()1 - 1");
 
 			for (auto pack : createPack) {
-				retval = send(sock[c_id], (char*)&pack, sizeof(sc_create_object_packet), 0);
+				retval = send(sock[c_id], reinterpret_cast<const char*>(&pack), sizeof(sc_create_object_packet), 0);
 				if (retval == SOCKET_ERROR) err_quit("send()1 - 2");
 			}
 		}
@@ -137,10 +137,10 @@ DWORD WINAPI SendThread(LPVOID arg)
 			auto deletePack = objmgr->GetDeletePack();
 			int deletePackSize = deletePack.size();
 			//printf("(deletepacket)%d socket : %d EA\n", c_id, deletePackSize);
-			retval = send(sock[c_id], (char*)deletePackSize, sizeof(int), 0);
+			retval = send(sock[c_id], reinterpret_cast<const char*>(&deletePackSize), sizeof(int), 0);
 			if(retval == SOCKET_ERROR) err_quit("send()2 - 1");
 			for (auto pack : deletePack) {
-				retval = send(sock[c_id], (char*)&pack, sizeof(sc_delete_object_packet), 0);
+				retval = send(sock[c_id], reinterpret_cast<const char*>(&pack), sizeof(sc_delete_object_packet), 0);
 				if (retval == SOCKET_ERROR) err_quit("send()2 - 2");
 			}
 		}
@@ -149,10 +149,10 @@ DWORD WINAPI SendThread(LPVOID arg)
 			auto packList = objmgr->AllTrnasformToPacket();
 			int objectSize = packList.size();
 			//printf("(transformpacket)%d socket : %d EA\n", c_id, objectSize);
-			retval = send(sock[c_id], (char*)objectSize, sizeof(int), 0);
+			retval = send(sock[c_id], reinterpret_cast<const char*>(&objectSize), sizeof(int), 0);
 			if (retval == SOCKET_ERROR) err_quit("send()3 - 1");
 			for (auto pack : packList) {
-				retval = send(sock[c_id], (char*)&pack, sizeof(sc_object_transform_packet), 0);
+				retval = send(sock[c_id], reinterpret_cast<const char*>(&pack), sizeof(sc_object_transform_packet), 0);
 				if (retval == SOCKET_ERROR) err_quit("send()3 - 2");
 			}
 		}
