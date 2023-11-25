@@ -8,6 +8,7 @@ class CSceneManager;
 class CGameFramework;
 class CGameTimer;
 class CInput;
+struct Eveet;
 
 class Define {
 public: // Manager
@@ -26,6 +27,8 @@ public:
 
 public: // Server Sock
 	static SOCKET sock;
+
+	static void RecvInputPack(int id);
 
 public:
 	Define() {}

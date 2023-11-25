@@ -14,6 +14,12 @@ CPlayer* Define::Player = nullptr;
 
 SOCKET Define::sock;
 
+void Define::RecvInputPack(int id)
+{
+	EVENT e{ id, -1 };
+	recv(sock, (char*)&e, sizeof(EVENT), 0);
+}
+
 Define::~Define()
 {
 }
