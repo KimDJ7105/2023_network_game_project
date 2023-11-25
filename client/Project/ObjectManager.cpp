@@ -107,6 +107,14 @@ void ObjectManager::AllCreatePackUpdate()
 	}
 }
 
+void ObjectManager::AllDeletePackUpdate()
+{
+	for (auto pack : _CretaePack)
+	{
+		DeleteGameObject(pack.object_type);
+	}
+}
+
 void ObjectManager::AllTransformPackUpdate()
 {
 	for (auto pack : _TransformPack)

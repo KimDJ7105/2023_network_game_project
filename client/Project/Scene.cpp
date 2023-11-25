@@ -169,38 +169,42 @@ void CScene::AnimateObjects(float fTimeElapsed)
 {
 	m_fElapsedTime = fTimeElapsed;
 
-	{
-		int createPackSize = 0;
-		recv(Define::sock, (char*)createPackSize, sizeof(int), 0);
-		for (int i = 0; i < createPackSize; i++)
-		{
-			sc_create_object_packet pack;
-			recv(Define::sock, (char*)&pack, sizeof(sc_create_object_packet), 0);
-			objectManager->AddCreatePack(pack);
-		}
-	}
+	//{
+	//	int createPackSize = 0;
+	//	recv(Define::sock, (char*)createPackSize, sizeof(int), 0);
+	//	for (int i = 0; i < createPackSize; i++)
+	//	{
+	//		sc_create_object_packet pack;
+	//		recv(Define::sock, (char*)&pack, sizeof(sc_create_object_packet), 0);
+	//		objectManager->AddCreatePack(pack);
+	//	}
+	//}
 
-	{
-		int deletePackSize = 0;
-		recv(Define::sock, (char*)deletePackSize, sizeof(int), 0);
-		for (int i = 0; i < deletePackSize; i++)
-		{
-			sc_delete_object_packet pack;
-			recv(Define::sock, (char*)&pack, sizeof(sc_create_object_packet), 0);
-			objectManager->AddDeletePack(pack);
-		}
-	}
+	//{
+	//	int deletePackSize = 0;
+	//	recv(Define::sock, (char*)deletePackSize, sizeof(int), 0);
+	//	for (int i = 0; i < deletePackSize; i++)
+	//	{
+	//		sc_delete_object_packet pack;
+	//		recv(Define::sock, (char*)&pack, sizeof(sc_create_object_packet), 0);
+	//		objectManager->AddDeletePack(pack);
+	//	}
+	//}
 
-	{
-		int transformPackSize = 0;
-		recv(Define::sock, (char*)transformPackSize, sizeof(int), 0);
-		for (int i = 0; i < transformPackSize; i++)
-		{
-			sc_object_transform_packet pack;
-			recv(Define::sock, (char*)&pack, sizeof(sc_object_transform_packet), 0);
-			objectManager->AddTransformPack(pack);
-		}
-	}
+	//{
+	//	int transformPackSize = 0;
+	//	recv(Define::sock, (char*)transformPackSize, sizeof(int), 0);
+	//	for (int i = 0; i < transformPackSize; i++)
+	//	{
+	//		sc_object_transform_packet pack;
+	//		recv(Define::sock, (char*)&pack, sizeof(sc_object_transform_packet), 0);
+	//		objectManager->AddTransformPack(pack);
+	//	}
+	//}
+
+	objectManager->AllCreatePackUpdate();
+
+	objectManager->AllDeletePackUpdate();
 
 	objectManager->AllTransformPackUpdate();
 	for (const auto& collider : Define::ColliderList)

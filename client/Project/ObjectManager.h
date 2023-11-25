@@ -16,6 +16,7 @@ public: // List function
 	void AddTransformPack(sc_object_transform_packet pack) { _TransformPack.emplace_back(pack); }
 
 	void AllCreatePackUpdate();
+	void AllDeletePackUpdate();
 	void AllTransformPackUpdate();
 public:
 	void AddGameObject(CGameObject* obj);

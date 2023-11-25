@@ -62,47 +62,12 @@ void err_display(const char* msg)
 
 DWORD WINAPI WorkerThread(LPVOID arg)
 {
-	//struct threadarg *th_arg = (threadarg*)arg;
-
-	//HINSTANCE hInstance = *(th_arg->hInstance);
-	//HINSTANCE hPrevInstance = *(th_arg->hPrevInstance);
-	//LPTSTR lpCmdLine = *(th_arg->lpCmdLine);
-	//int nCmdShow = *(th_arg->nCmdShow);
-
-	//UNREFERENCED_PARAMETER(hPrevInstance);
-	//UNREFERENCED_PARAMETER(lpCmdLine);
-
 	MSG msg;
-	//HACCEL hAccelTable;
-
-	//::LoadString(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
-	//::LoadString(hInstance, IDC_LABPROJECT0791, szWindowClass, MAX_LOADSTRING);
-	//MyRegisterClass(hInstance);
-
-	//if (!InitInstance(hInstance, nCmdShow)) return(FALSE);
-
-	//hAccelTable = ::LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_LABPROJECT0791));
-
 	int retval;
 
 	gGameFramework.BuildObjects();
 	while (1)
 	{
-
-		//if (::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-		//{
-		//	if (msg.message == WM_QUIT) break;
-		//	if (!::TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
-		//	{
-		//		::TranslateMessage(&msg);
-		//		::DispatchMessage(&msg);
-		//	}
-		//}
-		//else
-		//{
-		//	
-		//}
-
 		gGameFramework.FrameAdvance();
 		WaitForMultipleObjects(2, hSendEvent,true, INFINITE);
 	}
@@ -118,16 +83,14 @@ DWORD WINAPI RecvThread(LPVOID arg)
 	WaitForSingleObject(hRecvReadyEvent, INFINITE);
 
 	while (true) {
-		char buf[BUFSIZE];
-
-		int retval = recv(Define::sock[c_id], buf, BUFSIZE, MSG_WAITALL);
+		cs_player_input_packet pack;
+		int retval = recv(Define::sock[c_id], (char*)&pack, sizeof(cs_player_input_packet), MSG_WAITALL);
 		if (retval == 0) return 0;
 		else if (retval != 0) {
-			cs_player_input_packet* p = reinterpret_cast<cs_player_input_packet*>(buf);
-			printf("%d : We got some msg of %d - %d\n", c_id, p->packet_type, p->input_event);
+			printf("id - %d : We got some msg of %d - %d\n", c_id, pack.packet_type, pack.input_event);
 		}
 		EnterCriticalSection(&cs);
-		InputEventQueue.push({ (int)buf, c_id });
+		InputEventQueue.push({ pack.input_event, c_id });
 		LeaveCriticalSection(&cs);
 	}
 }
@@ -210,14 +173,14 @@ int main(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCm
 	//accpet에 필요한 변수들
 	int addrlen;
 	struct sockaddr_in clientaddr;
-	int numOfclient = 0;
 	std::array<HANDLE, 2> handle_arry;
 
-	while (numOfclient < 2) {
+	for (int i = 0; i < 2; i++)
+	{
 		//accept
 		addrlen = sizeof(clientaddr);
-		Define::sock[numOfclient] = accept(listen_sock, (struct sockaddr*)&clientaddr, &addrlen);
-		if (Define::sock[numOfclient] == INVALID_SOCKET) {
+		Define::sock[i] = accept(listen_sock, (struct sockaddr*)&clientaddr, &addrlen);
+		if (Define::sock[i] == INVALID_SOCKET) {
 			err_display("accept()");
 			break;
 		}
@@ -229,17 +192,17 @@ int main(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCm
 			addr, ntohs(clientaddr.sin_port));
 
 		//클라이언트 전용 RecvThread 생성
-		handle_arry[numOfclient] = CreateThread(NULL, 0, RecvThread, &numOfclient, 0, NULL);
-		if (handle_arry[numOfclient] == NULL) {
+		int player_id_index = i;
+		handle_arry[i] = CreateThread(NULL, 0, RecvThread, &player_id_index, 0, NULL);
+		if (handle_arry[i] == NULL) {
 			printf("RecvThread Fail");
-			return numOfclient;
+			return 0;
 		}
 
 		//클라이언트 전용 SendThread 생성
-		CreateThread(NULL, 0, SendThread, &numOfclient, 0, NULL);
-
-		++numOfclient;
+		CreateThread(NULL, 0, SendThread, &player_id_index, 0, NULL);
 	}
+
 	SetEvent(hRecvReadyEvent);
 
 

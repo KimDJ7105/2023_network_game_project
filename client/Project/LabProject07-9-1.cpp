@@ -16,6 +16,11 @@ TCHAR							szWindowClass[MAX_LOADSTRING];
 
 CGameFramework					gGameFramework;
 
+HANDLE hRecvHandle;
+HANDLE hWoker;
+
+DWORD WINAPI RecvThread(LPVOID arg);
+
 ATOM MyRegisterClass(HINSTANCE hInstance);
 BOOL InitInstance(HINSTANCE, int);
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
@@ -31,6 +36,9 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	WSADATA wsa;
 	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
 		return 1;
+
+	hRecvHandle = CreateEvent(NULL, true, true, NULL);
+	hWoker = CreateEvent(NULL, true, false, NULL);
 
 	// 家南 积己
 	Define::sock = socket(AF_INET, SOCK_STREAM, 0);
@@ -59,6 +67,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 
 	hAccelTable = ::LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_LABPROJECT0791));
 
+	CreateThread(NULL, 0, RecvThread, NULL, 0, NULL);
 	while (1)
 	{
 		if (::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
@@ -72,12 +81,58 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 		}
 		else
 		{
+			WaitForSingleObject(hWoker, INFINITE);
 			gGameFramework.FrameAdvance();
+			ResetEvent(hWoker);
+			SetEvent(hRecvHandle);
 		}
 	}
 	gGameFramework.OnDestroy();
 
 	return((int)msg.wParam);
+}
+
+DWORD WINAPI RecvThread(LPVOID arg)
+{
+	auto objMgr = Define::SceneManager->GetCurrentScene()->objectManager;
+
+	while (true) {
+		WaitForSingleObject(hRecvHandle, INFINITE);
+		{
+			int createPackSize = 0;
+			recv(Define::sock, (char*)createPackSize, sizeof(int), 0);
+			for (int i = 0; i < createPackSize; i++)
+			{
+				sc_create_object_packet pack;
+				recv(Define::sock, (char*)&pack, sizeof(sc_create_object_packet), 0);
+				objMgr->AddCreatePack(pack);
+			}
+		}
+
+		{
+			int deletePackSize = 0;
+			recv(Define::sock, (char*)deletePackSize, sizeof(int), 0);
+			for (int i = 0; i < deletePackSize; i++)
+			{
+				sc_delete_object_packet pack;
+				recv(Define::sock, (char*)&pack, sizeof(sc_create_object_packet), 0);
+				objMgr->AddDeletePack(pack);
+			}
+		}
+
+		{
+			int transformPackSize = 0;
+			recv(Define::sock, (char*)transformPackSize, sizeof(int), 0);
+			for (int i = 0; i < transformPackSize; i++)
+			{
+				sc_object_transform_packet pack;
+				recv(Define::sock, (char*)&pack, sizeof(sc_object_transform_packet), 0);
+				objMgr->AddTransformPack(pack);
+			}
+		}
+		ResetEvent(hRecvHandle);
+		SetEvent(hWoker);
+	}
 }
 
 ATOM MyRegisterClass(HINSTANCE hInstance)
