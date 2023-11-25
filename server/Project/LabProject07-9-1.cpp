@@ -89,6 +89,14 @@ DWORD WINAPI RecvThread(LPVOID arg)
 		else if (retval != 0) {
 			printf("id - %d : We got some msg of %d - %d\n", c_id, pack.packet_type, pack.input_event);
 		}
+
+		struct sockaddr_in myaddr;
+		int client_len = sizeof(myaddr);
+		getpeername(Define::sock[c_id], (struct sockaddr*)&myaddr, &client_len);
+
+		printf("Port    : %d\n", ntohs(myaddr.sin_port));
+		printf("address : %s\n", inet_ntoa(myaddr.sin_addr));
+
 		EnterCriticalSection(&cs);
 		InputEventQueue.push({ pack.input_event, c_id });
 		LeaveCriticalSection(&cs);
