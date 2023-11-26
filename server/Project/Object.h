@@ -176,6 +176,7 @@ public:
 public: // 내가 만든거
 	int id;
 	string name;
+	bool isEmpty = false;
 
 	CTransform* transform = NULL;
 	CCollider* collider = nullptr;

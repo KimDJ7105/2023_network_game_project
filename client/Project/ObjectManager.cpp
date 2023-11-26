@@ -111,7 +111,7 @@ void ObjectManager::AllGameObjectUpdateTransform()
 
 void ObjectManager::AllCreatePackUpdate()
 {
-	for (auto pack : _CretaePack) 
+	for (const auto pack : _CretaePack) 
 	{
 		if (pack.object_type < 0) continue;
 		auto obj = CGameObjectContainer::CreateGameObject(pack.object_type);
@@ -121,19 +121,19 @@ void ObjectManager::AllCreatePackUpdate()
 
 void ObjectManager::AllDeletePackUpdate()
 {
-	for (auto pack : _CretaePack)
+	for (const auto pack : _DeletePack)
 	{
-		DeleteGameObject(pack.object_type);
+		DeleteGameObject(pack.object_id);
 	}
 }
 
 void ObjectManager::AllTransformPackUpdate()
 {
-	for (auto pack : _TransformPack)
+	for (const auto pack : _TransformPack)
 	{
 		if (pack.object_id < 0) continue;
-		auto obj = FindGameObject(pack.object_id);
-		obj->transform->UpdateTransform(NULL);
+		auto obj = Define::GameObjectList[pack.object_id];
+		obj->transform->m_xmf4x4World = pack.matrix;
 	}
 	_TransformPack.clear();
 }

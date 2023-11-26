@@ -44,6 +44,4 @@ private:
 	deque<CGameObject*> _GameObjectList;
 	vector<sc_create_object_packet> _CreatePack;
 	vector<sc_delete_object_packet> _DeletePack;
-
-	int objectIndex = 0;
 };
