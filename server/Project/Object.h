@@ -122,6 +122,7 @@ public:
 
 public:
 	CGameObject();
+	CGameObject(int type);
 	virtual ~CGameObject();
 
 public:
@@ -175,6 +176,7 @@ public:
 
 public: // 내가 만든거
 	int id;
+	int object_Type;
 	string name;
 	bool isEmpty = false;
 
@@ -198,12 +200,26 @@ public:
 
 	virtual void AddComponet(CComponent* component);
 
-	template<class Componet>
-	inline Componet* GetComponet() {
+	template<class Component>
+	inline Component* GetComponent() {
 		for (const auto& component : ComponetList)
-			if (typeid(Componet) == typeid(*component))
-				return dynamic_cast<Componet*>(component);
+			if (typeid(Component) == typeid(*component))
+				return dynamic_cast<Component*>(component);
 		return NULL;
+	}
+
+	template<class Component>
+	inline vector<Component*>& GetComponentAll() {
+		vector<Component*> list;
+		auto obj = m_pChild;
+		while (obj != nullptr)
+		{
+			auto sync = obj->GetComponent<Component>();
+			if (sync != nullptr) list.emplace_back(sync);
+			obj = obj->m_pChild;
+		}
+
+		return list;
 	}
 
 	CGameObject* GetChilde(string name);

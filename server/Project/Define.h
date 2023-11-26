@@ -8,10 +8,12 @@ class CSceneManager;
 class CGameFramework;
 class CGameTimer;
 class CInput;
+class CSyncObjectManager;
 
 class Define {
 public: // Manager
 	static CSceneManager* SceneManager;
+	static CSyncObjectManager* SyncObjectManager;
 
 public: // Framework
 	static CGameFramework* Framework;

@@ -96,8 +96,16 @@ CGameObject::CGameObject() : CComponent(this)
 	Define::GameObjectList.emplace_back(this);
 	id = Define::GameObjectList.size();
 	Define::SceneManager->GetCurrentScene()->objectManager->AddGameObject(this);
-	
-	//Define::GameObjectList.emplace_back(this);
+}
+
+CGameObject::CGameObject(int type) : CComponent(this)
+{
+	object_Type = type;
+	transform = new CTransform(this);
+
+	Define::GameObjectList.emplace_back(this);
+	id = Define::GameObjectList.size();
+	Define::SceneManager->GetCurrentScene()->objectManager->AddGameObject(this);
 }
 
 CGameObject::~CGameObject()
@@ -129,8 +137,8 @@ void CGameObject::Release()
 	if (m_pChild) m_pChild->Release();
 	if (m_pSibling) m_pSibling->Release();
 
-	delete transform;
-	delete collider;
+	for (auto component : ComponetList)
+		delete component;
 	if (m_pMesh) m_pMesh->Release();
 
 	if (m_nMaterials > 0)

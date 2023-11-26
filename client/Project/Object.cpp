@@ -92,23 +92,36 @@ void CMaterial::PrepareShaders(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandLi
 CGameObject::CGameObject() : CComponent(this)
 {
 	transform = new CTransform(this);
-	Define::SceneManager->GetCurrentScene()->objectManager->AddGameObject(addObj);
+
+	Define::GameObjectList.emplace_back(this);
+	id = Define::GameObjectList.size();
+	Define::SceneManager->GetCurrentScene()->objectManager->AddGameObject(this);
+}
+
+CGameObject::CGameObject(int type) : CComponent(this)
+{
+	object_Type = type;
+	transform = new CTransform(this);
+
+	Define::GameObjectList.emplace_back(this);
+	id = Define::GameObjectList.size();
+	Define::SceneManager->GetCurrentScene()->objectManager->AddGameObject(this);
 }
 
 CGameObject::~CGameObject()
 {
-	delete transform;
-	delete collider;
-	if (m_pMesh) m_pMesh->Release();
+	//delete transform;
+	//delete collider;
+	//if (m_pMesh) m_pMesh->Release();
 
-	if (m_nMaterials > 0)
-	{
-		for (int i = 0; i < m_nMaterials; i++)
-		{
-			if (m_ppMaterials[i]) m_ppMaterials[i]->Release();
-		}
-	}
-	if (m_ppMaterials) delete[] m_ppMaterials;
+	//if (m_nMaterials > 0)
+	//{
+	//	for (int i = 0; i < m_nMaterials; i++)
+	//	{
+	//		if (m_ppMaterials[i]) m_ppMaterials[i]->Release();
+	//	}
+	//}
+	//if (m_ppMaterials) delete[] m_ppMaterials;
 }
 
 void CGameObject::AddRef()
@@ -124,7 +137,21 @@ void CGameObject::Release()
 	if (m_pChild) m_pChild->Release();
 	if (m_pSibling) m_pSibling->Release();
 
-	if (--m_nReferences <= 0) delete this;
+	for (auto component : ComponetList)
+		delete component;
+	if (m_pMesh) m_pMesh->Release();
+
+	if (m_nMaterials > 0)
+	{
+		for (int i = 0; i < m_nMaterials; i++)
+		{
+			if (m_ppMaterials[i]) m_ppMaterials[i]->Release();
+		}
+	}
+	if (m_ppMaterials) delete[] m_ppMaterials;
+
+	isEmpty = true;
+	//if (--m_nReferences <= 0) delete this;
 }
 
 void CGameObject::SetChild(CGameObject* pChild, bool bReferenceUpdate)

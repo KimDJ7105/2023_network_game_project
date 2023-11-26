@@ -13,7 +13,7 @@ void CPlayerController::Start()
 	pivotObject->transform->SetRotate(0, 180.0, 0);
 	tank = dynamic_cast<CTank*>(gameObject->root->GetChilde("Tank"));
 
-	status = gameObject->GetChilde("Tank")->GetComponet<CStatus>();
+	status = gameObject->GetChilde("Tank")->GetComponent<CStatus>();
 }
 
 void CPlayerController::Update()

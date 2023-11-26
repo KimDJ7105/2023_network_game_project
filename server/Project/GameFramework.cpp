@@ -7,6 +7,7 @@
 #include "CTankPlayer.h"
 #include "SceneManager.h"
 #include "GameScene.h"
+#include "CSyncObjectManager.h"
 
 CGameFramework::CGameFramework()
 {
@@ -38,6 +39,7 @@ CGameFramework::CGameFramework()
 
 	_tcscpy_s(m_pszFrameRate, _T("LabProject ("));
 
+	new CSyncObjectManager();
 	new CInput();
 	new CSceneManager();
 	new CGameScene(0);

@@ -307,7 +307,7 @@ XMFLOAT4 CHeightMapGridMesh::OnGetColor(int x, int z, void* pContext)
 	return(xmf4Color);
 }
 
-CTerrain::CTerrain(string filePath)
+CTerrain::CTerrain(string filePath, int type) : CGameObject(type)
 {
 	m_nWidth = m_nLength = 257;
 	int nBlockWidth = 17; int nBlockLength = 17;

@@ -37,9 +37,6 @@ public:
 	void AllGameObjectLateUpdate();
 
 	void AllGameObjectRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera);
-
-	vector<sc_object_transform_packet> AllTrnasformToPacket();
-
 private:
 	deque<CGameObject*> _GameObjectList;
 	vector<sc_create_object_packet> _CreatePack;

@@ -99,7 +99,7 @@ protected:
 class CTerrain : public CGameObject
 {
 public:
-	CTerrain(string filePath);
+	CTerrain(string filePath, int type = -1);
 	virtual ~CTerrain();
 
 public:

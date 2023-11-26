@@ -3,11 +3,13 @@
 #include "Object.h"
 
 CSceneManager* Define::SceneManager = nullptr;
+CSyncObjectManager* Define::SyncObjectManager = nullptr;
 
 CGameFramework* Define::Framework = nullptr;
 CGameTimer* Define::GameTimer = nullptr;
 CInput* Define::Input = nullptr;
 
+//list<CGameObject*> Define::GameObjectList;
 deque<CGameObject*> Define::GameObjectList;
 list<CCollider*> Define::ColliderList;
 CCamera* Define::MainCamera = nullptr;
@@ -31,12 +33,12 @@ int Define::AddGameObject(CGameObject* addObj)
 	return addObj->id;
 }
 
+Define::~Define()
+{
+}
+
 void Define::RecvInputPack(int id)
 {
 	EVENT e{ id, -1 };
 	recv(sock, (char*)&e, sizeof(EVENT), 0);
-}
-
-Define::~Define()
-{
 }
