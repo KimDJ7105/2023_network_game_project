@@ -122,6 +122,7 @@ public:
 
 public:
 	CGameObject();
+	CGameObject(int type);
 	virtual ~CGameObject();
 
 public:
@@ -174,7 +175,8 @@ public:
 	static void PrintFrameInfo(CGameObject* pGameObject, CGameObject* pParent);
 
 public: // 내가 만든거
-	UINT id;
+	int id;
+	int object_Type;
 	string name;
 	bool isEmpty = false;
 

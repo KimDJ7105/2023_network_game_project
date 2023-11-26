@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "ObjectManager.h"
+#include "SyncObject.h"
 
 ObjectManager::ObjectManager()
 {
@@ -14,14 +15,18 @@ ObjectManager::~ObjectManager()
 
 void ObjectManager::AddGameObject(CGameObject* obj)
 {
+	if (obj == nullptr) return;
+
 	_GameObjectList.emplace_back(obj);
 	obj->Start();
 
-	_CreatePack.emplace_back(sc_create_object_packet{ obj->id, obj->transform->m_xmf4x4World });
+	_CreatePack.emplace_back(sc_create_object_packet{ obj->object_Type, obj->transform->m_xmf4x4World });
 }
 
 bool ObjectManager::DeleteGameObject(CGameObject* obj)
 {
+	if (obj == nullptr) return false;
+
 	if (DeleteObjectToList(obj))
 	{
 		_DeletePack.emplace_back(sc_delete_object_packet{ obj->id });
@@ -121,20 +126,4 @@ void ObjectManager::AllGameObjectRender(ID3D12GraphicsCommandList* pd3dCommandLi
 {
 	for (const auto& obj : _GameObjectList)
 		obj->Render(pd3dCommandList, pCamera);
-}
-
-vector<sc_object_transform_packet> ObjectManager::AllTrnasformToPacket()
-{
-	const unsigned int size = _GameObjectList.size();
-	
-	vector<sc_object_transform_packet> packList(size);
-	int index = 0;
-	for (const auto obj : _GameObjectList)
-	{
-		packList[index].object_id = obj->id;
-		packList[index].matrix = obj->transform->m_xmf4x4World;
-		index++;
-	}
-
-	return packList;
 }

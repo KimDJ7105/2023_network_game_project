@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include "Scene.h"
+#include "CSyncObjectManager.h"
 
 CScene::CScene(int index)
 {
@@ -206,7 +207,9 @@ void CScene::AnimateObjects(float fTimeElapsed)
 
 	objectManager->AllDeletePackUpdate();
 
-	objectManager->AllTransformPackUpdate();
+	Define::SyncObjectManager->UpdateAllTransformPack();
+
+
 	for (const auto& collider : Define::ColliderList)
 		collider->UpdateBoundingBox();
 
@@ -222,20 +225,20 @@ void CScene::AnimateObjects(float fTimeElapsed)
 	//for (const auto& obj : Define::GameObjectList)
 	//	obj->LateUpdate();
 
-	for (auto colliderA : Define::ColliderList)
-	{
-		if (colliderA->gameObject->GetActive() == false) continue;
-		for (auto colliderB : Define::ColliderList)
-		{
-			if (colliderB->gameObject->GetActive() == false) continue;
-			if (colliderA->tag == colliderB->tag) continue;
-			if (colliderA == colliderB) continue;
-			if (colliderA->gameObject->CheckCollision(*colliderB) == false) continue;
+	//for (auto colliderA : Define::ColliderList)
+	//{
+	//	if (colliderA->gameObject->GetActive() == false) continue;
+	//	for (auto colliderB : Define::ColliderList)
+	//	{
+	//		if (colliderB->gameObject->GetActive() == false) continue;
+	//		if (colliderA->tag == colliderB->tag) continue;
+	//		if (colliderA == colliderB) continue;
+	//		if (colliderA->gameObject->CheckCollision(*colliderB) == false) continue;
 
- 			if(colliderA->gameObject->root) colliderA->gameObject->root->Collision(*colliderB);
-			else colliderA->gameObject->Collision(*colliderB);
-		}
-	}
+ //			if(colliderA->gameObject->root) colliderA->gameObject->root->Collision(*colliderB);
+	//		else colliderA->gameObject->Collision(*colliderB);
+	//	}
+	//}
 }
 
 void CScene::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera)

@@ -43,6 +43,9 @@
     <Filter Include="Scene">
       <UniqueIdentifier>{887760cc-6f28-4ff4-a094-500e9af20092}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Framework\Network">
+      <UniqueIdentifier>{cb218df1-b71d-4caa-bf21-ccefddeac9df}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -159,6 +162,12 @@
     <ClInclude Include="CMountineTerrain.h">
       <Filter>Object\Contain</Filter>
     </ClInclude>
+    <ClInclude Include="CSyncObjectManager.h">
+      <Filter>Framework\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="SyncObject.h">
+      <Filter>Framework\Network</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LabProject07-9-1.cpp">
@@ -259,6 +268,12 @@
     </ClCompile>
     <ClCompile Include="CMountineTerrain.cpp">
       <Filter>Object\Contain</Filter>
+    </ClCompile>
+    <ClCompile Include="CSyncObjectManager.cpp">
+      <Filter>Framework\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="SyncObject.cpp">
+      <Filter>Framework\Network</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

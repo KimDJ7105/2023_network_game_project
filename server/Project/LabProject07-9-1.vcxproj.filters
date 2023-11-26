@@ -43,6 +43,9 @@
     <Filter Include="Scene">
       <UniqueIdentifier>{887760cc-6f28-4ff4-a094-500e9af20092}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Framework\Network">
+      <UniqueIdentifier>{70cbf8bd-0370-43d9-b391-a6b6531183f5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -156,6 +159,12 @@
     <ClInclude Include="CMountineTerrain.h">
       <Filter>Object\Contain</Filter>
     </ClInclude>
+    <ClInclude Include="SyncObject.h">
+      <Filter>Framework\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="CSyncObjectManager.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LabProject07-9-1.cpp">
@@ -256,6 +265,12 @@
     </ClCompile>
     <ClCompile Include="CMountineTerrain.cpp">
       <Filter>Object\Contain</Filter>
+    </ClCompile>
+    <ClCompile Include="SyncObject.cpp">
+      <Filter>Framework\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="CSyncObjectManager.cpp">
+      <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

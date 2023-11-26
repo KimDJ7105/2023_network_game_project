@@ -8,11 +8,12 @@ class CSceneManager;
 class CGameFramework;
 class CGameTimer;
 class CInput;
-struct Eveet;
+class CSyncObjectManager;
 
 class Define {
 public: // Manager
 	static CSceneManager* SceneManager;
+	static CSyncObjectManager* SyncObjectManager;
 
 public: // Framework
 	static CGameFramework* Framework;
@@ -20,9 +21,9 @@ public: // Framework
 	static CInput* Input;
 
 public:
+	//static list<CGameObject*> GameObjectList;
 	static deque<CGameObject*> GameObjectList;
 	static int AddGameObject(CGameObject* addObj);
-	//static list<CGameObject*> GameObjectList;
 	static list<CCollider*> ColliderList;
 	static CCamera* MainCamera;
 	static CPlayer* Player;

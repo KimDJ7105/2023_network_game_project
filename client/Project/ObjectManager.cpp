@@ -19,6 +19,8 @@ void ObjectManager::AddGameObject(CGameObject* obj)
 
 	_GameObjectList.emplace_back(obj);
 	obj->Start();
+
+	_CreatePack.emplace_back(sc_create_object_packet{ obj->object_Type, obj->transform->m_xmf4x4World });
 }
 
 bool ObjectManager::DeleteGameObject(CGameObject* obj)
@@ -27,8 +29,8 @@ bool ObjectManager::DeleteGameObject(CGameObject* obj)
 
 	if (DeleteObjectToList(obj))
 	{
+		_DeletePack.emplace_back(sc_delete_object_packet{ obj->id });
 		obj->Release();
-		delete obj;
 		return true;
 	}
 
@@ -111,7 +113,7 @@ void ObjectManager::AllGameObjectUpdateTransform()
 
 void ObjectManager::AllCreatePackUpdate()
 {
-	for (const auto pack : _CretaePack) 
+	for (const auto pack : _CreatePack)
 	{
 		if (pack.object_type < 0) continue;
 		auto obj = CGameObjectContainer::CreateGameObject(pack.object_type);
@@ -127,16 +129,6 @@ void ObjectManager::AllDeletePackUpdate()
 	}
 }
 
-void ObjectManager::AllTransformPackUpdate()
-{
-	for (const auto pack : _TransformPack)
-	{
-		if (pack.object_id < 0) continue;
-		auto obj = Define::GameObjectList[pack.object_id];
-		obj->transform->m_xmf4x4World = pack.matrix;
-	}
-	_TransformPack.clear();
-}
 
 void ObjectManager::AllGameObjectStart()
 {

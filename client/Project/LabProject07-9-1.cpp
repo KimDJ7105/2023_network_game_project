@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "LabProject07-9-1.h"
 #include "GameFramework.h"
+#include "CSyncObjectManager.h"
 
 #pragma comment(lib,"ws2_32")
 #define MAX_LOADSTRING 100
@@ -125,12 +126,15 @@ DWORD WINAPI RecvThread(LPVOID arg)
 		{
 			int transformPackSize = 0;
 			recv(Define::sock, (char*)&transformPackSize, sizeof(int), 0);
+			vector<sc_object_transform_packet> packList(transformPackSize);
 			for (int i = 0; i < transformPackSize; i++)
 			{
 				sc_object_transform_packet pack;
 				recv(Define::sock, (char*)&pack, sizeof(sc_object_transform_packet), 0);
-				objMgr->AddTransformPack(pack);
+				packList[i] = pack;
 			}
+
+			Define::SyncObjectManager->SetTransformPack(packList);
 		}
 		ResetEvent(hRecvHandle);
 		SetEvent(hWoker);

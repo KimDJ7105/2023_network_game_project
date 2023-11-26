@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "LabProject07-9-1.h"
 #include "GameFramework.h"
+#include "CSyncObjectManager.h"
 
 #define MAX_LOADSTRING 100
 #pragma comment(lib,"ws2_32")
@@ -132,7 +133,7 @@ DWORD WINAPI SendThread(LPVOID arg)
 		}
 
 		{
-			auto packList = objmgr->AllTrnasformToPacket();
+			auto packList = Define::SyncObjectManager->GetAllTransformPack();
 			int objectSize = packList.size();
 			//printf("(transformpacket)%d socket : %d EA\n", c_id, objectSize);
 			send(Define::sock[c_id], (char*)&objectSize, sizeof(int), 0);

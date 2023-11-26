@@ -3,6 +3,7 @@
 #include "Object.h"
 
 CSceneManager* Define::SceneManager = nullptr;
+CSyncObjectManager* Define::SyncObjectManager = nullptr;
 
 CGameFramework* Define::Framework = nullptr;
 CGameTimer* Define::GameTimer = nullptr;
