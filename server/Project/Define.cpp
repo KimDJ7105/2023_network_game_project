@@ -14,8 +14,6 @@ list<CCollider*> Define::ColliderList;
 CCamera* Define::MainCamera = nullptr;
 CPlayer* Define::Player = nullptr;
 
-SOCKET Define::sock[2];
-
 int Define::AddGameObject(CGameObject* addObj)
 {
 	for (int i = 0; i < GameObjectList.size(); i++)
