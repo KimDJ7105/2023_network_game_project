@@ -132,8 +132,8 @@ void ObjectManager::AllTransformPackUpdate()
 	for (const auto pack : _TransformPack)
 	{
 		if (pack.object_id < 0) continue;
-		auto obj = FindGameObject(pack.object_id);
-		obj->transform->UpdateTransform(NULL);
+		auto obj = Define::GameObjectList[pack.object_id];
+		obj->transform->m_xmf4x4World = pack.matrix;
 	}
 	_TransformPack.clear();
 }

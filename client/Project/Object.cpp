@@ -92,9 +92,7 @@ void CMaterial::PrepareShaders(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandLi
 CGameObject::CGameObject() : CComponent(this)
 {
 	transform = new CTransform(this);
-
-	Define::SceneManager->GetCurrentScene()->objectManager->AddGameObject(this);
-	//Define::GameObjectList.emplace_back(this);
+	Define::SceneManager->GetCurrentScene()->objectManager->AddGameObject(addObj);
 }
 
 CGameObject::~CGameObject()

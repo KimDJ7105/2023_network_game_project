@@ -174,8 +174,9 @@ public:
 	static void PrintFrameInfo(CGameObject* pGameObject, CGameObject* pParent);
 
 public: // 내가 만든거
-	int id;
+	UINT id;
 	string name;
+	bool isEmpty = false;
 
 	CTransform* transform = NULL;
 	CCollider* collider = nullptr;

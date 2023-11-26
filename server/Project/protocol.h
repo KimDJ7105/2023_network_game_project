@@ -40,6 +40,7 @@ struct sc_object_transform_packet {
 	XMFLOAT4X4 matrix;
 
 	sc_object_transform_packet();
+	sc_object_transform_packet(int id, XMFLOAT4X4 m) : object_id(id), matrix(m) {}
 };
 
 struct sc_delete_object_packet {

@@ -16,7 +16,6 @@ void ObjectManager::AddGameObject(CGameObject* obj)
 {
 	_GameObjectList.emplace_back(obj);
 	obj->Start();
-	obj->id = ++objectIndex;
 
 	_CreatePack.emplace_back(sc_create_object_packet{ obj->id, obj->transform->m_xmf4x4World });
 }
@@ -27,7 +26,6 @@ bool ObjectManager::DeleteGameObject(CGameObject* obj)
 	{
 		_DeletePack.emplace_back(sc_delete_object_packet{ obj->id });
 		obj->Release();
-		delete obj;
 		return true;
 	}
 
@@ -130,6 +128,13 @@ vector<sc_object_transform_packet> ObjectManager::AllTrnasformToPacket()
 	const unsigned int size = _GameObjectList.size();
 	
 	vector<sc_object_transform_packet> packList(size);
+	int index = 0;
+	for (const auto obj : _GameObjectList)
+	{
+		packList[index].object_id = obj->id;
+		packList[index].matrix = obj->transform->m_xmf4x4World;
+		index++;
+	}
 
 	return packList;
 }
