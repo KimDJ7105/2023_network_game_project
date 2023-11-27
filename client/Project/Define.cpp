@@ -16,6 +16,7 @@ CCamera* Define::MainCamera = nullptr;
 CPlayer* Define::Player = nullptr;
 
 SOCKET Define::sock;
+int Define::ClientIndex = -1;
 
 int Define::AddGameObject(CGameObject* addObj)
 {

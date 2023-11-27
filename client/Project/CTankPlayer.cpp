@@ -6,7 +6,7 @@
 
 CTankPlayer::CTankPlayer()
 {
-	Define::Player = this;
+	//Define::Player = this;
 	name = "Player";
 
 	pivotObject = new CGameObject();

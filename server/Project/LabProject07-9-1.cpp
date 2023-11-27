@@ -193,6 +193,10 @@ int main(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCm
 			break;
 		}
 
+		// 클라이언트에게 자신이 몇번쨰로 접속했는지 알려주기
+		int clientIndex = i;
+		send(Define::sock[i], (char*)&clientIndex, sizeof(int), 0);
+
 		// 접속한 클라이언트 정보 출력
 		char addr[INET_ADDRSTRLEN];
 		inet_ntop(AF_INET, &clientaddr.sin_addr, addr, sizeof(addr));
