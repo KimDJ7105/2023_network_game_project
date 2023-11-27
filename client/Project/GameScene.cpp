@@ -16,9 +16,10 @@ void CGameScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 	CScene::BuildObjects(pd3dDevice, pd3dCommandList);
 
 	mainCamera = new CCamera();
+	mainCamera->AddComponet(new CCameraController(mainCamera));
 	localPlayer = nullptr;
 	remotePlayer = nullptr;
-	//mainCamera->AddComponet(new CCameraController(mainCamera));
+
 
 	//CTerrain* terrain = new CTerrain("Image/terrain.raw");
 	//terrain->name = "Terrain";
@@ -41,7 +42,7 @@ void CGameScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 	//	obj->AddComponet(bigMissile);
 	//}
 
-	objectManager->AllGameObjectStart();
+	//objectManager->AllGameObjectStart();
 
 	//for (const auto& obj : Define::GameObjectList)
 	//	obj->Start();

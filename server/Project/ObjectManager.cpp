@@ -105,7 +105,9 @@ void ObjectManager::AllReleaseUploadBuffers()
 void ObjectManager::AllGameObjectUpdateTransform()
 {
 	for (const auto& obj : _GameObjectList)
+	{
 		obj->transform->UpdateTransform(NULL);
+	}
 }
 
 void ObjectManager::AllGameObjectStart()

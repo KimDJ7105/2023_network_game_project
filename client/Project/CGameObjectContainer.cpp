@@ -17,9 +17,11 @@ CGameObject* CGameObjectContainer::CreateGameObject(int typeID)
 	}
 	case PLAYER:
 	{
+		int playerID;
+		if (CGameObject::FindObject("Player") == nullptr) playerID = 0;
+		else playerID = 1;
 		CTankPlayer* player = new CTankPlayer();
-		if (CGameObject::FindObject("Player") == nullptr) player->playerID = 0;
-		else player->playerID = 1;
+		player->playerID = playerID;
 		if (player->playerID == Define::ClientIndex) Define::Player = player;
 		return player;
 	}

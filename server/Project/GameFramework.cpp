@@ -582,7 +582,6 @@ void CGameFramework::FrameAdvance()
 
 	m_GameTimer.GetFrameRate(m_pszFrameRate + 12, 37);
 	size_t nLength = _tcslen(m_pszFrameRate);
-	printf("fps %d\n", nLength);
 	//XMFLOAT3 xmf3Position(0,0,0);
 	//XMStoreFloat3(&xmf3Position, Define::Player->GetChilde("Pivot")->transform->GetPosition());
 
