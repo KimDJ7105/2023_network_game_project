@@ -21,6 +21,7 @@ HANDLE hRecvHandle;
 HANDLE hWoker;
 
 DWORD WINAPI RecvThread(LPVOID arg);
+void KeyControl();
 
 ATOM MyRegisterClass(HINSTANCE hInstance);
 BOOL InitInstance(HINSTANCE, int);
@@ -87,6 +88,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 		{
 			WaitForSingleObject(hWoker, INFINITE);
 			gGameFramework.FrameAdvance();
+			KeyControl();
 			ResetEvent(hWoker);
 			SetEvent(hRecvHandle);
 		}
@@ -142,6 +144,19 @@ DWORD WINAPI RecvThread(LPVOID arg)
 		ResetEvent(hRecvHandle);
 		SetEvent(hWoker);
 	}
+}
+
+void KeyControl()
+{
+	if (Define::Input->GetKeyAny() == false) return;
+	if (Define::Input->GetKeyPress(KeyCode::W))
+		Define::RecvInputPack(KEY_UP);
+	if (Define::Input->GetKeyPress(KeyCode::S))
+		Define::RecvInputPack(KEY_DOWN);
+	if (Define::Input->GetKeyPress(KeyCode::D))
+		Define::RecvInputPack(KEY_RIGHT);
+	if (Define::Input->GetKeyPress(KeyCode::A))
+		Define::RecvInputPack(KEY_LEFT);
 }
 
 ATOM MyRegisterClass(HINSTANCE hInstance)

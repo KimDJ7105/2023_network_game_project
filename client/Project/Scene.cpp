@@ -211,8 +211,8 @@ void CScene::AnimateObjects(float fTimeElapsed)
 	Define::SyncObjectManager->UpdateAllTransformPack();
 
 
-	for (const auto& collider : Define::ColliderList)
-		collider->UpdateBoundingBox();
+	//for (const auto& collider : Define::ColliderList)
+	//	collider->UpdateBoundingBox();
 
 	//for (const auto& obj : Define::GameObjectList)
 	//	obj->transform->UpdateTransform(NULL);

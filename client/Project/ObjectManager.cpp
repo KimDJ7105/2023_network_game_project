@@ -116,6 +116,7 @@ void ObjectManager::AllCreatePackUpdate()
 		if (pack.object_type < 0) continue;
 		auto obj = CGameObjectContainer::CreateGameObject(pack.object_type);
 	}
+	_CreatePack.clear();
 }
 
 void ObjectManager::AllDeletePackUpdate()
@@ -124,6 +125,7 @@ void ObjectManager::AllDeletePackUpdate()
 	{
 		DeleteGameObject(pack.object_id);
 	}
+	_DeletePack.clear();
 }
 
 

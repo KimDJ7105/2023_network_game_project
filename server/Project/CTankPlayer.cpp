@@ -15,7 +15,7 @@ CTankPlayer::CTankPlayer(int type) : CPlayer(type)
 	SetChild(pivotObject, true);
 
 	tank = new CTank();
-	tank->BulletInit(30);
+	tank->BulletInit(1);
 	tank->AddComponet(status);
 	tank->AddComponet(new SyncObject(this));
 	SetChild(tank, true);
