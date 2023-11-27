@@ -12,6 +12,10 @@ public: //getter setter
 	deque<CGameObject*>* GetList() { return &_GameObjectList; }
 	vector<sc_create_object_packet>* GetCreatePack() { return &_CreatePack; }
 	vector<sc_delete_object_packet>* GetDeletePack() { return &_DeletePack; }
+
+public: //pack
+	void AddCreatePack(CGameObject* obj);
+
 public:
 	void AddGameObject(CGameObject* obj);
 	bool DeleteGameObject(CGameObject* obj);

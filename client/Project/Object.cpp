@@ -93,9 +93,6 @@ CGameObject::CGameObject() : CComponent(this)
 {
 	transform = new CTransform(this);
 
-	Define::GameObjectList.emplace_back(this);
-	id = Define::GameObjectList.size();
-	Define::SceneManager->GetCurrentScene()->objectManager->AddGameObject(this);
 }
 
 CGameObject::CGameObject(int type) : CComponent(this)
@@ -103,8 +100,6 @@ CGameObject::CGameObject(int type) : CComponent(this)
 	object_Type = type;
 	transform = new CTransform(this);
 
-	Define::GameObjectList.emplace_back(this);
-	id = Define::GameObjectList.size();
 	Define::SceneManager->GetCurrentScene()->objectManager->AddGameObject(this);
 }
 

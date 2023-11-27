@@ -19,8 +19,6 @@ void ObjectManager::AddGameObject(CGameObject* obj)
 
 	_GameObjectList.emplace_back(obj);
 	obj->Start();
-
-	_CreatePack.emplace_back(sc_create_object_packet{ obj->object_Type, obj->transform->m_xmf4x4World });
 }
 
 bool ObjectManager::DeleteGameObject(CGameObject* obj)
@@ -29,7 +27,6 @@ bool ObjectManager::DeleteGameObject(CGameObject* obj)
 
 	if (DeleteObjectToList(obj))
 	{
-		_DeletePack.emplace_back(sc_delete_object_packet{ obj->id });
 		obj->Release();
 		return true;
 	}

@@ -4,7 +4,7 @@
 #include "PlayerController.h"
 #include "RigidBody.h"
 
-CTankPlayer::CTankPlayer()
+CTankPlayer::CTankPlayer(int type) : CPlayer(type)
 {
 	Define::Player = this;
 	name = "Player";

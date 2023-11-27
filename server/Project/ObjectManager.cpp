@@ -13,14 +13,18 @@ ObjectManager::~ObjectManager()
 	_GameObjectList.clear();
 }
 
+void ObjectManager::AddCreatePack(CGameObject* obj)
+{
+	_CreatePack.emplace_back(sc_create_object_packet{ obj->object_Type, obj->transform->m_xmf4x4World });
+}
+
 void ObjectManager::AddGameObject(CGameObject* obj)
 {
 	if (obj == nullptr) return;
+	if (obj->m_pParent != nullptr) return;
 
 	_GameObjectList.emplace_back(obj);
 	obj->Start();
-
-	_CreatePack.emplace_back(sc_create_object_packet{ obj->object_Type, obj->transform->m_xmf4x4World });
 }
 
 bool ObjectManager::DeleteGameObject(CGameObject* obj)

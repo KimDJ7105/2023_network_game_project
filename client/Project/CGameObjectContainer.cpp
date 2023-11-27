@@ -13,11 +13,13 @@ CGameObject* CGameObjectContainer::CreateGameObject(int typeID)
 	case TERRAIN:
 		return new CMountineTerrain;
 	case PLAYER:
+	{
 		CTankPlayer* player = new CTankPlayer();
 		if (CGameObject::FindObject("Player") == nullptr) player->playerID = 0;
 		else player->playerID = 1;
 		if (player->playerID == Define::ClientIndex) Define::Player = player;
 		return player;
+	}
 	case BULLET:
 		return new CBulletObject;
 		//case TREE:
