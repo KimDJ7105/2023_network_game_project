@@ -16,9 +16,10 @@ ObjectManager::~ObjectManager()
 void ObjectManager::AddGameObject(CGameObject* obj)
 {
 	if (obj == nullptr) return;
+	if (obj->m_pParent != nullptr) return;
 
 	_GameObjectList.emplace_back(obj);
-	obj->Start();
+	_CreateObjectList.emplace_back(obj);
 }
 
 bool ObjectManager::DeleteGameObject(CGameObject* obj)
@@ -114,7 +115,6 @@ void ObjectManager::AllCreatePackUpdate()
 	{
 		if (pack.object_type < 0) continue;
 		auto obj = CGameObjectContainer::CreateGameObject(pack.object_type);
-		AddGameObject(obj);
 	}
 }
 
@@ -131,6 +131,13 @@ void ObjectManager::AllGameObjectStart()
 {
 	for (const auto& obj : _GameObjectList)
 		obj->Start();
+}
+
+void ObjectManager::AllCreateObjectStart()
+{
+	for (const auto& obj : _CreateObjectList)
+		obj->Start();
+	_CreateObjectList.clear();
 }
 
 void ObjectManager::AllGameObjectUpdate()

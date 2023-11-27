@@ -204,6 +204,7 @@ void CScene::AnimateObjects(float fTimeElapsed)
 	//}
 
 	objectManager->AllCreatePackUpdate();
+	objectManager->AllCreateObjectStart();
 
 	objectManager->AllDeletePackUpdate();
 

@@ -37,12 +37,17 @@ public:
 	void AllGameObjectUpdateTransform();
 
 	void AllGameObjectStart();
+	void AllCreateObjectStart();
+
 	void AllGameObjectUpdate();
 	void AllGameObjectLateUpdate();
 
 	void AllGameObjectRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera);
 private:
 	deque<CGameObject*> _GameObjectList;
+	deque<CGameObject*> _CreateObjectList;
+
+private:
 	vector<sc_create_object_packet> _CreatePack;
 	vector<sc_delete_object_packet> _DeletePack;
 };

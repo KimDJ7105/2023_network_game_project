@@ -11,7 +11,10 @@ CGameObject* CGameObjectContainer::CreateGameObject(int typeID)
 	switch (typeID)
 	{
 	case TERRAIN:
-		return new CMountineTerrain;
+	{
+		CMountineTerrain* terrain = new CMountineTerrain();
+		return terrain;
+	}
 	case PLAYER:
 	{
 		CTankPlayer* player = new CTankPlayer();

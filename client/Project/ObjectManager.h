@@ -37,6 +37,8 @@ public:
 	void AllGameObjectUpdateTransform();
 
 	void AllGameObjectStart();
+	void AllCreateObjectStart();
+
 	void AllGameObjectUpdate();
 	void AllGameObjectLateUpdate();
 
@@ -44,6 +46,9 @@ public:
 
 private:
 	deque<CGameObject*> _GameObjectList;
+	deque<CGameObject*> _CreateObjectList;
+
+private:
 	vector<sc_create_object_packet> _CreatePack;
 	vector<sc_delete_object_packet> _DeletePack;
 };
