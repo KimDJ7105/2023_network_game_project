@@ -21,9 +21,6 @@ public: // Framework
 	static CInput* Input;
 
 public:
-	//static list<CGameObject*> GameObjectList;
-	static deque<CGameObject*> GameObjectList;
-	static int AddGameObject(CGameObject* addObj);
 	static list<CCollider*> ColliderList;
 	static CCamera* MainCamera;
 	static CPlayer* Player;
