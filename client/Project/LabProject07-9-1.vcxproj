@@ -152,7 +152,6 @@
     <ClInclude Include="CSyncObjectManager.h" />
     <ClInclude Include="CTankPlayer.h" />
     <ClInclude Include="Define.h" />
-    <ClInclude Include="Enumy.h" />
     <ClInclude Include="GameFramework.h" />
     <ClInclude Include="GameScene.h" />
     <ClInclude Include="Input.h" />
@@ -192,7 +191,6 @@
     <ClCompile Include="CSyncObjectManager.cpp" />
     <ClCompile Include="CTankPlayer.cpp" />
     <ClCompile Include="Define.cpp" />
-    <ClCompile Include="Enumy.cpp" />
     <ClCompile Include="GameFramework.cpp" />
     <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="Input.cpp" />

@@ -23,8 +23,8 @@ void CPlayerController::Update()
 	//if (Define::Input->GetKeyDown(KeyCode::Space))
 	//	tank->FireBullet(nullptr);
 
-	MouseRotate();
-	MoveMent();
+	//MouseRotate();
+	//MoveMent();
 }
 
 void CPlayerController::MoveMent()
@@ -62,6 +62,7 @@ void CPlayerController::MouseRotate()
 	//	if (roX > 30.0f) roX =- 30.0f;
 	//	else if (roX < -30.0f) roX -= -30.0f;
 	//}
+
 	if (Define::Input->GetMousePress(MouseButton::Left))
 	{
 		pivotObject->transform->Rotate(0.0f, mouseAxis.x, 0.0f);

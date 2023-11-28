@@ -177,22 +177,6 @@ void CScene::AnimateObjects(float fTimeElapsed)
 	Define::MainCamera->LateUpdate();
 
 	objectManager->AllGameObjectUpdateTransform();
-	//Define::MainCamera->transform->UpdateTransform(NULL);
-
-	//for (auto colliderA : Define::ColliderList)
-	//{
-	//	if (colliderA->gameObject->GetActive() == false) continue;
-	//	for (auto colliderB : Define::ColliderList)
-	//	{
-	//		if (colliderB->gameObject->GetActive() == false) continue;
-	//		if (colliderA->tag == colliderB->tag) continue;
-	//		if (colliderA == colliderB) continue;
-	//		if (colliderA->gameObject->CheckCollision(*colliderB) == false) continue;
-
- //			if(colliderA->gameObject->root) colliderA->gameObject->root->Collision(*colliderB);
-	//		else colliderA->gameObject->Collision(*colliderB);
-	//	}
-	//}
 }
 
 void CScene::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera)

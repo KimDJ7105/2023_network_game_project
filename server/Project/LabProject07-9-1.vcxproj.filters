@@ -66,9 +66,6 @@
     <ClInclude Include="CTankPlayer.h">
       <Filter>Object\Contain</Filter>
     </ClInclude>
-    <ClInclude Include="Enumy.h">
-      <Filter>Object\Contain</Filter>
-    </ClInclude>
     <ClInclude Include="Tank.h">
       <Filter>Object\Contain</Filter>
     </ClInclude>
@@ -126,9 +123,6 @@
     <ClInclude Include="Transform.h">
       <Filter>Componet\Default</Filter>
     </ClInclude>
-    <ClInclude Include="CameraController.h">
-      <Filter>Componet</Filter>
-    </ClInclude>
     <ClInclude Include="GameScene.h">
       <Filter>Scene</Filter>
     </ClInclude>
@@ -177,9 +171,6 @@
       <Filter>Object\Contain</Filter>
     </ClCompile>
     <ClCompile Include="CTankPlayer.cpp">
-      <Filter>Object\Contain</Filter>
-    </ClCompile>
-    <ClCompile Include="Enumy.cpp">
       <Filter>Object\Contain</Filter>
     </ClCompile>
     <ClCompile Include="Tank.cpp">
@@ -232,9 +223,6 @@
     </ClCompile>
     <ClCompile Include="Transform.cpp">
       <Filter>Componet\Default</Filter>
-    </ClCompile>
-    <ClCompile Include="CameraController.cpp">
-      <Filter>Componet</Filter>
     </ClCompile>
     <ClCompile Include="GameScene.cpp">
       <Filter>Scene</Filter>

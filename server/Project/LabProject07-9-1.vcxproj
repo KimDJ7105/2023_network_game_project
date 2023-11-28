@@ -143,7 +143,6 @@
     <ClInclude Include="BigMissile.h" />
     <ClInclude Include="BulletObject.h" />
     <ClInclude Include="Camera.h" />
-    <ClInclude Include="CameraController.h" />
     <ClInclude Include="CGameObjectContainer.h" />
     <ClInclude Include="CMountineTerrain.h" />
     <ClInclude Include="Collider.h" />
@@ -151,7 +150,6 @@
     <ClInclude Include="CSyncObjectManager.h" />
     <ClInclude Include="CTankPlayer.h" />
     <ClInclude Include="Define.h" />
-    <ClInclude Include="Enumy.h" />
     <ClInclude Include="GameFramework.h" />
     <ClInclude Include="GameScene.h" />
     <ClInclude Include="Input.h" />
@@ -183,7 +181,6 @@
     <ClCompile Include="BigMissile.cpp" />
     <ClCompile Include="BulletObject.cpp" />
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="CameraController.cpp" />
     <ClCompile Include="CGameObjectContainer.cpp" />
     <ClCompile Include="CMountineTerrain.cpp" />
     <ClCompile Include="Collider.cpp" />
@@ -191,7 +188,6 @@
     <ClCompile Include="CSyncObjectManager.cpp" />
     <ClCompile Include="CTankPlayer.cpp" />
     <ClCompile Include="Define.cpp" />
-    <ClCompile Include="Enumy.cpp" />
     <ClCompile Include="GameFramework.cpp" />
     <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="Input.cpp" />

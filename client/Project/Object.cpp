@@ -145,7 +145,6 @@ void CGameObject::Release()
 	}
 	if (m_ppMaterials) delete[] m_ppMaterials;
 
-	isEmpty = true;
 	//if (--m_nReferences <= 0) delete this;
 }
 
@@ -162,7 +161,10 @@ void CGameObject::SetChild(CGameObject* pChild, bool bReferenceUpdate)
 		if (bReferenceUpdate) pChild->AddRef();
 		auto* objMgr = Define::SceneManager->GetCurrentScene()->objectManager;
 		if (objMgr->FindGameObject(pChild) != nullptr)
+		{
 			objMgr->DeleteObjectToList(pChild);
+			objMgr->DeleteObjectToStarList(pChild);
+		}
 		
 		//auto p = find(Define::GameObjectList.begin(), Define::GameObjectList.end(), pChild);
 		//if (p != Define::GameObjectList.end())Define::GameObjectList.erase(p);

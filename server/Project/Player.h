@@ -69,4 +69,9 @@ public:
 
 	virtual void ReleaseShaderVariables();
 	virtual void UpdateShaderVariables(ID3D12GraphicsCommandList *pd3dCommandList);
+
+public: // eventQueue
+	void AddEventQueue(EVENT e);
+private:
+	queue<EVENT> inputEventQueue;
 };

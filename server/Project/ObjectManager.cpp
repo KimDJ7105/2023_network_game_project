@@ -68,6 +68,18 @@ bool ObjectManager::DeleteObjectToList(CGameObject* obj)
 	return false;
 }
 
+bool ObjectManager::DeleteObjectToStartList(CGameObject* obj)
+{
+	auto p = find(_CreateObjectList.begin(), _CreateObjectList.end(), obj);
+	if (p != _CreateObjectList.end())
+	{
+		_CreateObjectList.erase(p);
+		return true;
+	}
+
+	return false;
+}
+
 void ObjectManager::GameObjectTransformUpdate(int id)
 {
 	auto obj = FindGameObject(id);

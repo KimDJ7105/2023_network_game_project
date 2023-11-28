@@ -23,7 +23,7 @@ public: // Framework
 public:
 	static list<CCollider*> ColliderList;
 	static CCamera* MainCamera;
-	static CPlayer* Player;
+	static CPlayer** Players;
 
 public: // Server Sock
 	static SOCKET sock[2];

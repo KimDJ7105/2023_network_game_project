@@ -1,9 +1,7 @@
 #include "stdafx.h"
 #include "GameScene.h"
-#include "CameraController.h"
 #include "Tree.h"
 #include "CTankPlayer.h"
-#include "Enumy.h"
 #include "BigMissile.h"
 #include "CMountineTerrain.h"
 
@@ -20,8 +18,10 @@ void CGameScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 
 	CTerrain* terrain = new CMountineTerrain();
 
-	localPlayer = new CTankPlayer(PLAYER);
-	remotePlayer = new CTankPlayer(PLAYER);
+	Define::Players = new CPlayer*[2];
+	Define::Players[0] = new CTankPlayer(PLAYER);
+	Define::Players[1] = new CTankPlayer(PLAYER);
+
 
 	//player = new CTankPlayer();
 

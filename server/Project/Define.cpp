@@ -11,7 +11,7 @@ CInput* Define::Input = nullptr;
 
 list<CCollider*> Define::ColliderList;
 CCamera* Define::MainCamera = nullptr;
-CPlayer* Define::Player = nullptr;
+CPlayer** Define::Players = nullptr;
 
 SOCKET Define::sock[2];
 

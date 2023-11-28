@@ -178,7 +178,6 @@ public: // 내가 만든거
 	int id;
 	int object_Type;
 	string name;
-	bool isEmpty = false;
 
 	CTransform* transform = NULL;
 	CCollider* collider = nullptr;

@@ -25,6 +25,7 @@ public:
 	CGameObject* FindGameObject(CGameObject* obj);
 
 	bool DeleteObjectToList(CGameObject* obj);
+	bool DeleteObjectToStartList(CGameObject* obj);
 	
 public:
 	void GameObjectTransformUpdate(int id);

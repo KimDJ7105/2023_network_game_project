@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "Tree.h"
 #include "CTankPlayer.h"
-#include "Enumy.h"
 
 CTree::CTree()
 {
