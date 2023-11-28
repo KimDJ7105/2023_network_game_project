@@ -15,7 +15,7 @@ ObjectManager::~ObjectManager()
 
 void ObjectManager::AddCreatePack(CGameObject* obj)
 {
-	_CreatePack.emplace_back(sc_create_object_packet{ obj->object_Type, obj->transform->m_xmf4x4World });
+	_CreatePack.emplace_back(sc_create_object_packet{ obj->object_Type, obj->transform->m_xmf4x4Transform });
 }
 
 void ObjectManager::AddGameObject(CGameObject* obj)

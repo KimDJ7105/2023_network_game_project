@@ -127,6 +127,7 @@ void ObjectManager::AllCreatePackUpdate()
 	{
 		if (pack.object_type < 0) continue;
 		auto obj = CGameObjectContainer::CreateGameObject(pack.object_type);
+		obj->transform->m_xmf4x4Transform = pack.matrix;
 	}
 	_CreatePack.clear();
 }
