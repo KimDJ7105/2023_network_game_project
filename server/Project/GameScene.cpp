@@ -42,6 +42,7 @@ void CGameScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 	//}
 
 	objectManager->AllGameObjectStart();
+	objectManager->ClearCreateObjectList();
 
 	//for (const auto& obj : Define::GameObjectList)
 	//	obj->Start();

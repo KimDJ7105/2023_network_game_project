@@ -167,10 +167,10 @@ void CScene::AnimateObjects(float fTimeElapsed)
 {
 	m_fElapsedTime = fTimeElapsed;
 
-	objectManager->AllCreatePackUpdate();
-	objectManager->AllCreateObjectStart();
+	//objectManager->AllCreatePackUpdate();
+	//objectManager->AllCreateObjectStart();
 
-	objectManager->AllDeletePackUpdate();
+	//objectManager->AllDeletePackUpdate();
 
 	Define::SyncObjectManager->UpdateAllTransformPack();
 	Define::MainCamera->Update();

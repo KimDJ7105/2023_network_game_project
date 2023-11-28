@@ -420,7 +420,9 @@ void CGameFramework::BuildObjects()
 {
 	m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
 
-	Define::SceneManager->GetCurrentScene()->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
+	auto scene = Define::SceneManager->GetCurrentScene();
+
+	scene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
 	m_pd3dCommandList->Close();
 	ID3D12CommandList *ppd3dCommandLists[] = { m_pd3dCommandList };
@@ -428,7 +430,7 @@ void CGameFramework::BuildObjects()
 
 	WaitForGpuComplete();
 
-	Define::SceneManager->GetCurrentScene()->ReleaseUploadBuffers();
+	scene->ReleaseUploadBuffers();
 
 	m_GameTimer.Reset();
 }
@@ -519,8 +521,7 @@ void CGameFramework::FrameAdvance()
 	m_GameTimer.Tick(0.0f);
 	
 	ProcessInput();
-
-    AnimateObjects();
+	AnimateObjects();
 
 	HRESULT hResult = m_pd3dCommandAllocator->Reset();
 	hResult = m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);

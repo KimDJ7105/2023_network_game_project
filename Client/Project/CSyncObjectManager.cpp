@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Object.h"
 #include "CSyncObjectManager.h"
+#include "CGameObjectContainer.h"
 
 CSyncObjectManager::CSyncObjectManager()
 {
@@ -9,6 +10,9 @@ CSyncObjectManager::CSyncObjectManager()
 
 CSyncObjectManager::~CSyncObjectManager()
 {
+	_CreatePack.clear();
+	transformPackList.clear();
+	syncList.clear();
 }
 
 void CSyncObjectManager::AddSyncObject(SyncObject* sync)
@@ -49,11 +53,22 @@ void CSyncObjectManager::SetTransformPack(vector<sc_object_transform_packet> pac
 
 void CSyncObjectManager::UpdateAllTransformPack()
 {
-	//for (auto pack : transformPackList)
-	//{
-	//	if (syncList.size() <= pack.object_id) continue;
-	//	syncList[pack.object_id]->gameObject->transform->m_xmf4x4Transform = pack.matrix;
-	//}
+	for (auto pack : transformPackList)
+	{
+		if (syncList.size() <= pack.object_id) continue;
+		syncList[pack.object_id]->gameObject->transform->m_xmf4x4Transform = pack.matrix;
+	}
 
 	transformPackList.clear();
+}
+
+void CSyncObjectManager::AllCreatePackUpdate()
+{
+	for (const auto pack : _CreatePack)
+	{
+		if (pack.object_type < 0) continue;
+		auto obj = CGameObjectContainer::CreateGameObject(pack.object_type);
+		obj->transform->m_xmf4x4Transform = pack.matrix;
+	}
+	_CreatePack.clear();
 }

@@ -21,6 +21,7 @@ HANDLE hRecvHandle;
 HANDLE hWoker;
 
 DWORD WINAPI RecvThread(LPVOID arg);
+void RecvInitObject();
 void KeyControl();
 
 ATOM MyRegisterClass(HINSTANCE hInstance);
@@ -68,6 +69,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	::LoadString(hInstance, IDC_LABPROJECT0791, szWindowClass, MAX_LOADSTRING);
 	MyRegisterClass(hInstance);
 
+	RecvInitObject();
 	if (!InitInstance(hInstance, nCmdShow)) return(FALSE);
 
 	hAccelTable = ::LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_LABPROJECT0791));
@@ -87,8 +89,10 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 		else
 		{
 			WaitForSingleObject(hWoker, INFINITE);
+
 			gGameFramework.FrameAdvance();
 			KeyControl();
+
 			ResetEvent(hWoker);
 			SetEvent(hRecvHandle);
 		}
@@ -100,34 +104,8 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 
 DWORD WINAPI RecvThread(LPVOID arg)
 {
-	auto objMgr = Define::SceneManager->GetCurrentScene()->objectManager;
-
 	while (true) {
 		WaitForSingleObject(hRecvHandle, INFINITE);
-		{
-			int createPackSize = 0;
-			int s = recv(Define::sock, (char*)&createPackSize, sizeof(int), 0);
-			if (s == -1) err_display("recv()");
-
-			for (int i = 0; i < createPackSize; i++)
-			{
-				sc_create_object_packet pack;
-				recv(Define::sock, (char*)&pack, sizeof(sc_create_object_packet), 0);
-				objMgr->AddCreatePack(pack);
-			}
-		}
-
-		{
-			int deletePackSize = 0;
-			recv(Define::sock, (char*)&deletePackSize, sizeof(int), 0);
-			for (int i = 0; i < deletePackSize; i++)
-			{
-				sc_delete_object_packet pack;
-				recv(Define::sock, (char*)&pack, sizeof(sc_create_object_packet), 0);
-				objMgr->AddDeletePack(pack);
-			}
-		}
-
 		{
 			int transformPackSize = 0;
 			recv(Define::sock, (char*)&transformPackSize, sizeof(int), 0);
@@ -143,6 +121,19 @@ DWORD WINAPI RecvThread(LPVOID arg)
 		}
 		ResetEvent(hRecvHandle);
 		SetEvent(hWoker);
+	}
+}
+
+void RecvInitObject()
+{
+	int createPackSize = 0;
+	recv(Define::sock, (char*)&createPackSize, sizeof(int), 0);
+
+	for (int i = 0; i < createPackSize; i++)
+	{
+		sc_create_object_packet pack;
+		recv(Define::sock, (char*)&pack, sizeof(sc_create_object_packet), 0);
+		Define::SyncObjectManager->AddCreatePack(pack);
 	}
 }
 

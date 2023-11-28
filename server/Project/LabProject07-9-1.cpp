@@ -78,7 +78,6 @@ DWORD WINAPI WorkerThread(LPVOID arg)
 			objMgr->GetCreatePack()->clear();
 			objMgr->GetDeletePack()->clear();
 		}
-		
 	}
 	gGameFramework.OnDestroy();
 
@@ -113,29 +112,20 @@ DWORD WINAPI SendThread(LPVOID arg)
 
 	auto objmgr = Define::SceneManager->GetCurrentScene()->objectManager;
 
+	{
+		auto createPack = objmgr->GetCreatePack();
+		int createPackSize = createPack->size();
+		if (createPackSize != 0) printf("(createpacket)%d socket : %d EA\n", c_id, createPackSize);
+		send(Define::sock[c_id], (char*)&createPackSize, sizeof(int), 0);
+		for (auto pack : *createPack)
+		{
+			printf("Client %d : Create Object %d\n", c_id, pack.object_type);
+			send(Define::sock[c_id], (char*)&pack, sizeof(sc_create_object_packet), 0);
+		}
+	}
+
 	while (true) {
 		WaitForSingleObject(hWorkerEvent[c_id], INFINITE);
-
-		{
-			auto createPack = objmgr->GetCreatePack();
-			int createPackSize = createPack->size();
-			if (createPackSize != 0) printf("(createpacket)%d socket : %d EA\n", c_id, createPackSize);
-			send(Define::sock[c_id], (char*)&createPackSize, sizeof(int), 0);
-			for (auto pack : *createPack)
-			{
-				printf("Client %d : Create Object %d\n", c_id, pack.object_type);
-				send(Define::sock[c_id], (char*)&pack, sizeof(sc_create_object_packet), 0);
-			}
-		}
-
-		{
-			auto deletePack = objmgr->GetDeletePack();
-			int deletePackSize = deletePack->size();
-			//printf("(deletepacket)%d socket : %d EA\n", c_id, deletePackSize);
-			send(Define::sock[c_id], (char*)&deletePackSize, sizeof(int), 0);
-			for (auto pack : *deletePack)
-				send(Define::sock[c_id], (char*)&pack, sizeof(sc_delete_object_packet), 0);
-		}
 
 		{
 			auto packList = Define::SyncObjectManager->GetAllTransformPack();
@@ -188,6 +178,24 @@ int main(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCm
 	struct sockaddr_in clientaddr;
 	std::array<HANDLE, 2> handle_arry;
 
+	// 워커 스레드 생성
+	struct threadarg arg;
+	arg.hInstance = &hInstance;
+	arg.hPrevInstance = &hPrevInstance;
+	arg.lpCmdLine = &lpCmdLine;
+	arg.nCmdShow = &nCmdShow;
+
+	HANDLE WorkerHandle = CreateThread(NULL, 0, WorkerThread, &arg, 0, NULL);
+
+	if (WorkerHandle == NULL) {
+		printf("WorkerThread Fail");
+		return 1;
+	}
+
+	WaitForMultipleObjects(2, hWorkerEvent, true, INFINITE);
+	SetEvent(hWorkerEvent[0]);
+	SetEvent(hWorkerEvent[1]);
+
 	for (int i = 0; i < 2; i++)
 	{
 		//accept
@@ -221,19 +229,6 @@ int main(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCm
 	}
 
 	SetEvent(hRecvReadyEvent);
-
-
-	struct threadarg arg;
-	arg.hInstance = &hInstance;
-	arg.hPrevInstance = &hPrevInstance;
-	arg.lpCmdLine = &lpCmdLine;
-	arg.nCmdShow = &nCmdShow;
-	HANDLE WorkerHandle = CreateThread(NULL, 0, WorkerThread, &arg, 0, NULL);
-
-	if (WorkerHandle == NULL) {
-		printf("WorkerThread Fail");
-		return 1;
-	}
 
 	WaitForSingleObject(WorkerHandle, INFINITE);
 	WaitForSingleObject(handle_arry[0], INFINITE);

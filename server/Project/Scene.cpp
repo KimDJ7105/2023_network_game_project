@@ -190,7 +190,7 @@ void CScene::AnimateObjects(float fTimeElapsed)
 {
 	m_fElapsedTime = fTimeElapsed;
 
-	objectManager->AllCreateObjectStart();
+	//objectManager->AllCreateObjectStart();
 
 	objectManager->AllGameObjectUpdate();
 	objectManager->AllGameObjectLateUpdate();

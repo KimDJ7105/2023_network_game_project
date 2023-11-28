@@ -5,6 +5,7 @@
 #include "CTankPlayer.h"
 #include "BigMissile.h"
 #include "CMountineTerrain.h"
+#include "CSyncObjectManager.h"
 
 CGameScene::CGameScene(int index) : CScene(index)
 {
@@ -24,6 +25,10 @@ void CGameScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 
 	//for (int i = 0; i < 10; i++)
 	//	CTree* tree = new CTree();
+
+	Define::SyncObjectManager->AllCreatePackUpdate();
+	objectManager->AllCreateObjectStart();
+	objectManager->ClearCreateObjectList();
 }
 
 void CGameScene::AnimateObjects(float fTimeElapsed)

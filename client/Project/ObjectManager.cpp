@@ -11,6 +11,9 @@ ObjectManager::~ObjectManager()
 	for (const auto& obj : _GameObjectList)
 		obj->Release();
 	_GameObjectList.clear();
+	_CreateObjectList.clear();
+
+	_DeletePack.clear();
 }
 
 void ObjectManager::AddGameObject(CGameObject* obj)
@@ -121,26 +124,13 @@ void ObjectManager::AllGameObjectUpdateTransform()
 		obj->transform->UpdateTransform(NULL);
 }
 
-void ObjectManager::AllCreatePackUpdate()
-{
-	for (const auto pack : _CreatePack)
-	{
-		if (pack.object_type < 0) continue;
-		auto obj = CGameObjectContainer::CreateGameObject(pack.object_type);
-		obj->transform->m_xmf4x4Transform = pack.matrix;
-	}
-	_CreatePack.clear();
-}
-
 void ObjectManager::AllDeletePackUpdate()
 {
 	for (const auto pack : _DeletePack)
 	{
 		DeleteGameObject(pack.object_id);
 	}
-	_DeletePack.clear();
 }
-
 
 void ObjectManager::AllGameObjectStart()
 {
@@ -152,7 +142,12 @@ void ObjectManager::AllCreateObjectStart()
 {
 	for (const auto& obj : _CreateObjectList)
 		obj->Start();
-	_CreateObjectList.clear();
+}
+
+void ObjectManager::AllCreateObjectReleaseUploadBuffers()
+{
+	for (const auto obj : _CreateObjectList)
+		obj->ReleaseUploadBuffers();
 }
 
 void ObjectManager::AllGameObjectUpdate()
