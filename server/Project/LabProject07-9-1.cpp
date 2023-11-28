@@ -95,6 +95,10 @@ DWORD WINAPI RecvThread(LPVOID arg)
 		cs_player_input_packet pack;
 		int retval = recv(Define::sock[c_id], (char*)&pack, sizeof(cs_player_input_packet), MSG_WAITALL);
 		if (retval == 0) return 0;
+		if (retval == SOCKET_ERROR) err_quit("recv()");
+		else {
+			printf("%d : recv Input data. Input Type : %d\n", c_id, pack.input_event);
+		}
 
 		EnterCriticalSection(&cs);
 		InputEventQueue.push({ pack.input_event, c_id });
@@ -115,10 +119,11 @@ DWORD WINAPI SendThread(LPVOID arg)
 		{
 			auto createPack = objmgr->GetCreatePack();
 			int createPackSize = createPack->size();
+			if (createPackSize != 0) printf("(createpacket)%d socket : %d EA\n", c_id, createPackSize);
 			send(Define::sock[c_id], (char*)&createPackSize, sizeof(int), 0);
 			for (auto pack : *createPack)
 			{
-				printf("(createpacket)%d socket : %d\n", c_id, pack.object_type);
+				printf("Client %d : Create Object %d\n", c_id, pack.object_type);
 				send(Define::sock[c_id], (char*)&pack, sizeof(sc_create_object_packet), 0);
 			}
 		}
