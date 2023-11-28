@@ -13,8 +13,6 @@ public:
 	CTank* tank = NULL;
 	CGameObject* pivotObject = nullptr;
 
-	int playerID;
-
 private:
 	CTimer fireRate;
 

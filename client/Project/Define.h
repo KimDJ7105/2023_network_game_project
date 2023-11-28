@@ -21,13 +21,15 @@ public: // Framework
 	static CInput* Input;
 
 public:
+	//static list<CGameObject*> GameObjectList;
+	static deque<CGameObject*> GameObjectList;
+	static int AddGameObject(CGameObject* addObj);
 	static list<CCollider*> ColliderList;
 	static CCamera* MainCamera;
 	static CPlayer* Player;
 
 public: // Server Sock
 	static SOCKET sock;
-	static int ClientIndex;
 
 	static void RecvInputPack(int id);
 

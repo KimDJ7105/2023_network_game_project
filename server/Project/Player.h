@@ -33,7 +33,7 @@ protected:
 	LPVOID						m_pCameraUpdatedContext;
 
 public:
-	CPlayer(int type);
+	CPlayer();
 	virtual ~CPlayer();
 
 	XMFLOAT3 GetPosition() { return(m_xmf3Position); }

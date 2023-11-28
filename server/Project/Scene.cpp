@@ -190,15 +190,41 @@ void CScene::AnimateObjects(float fTimeElapsed)
 {
 	m_fElapsedTime = fTimeElapsed;
 
-	objectManager->AllCreateObjectStart();
+	int numCount[4]{0};
 
-	objectManager->AllGameObjectUpdate();
-	objectManager->AllGameObjectLateUpdate();
+	// handle event 처리
+
+	//send 함수 만들기
+
+	//recv(Define::sock, (char*)numCount, sizeof(int) * 4, 0);
+
+	//for (int i = 0; i < 4; i++)
+	//{
+	//	for (int j = 0; j < numCount[i]; j++)
+	//	{
+	//		switch (i) {
+	//		case SC_CREATE_OBJECT:
+	//			objectManager->AddGameObject(CGameObjectContainer::CreateGameObject(0));
+	//			break;
+	//		case SC_DELETE_OBJECT:
+	//			objectManager->DeleteGameObject(0);
+	//			break;
+	//		case SC_MOVE_OBJECT:
+	//			objectManager->GameObjectTransformUpdate(0);
+	//		default:
+	//			break;
+	//		}
+	//	}
+	//}
 
 	objectManager->AllGameObjectUpdateTransform();
 
 	for (const auto& collider : Define::ColliderList)
 		collider->UpdateBoundingBox();
+
+	objectManager->AllGameObjectUpdate();
+	objectManager->AllGameObjectLateUpdate();
+
 
 
 	//for (auto colliderA : Define::ColliderList)

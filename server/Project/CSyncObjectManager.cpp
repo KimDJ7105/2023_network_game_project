@@ -36,7 +36,7 @@ vector<sc_object_transform_packet> CSyncObjectManager::GetAllTransformPack()
 	for (int i = 0; i < packSize; i++)
 	{
 		packlist[i].object_id = syncList[i]->id;
-		packlist[i].matrix = syncList[i]->gameObject->transform->m_xmf4x4Transform;
+		packlist[i].matrix = syncList[i]->gameObject->transform->m_xmf4x4World;
 	}
 
 	return packlist;

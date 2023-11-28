@@ -5,7 +5,7 @@
 class CTankPlayer : public CPlayer
 {
 public:
-	CTankPlayer(int type);
+	CTankPlayer();
 	virtual ~CTankPlayer();
 
 public:

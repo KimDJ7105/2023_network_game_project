@@ -9,6 +9,8 @@ CGameFramework* Define::Framework = nullptr;
 CGameTimer* Define::GameTimer = nullptr;
 CInput* Define::Input = nullptr;
 
+//list<CGameObject*> Define::GameObjectList;
+deque<CGameObject*> Define::GameObjectList;
 list<CCollider*> Define::ColliderList;
 CCamera* Define::MainCamera = nullptr;
 CPlayer* Define::Player = nullptr;
@@ -28,8 +30,6 @@ int Define::AddGameObject(CGameObject* addObj)
 	GameObjectList.emplace_back(addObj);
 	return addObj->id;
 }
-SOCKET Define::sock[2];
-
 
 Define::~Define()
 {

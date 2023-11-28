@@ -15,7 +15,6 @@ public:
 	void KeyStateUpdate();
 	void OnProceesingKeyBoardMassage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 
-	bool GetKeyAny();
 	bool GetKeyDown(KeyCode code); // 최초의 1회 눌렀을 시만 true
 	bool GetKeyPress(KeyCode code); // 눌려져 있는 키일 경우 true
 

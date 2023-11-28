@@ -98,10 +98,6 @@ DWORD WINAPI RecvThread(LPVOID arg)
 		cs_player_input_packet pack;
 		int retval = recv(sock[c_id], (char*)&pack, sizeof(cs_player_input_packet), MSG_WAITALL);
 		if (retval == 0) return 0;
-		if (retval == SOCKET_ERROR) err_quit("recv()");
-		else {
-			printf("%d : recv Input data. Input Type : %d\n", c_id, pack.input_event);
-		}
 
 		EnterCriticalSection(&cs);
 		InputEventQueue.push({ pack.input_event, c_id });
@@ -122,12 +118,19 @@ DWORD WINAPI SendThread(LPVOID arg)
 		{
 			auto createPack = objmgr->GetCreatePack();
 			int createPackSize = createPack->size();
-			if (createPackSize != 0) printf("(createpacket)%d socket : %d EA\n", c_id, createPackSize);
-			send(Define::sock[c_id], (char*)&createPackSize, sizeof(int), 0);
-			for (auto pack : *createPack)
-			{
-				printf("Client %d : Create Object %d\n", c_id, pack.object_type);
-				send(Define::sock[c_id], (char*)&pack, sizeof(sc_create_object_packet), 0);
+			//printf("(createpacket)%d socket : %d EA\n", c_id, createPackSize);
+			retval = send(sock[c_id], reinterpret_cast<const char*>(&createPackSize), sizeof(int), 0);
+			if (retval == SOCKET_ERROR) err_quit("send()1 - 1");
+
+			for (auto pack : *createPack) {
+				retval = send(sock[c_id], reinterpret_cast<const char*>(&pack), sizeof(sc_create_object_packet), 0);
+				if (retval == SOCKET_ERROR) err_quit("send()1 - 2");
+			// int createPackSize = createPack->size();
+			// send(Define::sock[c_id], (char*)&createPackSize, sizeof(int), 0);
+			// for (auto pack : *createPack)
+			// {
+			// 	printf("(createpacket)%d socket : %d\n", c_id, pack.object_type);
+			// 	send(Define::sock[c_id], (char*)&pack, sizeof(sc_create_object_packet), 0);
 			}
 		}
 
@@ -209,10 +212,6 @@ int main(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCm
 			err_display("accept()");
 			break;
 		}
-
-		// 클라이언트에게 자신이 몇번쨰로 접속했는지 알려주기
-		int clientIndex = i;
-		send(Define::sock[i], (char*)&clientIndex, sizeof(int), 0);
 
 		// 접속한 클라이언트 정보 출력
 		char addr[INET_ADDRSTRLEN];

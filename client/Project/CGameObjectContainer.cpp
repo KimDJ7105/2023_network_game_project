@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "CGameObjectContainer.h"
-#include "CTankPlayer.h"
+#include "Player.h"
 #include "BulletObject.h"
 #include "Tree.h"
 #include "CMountineTerrain.h"
@@ -11,20 +11,9 @@ CGameObject* CGameObjectContainer::CreateGameObject(int typeID)
 	switch (typeID)
 	{
 	case TERRAIN:
-	{
-		CMountineTerrain* terrain = new CMountineTerrain();
-		return terrain;
-	}
+		return new CMountineTerrain;
 	case PLAYER:
-	{
-		int playerID;
-		if (CGameObject::FindObject("Player") == nullptr) playerID = 0;
-		else playerID = 1;
-		CTankPlayer* player = new CTankPlayer();
-		player->playerID = playerID;
-		if (player->playerID == Define::ClientIndex) Define::Player = player;
-		return player;
-	}
+		return new CPlayer;
 	case BULLET:
 		return new CBulletObject;
 		//case TREE:

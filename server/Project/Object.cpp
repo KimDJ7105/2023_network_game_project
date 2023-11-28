@@ -93,6 +93,8 @@ CGameObject::CGameObject() : CComponent(this)
 {
 	transform = new CTransform(this);
 
+	Define::GameObjectList.emplace_back(this);
+	id = Define::GameObjectList.size();
 	Define::SceneManager->GetCurrentScene()->objectManager->AddGameObject(this);
 }
 
@@ -101,8 +103,9 @@ CGameObject::CGameObject(int type) : CComponent(this)
 	object_Type = type;
 	transform = new CTransform(this);
 
+	Define::GameObjectList.emplace_back(this);
+	id = Define::GameObjectList.size();
 	Define::SceneManager->GetCurrentScene()->objectManager->AddGameObject(this);
-	Define::SceneManager->GetCurrentScene()->objectManager->AddCreatePack(this);
 }
 
 CGameObject::~CGameObject()
@@ -504,8 +507,7 @@ CGameObject* CGameObject::LoadFrameHierarchyFromFile(ID3D12Device* pd3dDevice, I
 				CMesh* pMesh = NULL;
 				if (pMeshInfo->m_nType & VERTEXT_NORMAL)
 				{
-					pMesh = new CMeshIlluminatedFromFile();
-					//pMesh = new CMeshIlluminatedFromFile(pd3dDevice, pd3dCommandList, pMeshInfo);
+					pMesh = new CMeshIlluminatedFromFile(pd3dDevice, pd3dCommandList, pMeshInfo);
 				}
 				if (pMesh)
 				{

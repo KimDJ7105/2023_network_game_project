@@ -12,10 +12,6 @@ public: //getter setter
 	deque<CGameObject*>* GetList() { return &_GameObjectList; }
 	vector<sc_create_object_packet>* GetCreatePack() { return &_CreatePack; }
 	vector<sc_delete_object_packet>* GetDeletePack() { return &_DeletePack; }
-
-public: //pack
-	void AddCreatePack(CGameObject* obj);
-
 public:
 	void AddGameObject(CGameObject* obj);
 	bool DeleteGameObject(CGameObject* obj);
@@ -37,17 +33,12 @@ public:
 	void AllGameObjectUpdateTransform();
 
 	void AllGameObjectStart();
-	void AllCreateObjectStart();
-
 	void AllGameObjectUpdate();
 	void AllGameObjectLateUpdate();
 
 	void AllGameObjectRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera);
 private:
 	deque<CGameObject*> _GameObjectList;
-	deque<CGameObject*> _CreateObjectList;
-
-private:
 	vector<sc_create_object_packet> _CreatePack;
 	vector<sc_delete_object_packet> _DeletePack;
 };

@@ -20,8 +20,8 @@ void CPlayerController::Update()
 {
 	IsDie();
 
-	//if (Define::Input->GetKeyDown(KeyCode::Space))
-	//	tank->FireBullet(nullptr);
+	if (Define::Input->GetKeyDown(KeyCode::Space))
+		tank->FireBullet(nullptr);
 
 	MouseRotate();
 	MoveMent();
@@ -30,19 +30,19 @@ void CPlayerController::Update()
 void CPlayerController::MoveMent()
 {
 	XMFLOAT3 dir = XMFLOAT3(0, 0, 0);
-	//if (Define::Input->GetKeyPress(KeyCode::W))
-	//	dir.z += 1;
-	//if (Define::Input->GetKeyPress(KeyCode::S))
-	//	dir.z -= 1;
-	//if (Define::Input->GetKeyPress(KeyCode::D))
-	//	dir.x += 1;
-	//if (Define::Input->GetKeyPress(KeyCode::A))
-	//	dir.x -= 1;
+	if (Define::Input->GetKeyPress(KeyCode::W))
+		dir.z += 1;
+	if (Define::Input->GetKeyPress(KeyCode::S))
+		dir.z -= 1;
+	if (Define::Input->GetKeyPress(KeyCode::D))
+		dir.x += 1;
+	if (Define::Input->GetKeyPress(KeyCode::A))
+		dir.x -= 1;
 
-	//if (Define::Input->GetKeyDown(KeyCode::Q))
-	//	status->speed += 1;
-	//if (Define::Input->GetKeyDown(KeyCode::E))
-	//	status->speed -= 1;
+	if (Define::Input->GetKeyDown(KeyCode::Q))
+		status->speed += 1;
+	if (Define::Input->GetKeyDown(KeyCode::E))
+		status->speed -= 1;
 
 	tank->Move(dir, status->speed * Define::GameTimer->GetTimeElapsed());
 

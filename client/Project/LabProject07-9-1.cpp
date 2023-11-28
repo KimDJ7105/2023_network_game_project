@@ -21,7 +21,6 @@ HANDLE hRecvHandle;
 HANDLE hWoker;
 
 DWORD WINAPI RecvThread(LPVOID arg);
-void KeyControl();
 
 ATOM MyRegisterClass(HINSTANCE hInstance);
 BOOL InitInstance(HINSTANCE, int);
@@ -55,9 +54,6 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	retval = connect(Define::sock, (struct sockaddr*)&serveraddr, sizeof(serveraddr));
 	if (retval == SOCKET_ERROR) err_quit("connect()");
 
-	// 몇번째 클라인지 수신받기
-	recv(Define::sock, (char*)&Define::ClientIndex, sizeof(int), 0);
-
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
@@ -88,7 +84,6 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 		{
 			WaitForSingleObject(hWoker, INFINITE);
 			gGameFramework.FrameAdvance();
-			KeyControl();
 			ResetEvent(hWoker);
 			SetEvent(hRecvHandle);
 		}
@@ -144,19 +139,6 @@ DWORD WINAPI RecvThread(LPVOID arg)
 		ResetEvent(hRecvHandle);
 		SetEvent(hWoker);
 	}
-}
-
-void KeyControl()
-{
-	if (Define::Input->GetKeyAny() == false) return;
-	if (Define::Input->GetKeyPress(KeyCode::W))
-		Define::RecvInputPack(KEY_UP);
-	if (Define::Input->GetKeyPress(KeyCode::S))
-		Define::RecvInputPack(KEY_DOWN);
-	if (Define::Input->GetKeyPress(KeyCode::D))
-		Define::RecvInputPack(KEY_RIGHT);
-	if (Define::Input->GetKeyPress(KeyCode::A))
-		Define::RecvInputPack(KEY_LEFT);
 }
 
 ATOM MyRegisterClass(HINSTANCE hInstance)

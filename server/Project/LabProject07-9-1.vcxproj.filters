@@ -147,6 +147,9 @@
     <ClInclude Include="BigMissile.h">
       <Filter>Componet</Filter>
     </ClInclude>
+    <ClInclude Include="protocol.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
     <ClInclude Include="ObjectManager.h">
       <Filter>Framework\Manager</Filter>
     </ClInclude>
@@ -161,9 +164,6 @@
     </ClInclude>
     <ClInclude Include="CSyncObjectManager.h">
       <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="protocol.h">
-      <Filter>Framework\Network</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -260,6 +260,9 @@
     <ClCompile Include="CGameObjectContainer.cpp">
       <Filter>Object\Contain</Filter>
     </ClCompile>
+    <ClCompile Include="protocol.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
     <ClCompile Include="CMountineTerrain.cpp">
       <Filter>Object\Contain</Filter>
     </ClCompile>
@@ -268,9 +271,6 @@
     </ClCompile>
     <ClCompile Include="CSyncObjectManager.cpp">
       <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="protocol.cpp">
-      <Filter>Framework\Network</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -52,7 +52,7 @@ void CSyncObjectManager::UpdateAllTransformPack()
 	for (auto pack : transformPackList)
 	{
 		if (syncList.size() <= pack.object_id) continue;
-		syncList[pack.object_id]->gameObject->transform->m_xmf4x4Transform = pack.matrix;
+		syncList[pack.object_id]->gameObject->transform->m_xmf4x4World = pack.matrix;
 	}
 
 	transformPackList.clear();
