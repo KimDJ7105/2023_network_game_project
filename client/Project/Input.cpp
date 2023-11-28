@@ -31,6 +31,15 @@ void CKey::OnProceesingKeyBoardMassage(HWND hWnd, UINT nMessageID, WPARAM wParam
 	}
 }
 
+bool CKey::GetKeyAny()
+{
+	for (auto key : KeyState)
+	{
+		if (key.first == 1 || key.first == 3) return true;
+	}
+	return false;
+}
+
 bool CKey::GetKeyDown(KeyCode code)
 {
 	return (KeyState[key[code]] == 1 ) ? true : false;

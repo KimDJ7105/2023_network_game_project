@@ -6,9 +6,9 @@ CBulletObject::CBulletObject()
 	name = "Bullet";
 
 	missile = CGameObject::LoadGeometryFromFile("Model/Missile.bin");
-	missile->collider = new CCollider(missile);
+	//missile->collider = new CCollider(missile);
+	//missile->collider->tag = "Bullet";
 	missile->name = "Missile";
-	missile->collider->tag = "Bullet";
 	SetChild(missile);
 
 	collisionParticle = new CParticleSystem(10);

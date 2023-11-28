@@ -20,6 +20,9 @@ void CGameScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 
 	CTerrain* terrain = new CMountineTerrain();
 
+	localPlayer = new CTankPlayer(PLAYER);
+	remotePlayer = new CTankPlayer(PLAYER);
+
 	//player = new CTankPlayer();
 
 	//for (int i = 0; i < 6; i++)

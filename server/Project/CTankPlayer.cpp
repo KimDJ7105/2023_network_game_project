@@ -3,8 +3,9 @@
 #include "Shader.h"
 #include "PlayerController.h"
 #include "RigidBody.h"
+#include "SyncObject.h"	
 
-CTankPlayer::CTankPlayer()
+CTankPlayer::CTankPlayer(int type) : CPlayer(type)
 {
 	Define::Player = this;
 	name = "Player";
@@ -14,16 +15,19 @@ CTankPlayer::CTankPlayer()
 	SetChild(pivotObject, true);
 
 	tank = new CTank();
-	tank->BulletInit(30);
-
+	tank->BulletInit(1);
 	tank->AddComponet(status);
+	tank->AddComponet(new SyncObject(this));
 	SetChild(tank, true);
 
 	string collidertag = "Player";
 	collider = new CCollider(this);
 	tank->upperBodyFrame->collider->tag = collidertag;
+	tank->upperBodyFrame->AddComponet(new SyncObject(this));
 	tank->lowerBodyFrame->collider->tag = collidertag;
+	tank->lowerBodyFrame->AddComponet(new SyncObject(this));
 	tank->gunFrame->collider->tag = collidertag;
+	tank->gunFrame->AddComponet(new SyncObject(this));
 	//m_pCamera = ChangeCamera(/*SPACESHIP_CAMERA*/THIRD_PERSON_CAMERA, 0.0f);
 
 	tank->SetAllColor(0.0f, 0.0f, 0.8f);
@@ -51,6 +55,7 @@ CTankPlayer::CTankPlayer()
 	status->speed = 3.0f;
 	AddComponet(new CRigidBody(this));
 	AddComponet(new CPlayerController(this));
+	AddComponet(new SyncObject(this));
 }
 
 CTankPlayer::~CTankPlayer()
