@@ -165,8 +165,15 @@ void CScene::HandleInputEvent(queue<EVENT> q)
 		switch (event.event_id)
 		{
 		case KEY_UP:
+			// 입력된 키 이벤트값에 따라 행렬 변환 적용 필요
 			break;
 		case KEY_DOWN:
+			break;
+		case KEY_LEFT:
+			break;
+		case KEY_RIGHT:
+			break;
+		case KEY_SHOOT:
 			break;
 		}
 	}
