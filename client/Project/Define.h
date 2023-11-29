@@ -23,7 +23,7 @@ public: // Framework
 public:
 	static list<CCollider*> ColliderList;
 	static CCamera* MainCamera;
-	static CPlayer* Player;
+	static CPlayer** Players;
 
 public: // Server Sock
 	static SOCKET sock;
@@ -32,6 +32,6 @@ public: // Server Sock
 	static void RecvInputPack(int id);
 
 public:
-	Define() {}
+	Define();
 	~Define();
 };

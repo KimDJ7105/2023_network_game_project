@@ -57,12 +57,12 @@ void CBigMissile::OnCollision(CCollider& other)
 		gameObject->collider->SetActive(false);
 		Reset();
 	}
-	else if (other.tag == "Player")
-	{
-		CStatus* playerStatus = Define::Player->GetChilde("Tank")->GetComponet<CStatus>();
-		playerStatus->hp -= status->damage;
+	//else if (other.tag == "Player")
+	//{
+	//	CStatus* playerStatus = Define::Player->GetChilde("Tank")->GetComponet<CStatus>();
+	//	playerStatus->hp -= status->damage;
 
-		gameObject->collider->SetActive(false);
-		Reset();
-	}
+	//	gameObject->collider->SetActive(false);
+	//	Reset();
+	//}
 }

@@ -420,9 +420,7 @@ void CGameFramework::BuildObjects()
 {
 	m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
 
-	auto scene = Define::SceneManager->GetCurrentScene();
-
-	scene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
+	Define::SceneManager->GetCurrentScene()->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
 	m_pd3dCommandList->Close();
 	ID3D12CommandList *ppd3dCommandLists[] = { m_pd3dCommandList };
@@ -430,7 +428,7 @@ void CGameFramework::BuildObjects()
 
 	WaitForGpuComplete();
 
-	scene->ReleaseUploadBuffers();
+	Define::SceneManager->GetCurrentScene()->ReleaseUploadBuffers();
 
 	m_GameTimer.Reset();
 }
@@ -584,7 +582,9 @@ void CGameFramework::FrameAdvance()
 	m_GameTimer.GetFrameRate(m_pszFrameRate + 12, 37);
 	size_t nLength = _tcslen(m_pszFrameRate);
 	XMFLOAT3 xmf3Position(0,10,0);
-	XMStoreFloat3(&xmf3Position, Define::Player->GetChilde("Pivot")->transform->GetPosition());
+
+	if(Define::Players[Define::ClientIndex] != nullptr)
+		XMStoreFloat3(&xmf3Position, Define::Players[Define::ClientIndex]->GetChilde("Pivot")->transform->GetPosition());
 
 	_stprintf_s(m_pszFrameRate + nLength, 70 - nLength, _T("(%4f, %4f, %4f)"), xmf3Position.x, xmf3Position.y, xmf3Position.z);
 	::SetWindowText(m_hWnd, m_pszFrameRate);

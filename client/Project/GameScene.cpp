@@ -17,8 +17,7 @@ void CGameScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 
 	mainCamera = new CCamera();
 	mainCamera->AddComponet(new CCameraController(mainCamera));
-	localPlayer = nullptr;
-	remotePlayer = nullptr;
+	Define::Players = new CPlayer * [2];
 
 	//CTerrain* terrain = new CMountineTerrain();
 	//terrain->name = "Terrain";
@@ -35,18 +34,20 @@ void CGameScene::AnimateObjects(float fTimeElapsed)
 {
 	CScene::AnimateObjects(fTimeElapsed);
 
-	if (m_pLights && localPlayer != nullptr)
+	if (m_pLights && Define::Players[0] != nullptr)
 	{
-		XMStoreFloat3(&m_pLights[0].m_xmf3Position, localPlayer->tank->gunFrame->transform->GetPosition());
-		XMStoreFloat3(&m_pLights[0].m_xmf3Position, XMLoadFloat3(&m_pLights[0].m_xmf3Position) + localPlayer->tank->gunFrame->transform->GetLook());
-		XMStoreFloat3(&m_pLights[0].m_xmf3Direction, localPlayer->tank->gunFrame->transform->GetLook());
+		CTankPlayer* p = (CTankPlayer*)Define::Players[1];
+		XMStoreFloat3(&m_pLights[1].m_xmf3Position, p->tank->gunFrame->transform->GetPosition());
+		XMStoreFloat3(&m_pLights[1].m_xmf3Position, XMLoadFloat3(&m_pLights[0].m_xmf3Position) + p->tank->gunFrame->transform->GetLook());
+		XMStoreFloat3(&m_pLights[1].m_xmf3Direction, p->tank->gunFrame->transform->GetLook());
 	}
 
-	if (m_pLights && remotePlayer != nullptr)
+	if (m_pLights && Define::Players[1] != nullptr)
 	{
-		XMStoreFloat3(&m_pLights[1].m_xmf3Position, remotePlayer->tank->gunFrame->transform->GetPosition());
-		XMStoreFloat3(&m_pLights[1].m_xmf3Position, XMLoadFloat3(&m_pLights[0].m_xmf3Position) + remotePlayer->tank->gunFrame->transform->GetLook());
-		XMStoreFloat3(&m_pLights[1].m_xmf3Direction, remotePlayer->tank->gunFrame->transform->GetLook());
+		CTankPlayer* p = (CTankPlayer*)Define::Players[1];
+		XMStoreFloat3(&m_pLights[1].m_xmf3Position, p->tank->gunFrame->transform->GetPosition());
+		XMStoreFloat3(&m_pLights[1].m_xmf3Position, XMLoadFloat3(&m_pLights[0].m_xmf3Position) + p->tank->gunFrame->transform->GetLook());
+		XMStoreFloat3(&m_pLights[1].m_xmf3Direction, p->tank->gunFrame->transform->GetLook());
 	}
 }
 

@@ -22,7 +22,7 @@ CGameObject* CGameObjectContainer::CreateGameObject(int typeID)
 		else playerID = 1;
 		CTankPlayer* player = new CTankPlayer();
 		player->playerID = playerID;
-		if (player->playerID == Define::ClientIndex) Define::Player = player;
+		Define::Players[playerID] = player;
 		return player;
 	}
 	case BULLET:
