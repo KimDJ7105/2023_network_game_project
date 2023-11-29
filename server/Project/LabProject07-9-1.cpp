@@ -6,7 +6,7 @@
 #define MAX_LOADSTRING 100
 #pragma comment(lib,"ws2_32")
 
-#define SHOW_RECV_DEBUG false
+#define SHOW_RECV_DEBUG true
 #define SHOW_SEND_DEBUG false
 
 HINSTANCE						ghAppInstance;
