@@ -115,14 +115,12 @@ bool CMouse::GetMousePress(MouseButton button)
 POINT CMouse::GetMouseAxis()
 {
 	POINT Axis{ 0,0 };
-	if (IsMoveAxis()) {
-		if (GetCapture() == Define::Framework->m_hWnd)
-		{
-			SetCursor(NULL);
-			GetCursorPos(&nowCursorPos);
-			Axis.x = (float)(nowCursorPos.x - oldCursorPos.x);
-			Axis.y = (float)(nowCursorPos.y - oldCursorPos.y);
-		}
+	if (GetCapture() == Define::Framework->m_hWnd)
+	{
+		SetCursor(NULL);
+		GetCursorPos(&nowCursorPos);
+		Axis.x = (float)(nowCursorPos.x - oldCursorPos.x);
+		Axis.y = (float)(nowCursorPos.y - oldCursorPos.y);
 	}
 	return Axis;
 }

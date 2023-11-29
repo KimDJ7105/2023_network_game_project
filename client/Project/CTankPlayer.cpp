@@ -12,6 +12,7 @@ CTankPlayer::CTankPlayer()
 
 	pivotObject = new CGameObject();
 	pivotObject->name = "Pivot";
+	pivotObject->AddComponet(new SyncObject(pivotObject));
 	SetChild(pivotObject, true);
 
 	tank = new CTank();
@@ -23,11 +24,11 @@ CTankPlayer::CTankPlayer()
 	//string collidertag = "Player";
 	//collider = new CCollider(this);
 	//tank->upperBodyFrame->collider->tag = collidertag;
-	tank->upperBodyFrame->AddComponet(new SyncObject(this));
+	tank->upperBodyFrame->AddComponet(new SyncObject(tank->upperBodyFrame));
 	//tank->lowerBodyFrame->collider->tag = collidertag;
-	tank->lowerBodyFrame->AddComponet(new SyncObject(this));
+	tank->lowerBodyFrame->AddComponet(new SyncObject(tank->lowerBodyFrame));
 	//tank->gunFrame->collider->tag = collidertag;
-	tank->gunFrame->AddComponet(new SyncObject(this));
+	tank->gunFrame->AddComponet(new SyncObject(tank->gunFrame));
 	//m_pCamera = ChangeCamera(/*SPACESHIP_CAMERA*/THIRD_PERSON_CAMERA, 0.0f);
 
 	tank->SetAllColor(0.0f, 0.0f, 0.8f);

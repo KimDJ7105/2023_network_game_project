@@ -157,13 +157,12 @@ void KeyControl()
 
 void MouseControl()
 {
-
-	POINT mouseAxis = Define::Input->GetMouseAxis();
-	if (mouseAxis.x == 0 && mouseAxis.y == 0) return;
-
-	EVENT e{ MOUSE_MOVE, Define::ClientIndex, mouseAxis };
-	send(Define::sock, (char*)&e, sizeof(EVENT), 0);
-
+	if (Define::Input->GetMousePress(MouseButton::Left))
+	{
+		POINT mouseAxis = Define::Input->GetMouseAxis();
+		EVENT e{ MOUSE_MOVE, Define::ClientIndex, mouseAxis };
+		send(Define::sock, (char*)&e, sizeof(EVENT), 0);
+	}
 }
 
 ATOM MyRegisterClass(HINSTANCE hInstance)
