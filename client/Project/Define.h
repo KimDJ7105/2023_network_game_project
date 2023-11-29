@@ -29,8 +29,6 @@ public: // Server Sock
 	static SOCKET sock;
 	static int ClientIndex;
 
-	static void RecvInputPack(int id);
-
 public:
 	Define();
 	~Define();

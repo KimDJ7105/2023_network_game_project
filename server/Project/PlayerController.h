@@ -17,6 +17,7 @@ public:
 private:
 	void MoveMent();
 	void MouseRotate();
+	void KeyUpdate();
 
 	void IsDie();
 
@@ -25,4 +26,6 @@ private:
 	CGameObject* pivotObject;
 	CTank* tank;
 	CStatus* status;
+
+	bool keyState[5];
 };

@@ -4,6 +4,8 @@
 
 CKey::CKey()
 {
+	isKeyDown = isKeyUp = false;
+
 	key[KeyCode::Q] = 'Q'; key[KeyCode::W] = 'W'; key[KeyCode::E] = 'E'; key[KeyCode::R] = 'R';
 	key[KeyCode::A] = 'A'; key[KeyCode::S] = 'S'; key[KeyCode::D] = 'D'; key[KeyCode::F] = 'F';
 	key[KeyCode::Space] = VK_SPACE;
@@ -20,13 +22,16 @@ void CKey::KeyStateUpdate()
 
 void CKey::OnProceesingKeyBoardMassage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
 {
+	isKeyDown = isKeyUp = false;
 	switch (nMessageID)
 	{
 	case WM_KEYDOWN:
-		KeyState[wParam] = 1;	
+		KeyState[wParam] = 1;
+		isKeyDown = true;
 		break;
 	case WM_KEYUP:
 		KeyState[wParam] = 2;
+		isKeyUp = true;
 		break;
 	}
 }
@@ -43,6 +48,11 @@ bool CKey::GetKeyAny()
 bool CKey::GetKeyDown(KeyCode code)
 {
 	return (KeyState[key[code]] == 1 ) ? true : false;
+}
+
+bool CKey::GetKeyUp(KeyCode code)
+{
+	return (KeyState[key[code]] == 2) ? true : false;
 }
 
 bool CKey::GetKeyPress(KeyCode code)

@@ -15,11 +15,17 @@ public:
 	void KeyStateUpdate();
 	void OnProceesingKeyBoardMassage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 
+	bool IsKeyUp() { return isKeyUp; }
+	bool IsKeyDown() { return isKeyDown; }
+
 	bool GetKeyAny();
 	bool GetKeyDown(KeyCode code); // 최초의 1회 눌렀을 시만 true
+	bool GetKeyUp(KeyCode code);
 	bool GetKeyPress(KeyCode code); // 눌려져 있는 키일 경우 true
 
 protected:
+	bool isKeyDown;
+	bool isKeyUp;
 	map<KeyCode, WPARAM> key;
 	map<WPARAM, unsigned __int8> KeyState; // 0 : 아무것도 안함, 1 : Key Down , 2 : Key Up, 3 : Key Press
 };

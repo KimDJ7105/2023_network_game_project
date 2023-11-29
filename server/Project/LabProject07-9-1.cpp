@@ -107,9 +107,9 @@ DWORD WINAPI RecvThread(LPVOID arg)
 		int retval = recv(Define::sock[c_id], (char*)&pack, sizeof(EVENT), MSG_WAITALL);
 		if (retval == 0) return 0;
 		if (retval == SOCKET_ERROR) err_quit("recv()");
-		else if (SHOW_RECV_DEBUG){
-			printf("%d : recv Input data. Input Type : %d\n", pack.client_id, pack.event_id);
-		}
+		//else if (SHOW_RECV_DEBUG){
+		//	printf("%d : recv Input data. Input Type : %d\n", pack.client_id, pack.event_id);
+		//}
 
 		EnterCriticalSection(&cs);
 		InputEvent.push_back(pack);

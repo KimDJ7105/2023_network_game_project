@@ -78,6 +78,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	CreateThread(NULL, 0, RecvThread, NULL, 0, NULL);
 	while (1)
 	{
+		
 		if (::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 		{
 			if (msg.message == WM_QUIT) break;
@@ -90,7 +91,6 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 		else
 		{
 			WaitForSingleObject(hWoker, INFINITE);
-
 			gGameFramework.FrameAdvance();
 			KeyControl();
 			MouseControl();
@@ -143,16 +143,41 @@ void KeyControl()
 {
 	//if (Define::Input->GetKeyAny()) return;
 	//이 코드가 없으면 정상 작동함.
-	if (Define::Input->GetKeyPress(KeyCode::W))
-		Define::RecvInputPack(KEY_UP);
-	if (Define::Input->GetKeyPress(KeyCode::S))
-		Define::RecvInputPack(KEY_DOWN);
-	if (Define::Input->GetKeyPress(KeyCode::D))
-		Define::RecvInputPack(KEY_RIGHT);
-	if (Define::Input->GetKeyPress(KeyCode::A))
-		Define::RecvInputPack(KEY_LEFT);
-	if (Define::Input->GetKeyPress(KeyCode::Space))
-		Define::RecvInputPack(KEY_SPACE);
+
+	auto recvKey = [](int key, int key_state) {
+		EVENT e{ Define::ClientIndex, -1, -1, {-1,-1} };
+
+		e.event_id = key;
+		e.key_state = key_state;
+		send(Define::sock, (char*)&e, sizeof(EVENT), 0);
+	};
+
+	if (Define::Input->IsKeyDown())
+	{
+		if (Define::Input->GetKeyDown(KeyCode::W))
+			recvKey(KEY_W, KEY_DOWN);
+		if (Define::Input->GetKeyDown(KeyCode::S))
+			recvKey(KEY_S, KEY_DOWN);
+		if (Define::Input->GetKeyDown(KeyCode::D))
+			recvKey(KEY_D, KEY_DOWN);
+		if (Define::Input->GetKeyDown(KeyCode::A))
+			recvKey(KEY_A, KEY_DOWN);
+		if (Define::Input->GetKeyDown(KeyCode::Space))
+			recvKey(KEY_SPACE, KEY_DOWN);
+	}
+	if (Define::Input->IsKeyUp())
+	{
+		if (Define::Input->GetKeyUp(KeyCode::W))
+			recvKey(KEY_W, KEY_UP);
+		if (Define::Input->GetKeyUp(KeyCode::S))
+			recvKey(KEY_S, KEY_UP);
+		if (Define::Input->GetKeyUp(KeyCode::D))
+			recvKey(KEY_D, KEY_UP);
+		if (Define::Input->GetKeyUp(KeyCode::A))
+			recvKey(KEY_A, KEY_UP);
+		if (Define::Input->GetKeyUp(KeyCode::Space))
+			recvKey(KEY_SPACE, KEY_UP);
+	}
 }
 
 void MouseControl()
@@ -160,7 +185,7 @@ void MouseControl()
 	if (Define::Input->GetMousePress(MouseButton::Left))
 	{
 		POINT mouseAxis = Define::Input->GetMouseAxis();
-		EVENT e{ MOUSE_MOVE, Define::ClientIndex, mouseAxis };
+		EVENT e{ Define::ClientIndex, MOUSE_MOVE, -1, mouseAxis };
 		send(Define::sock, (char*)&e, sizeof(EVENT), 0);
 	}
 }

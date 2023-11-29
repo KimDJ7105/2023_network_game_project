@@ -24,9 +24,3 @@ Define::Define()
 Define::~Define()
 {
 }
-
-void Define::RecvInputPack(int id)
-{
-	EVENT e{ id, ClientIndex };
-	send(sock, (char*)&e, sizeof(EVENT), 0);
-}

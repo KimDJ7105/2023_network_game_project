@@ -5,6 +5,8 @@
 
 CPlayerController::CPlayerController(CGameObject* obj) : CComponent(obj)
 {
+	for (int i = 0; i < 5; i++)
+		keyState[i] = false;
 }
 
 void CPlayerController::Start()
@@ -24,6 +26,7 @@ void CPlayerController::Update()
 	//if (Define::Input->GetKeyDown(KeyCode::Space))
 	//	tank->FireBullet(nullptr);
 
+	KeyUpdate();
 	MouseRotate();
 	MoveMent();
 
@@ -33,27 +36,15 @@ void CPlayerController::Update()
 void CPlayerController::MoveMent()
 {
 	XMFLOAT3 dir = XMFLOAT3(0, 0, 0);
-	for (auto input : *Define::Players[playerID]->GetInputEventList())
-	{
-		if (input.event_id == KEY_UP)
-			dir.z += 1;
-		else if (input.event_id == KEY_DOWN)
-			dir.z -= 1;
-		else if (input.event_id == KEY_RIGHT)
-			dir.x += 1;
-		else if (input.event_id == KEY_LEFT)
-			dir.x -= 1;
-	}
-	
-	//if (Define::Input->GetKeyPress(KeyCode::W))
-	//	dir.z += 1;
-	//if (Define::Input->GetKeyPress(KeyCode::S))
-	//	dir.z -= 1;
-	//if (Define::Input->GetKeyPress(KeyCode::D))
-	//	dir.x += 1;
-	//if (Define::Input->GetKeyPress(KeyCode::A))
-	//	dir.x -= 1;
 
+	if (keyState[KEY_W])
+		dir.z += 1;
+	else if (keyState[KEY_S])
+		dir.z -= 1;
+	else if (keyState[KEY_D])
+		dir.x += 1;
+	else if (keyState[KEY_A])
+		dir.x -= 1;
 	//if (Define::Input->GetKeyDown(KeyCode::Q))
 	//	status->speed += 1;
 	//if (Define::Input->GetKeyDown(KeyCode::E))
@@ -67,7 +58,7 @@ void CPlayerController::MoveMent()
 
 void CPlayerController::MouseRotate()
 {
-	for (auto input : *Define::Players[playerID]->GetInputEventList())
+	for (const auto input : *Define::Players[playerID]->GetInputEventList())
 	{
 		if (input.event_id == MOUSE_MOVE)
 		{
@@ -98,6 +89,17 @@ void CPlayerController::MouseRotate()
 	//	pivotObject->transform->Rotate(0.0f, mouseAxis.x, 0.0f);
 	//	tank->Rotate(0.0f, mouseAxis.x, 0.0f);
 	//}
+}
+
+void CPlayerController::KeyUpdate()
+{
+	for (const auto input : *Define::Players[playerID]->GetInputEventList())
+	{
+		if (input.key_state == KEY_DOWN)
+			keyState[input.event_id] = true;
+		else if(input.key_state == KEY_UP)
+			keyState[input.event_id] = false;
+	}
 }
 
 void CPlayerController::IsDie()

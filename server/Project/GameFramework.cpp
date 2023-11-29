@@ -56,11 +56,11 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 	m_hInstance = hInstance;
 	m_hWnd = hMainWnd;
 
-	CreateDirect3DDevice();
-	CreateCommandQueueAndList();
-	CreateRtvAndDsvDescriptorHeaps();
-	CreateSwapChain();
-	CreateDepthStencilView();
+	//CreateDirect3DDevice();
+	//CreateCommandQueueAndList();
+	//CreateRtvAndDsvDescriptorHeaps();
+	//CreateSwapChain();
+	//CreateDepthStencilView();
 
 	BuildObjects();
 
@@ -518,7 +518,7 @@ void CGameFramework::FrameAdvance()
 {    
 	m_GameTimer.Tick(0.0f);
 	
-	ProcessInput();
+	//ProcessInput();
 
     AnimateObjects();
 
