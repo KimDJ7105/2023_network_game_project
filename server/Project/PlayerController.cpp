@@ -69,7 +69,7 @@ void CPlayerController::MouseRotate()
 {
 	for (auto input : *Define::Players[playerID]->GetInputEventList())
 	{
-		if (input.event_id == MOUSE_LEFT)
+		if (input.event_id == MOUSE_MOVE)
 		{
 			POINT mouseAxis = input.mouseAxis;
 			mouseAxis.x /= 3.0f;

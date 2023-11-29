@@ -141,7 +141,8 @@ void RecvInitObject()
 
 void KeyControl()
 {
-	if (Define::Input->GetKeyAny() == false) return;
+	//if (Define::Input->GetKeyAny()) return;
+	//이 코드가 없으면 정상 작동함.
 	if (Define::Input->GetKeyPress(KeyCode::W))
 		Define::RecvInputPack(KEY_UP);
 	if (Define::Input->GetKeyPress(KeyCode::S))
@@ -150,16 +151,19 @@ void KeyControl()
 		Define::RecvInputPack(KEY_RIGHT);
 	if (Define::Input->GetKeyPress(KeyCode::A))
 		Define::RecvInputPack(KEY_LEFT);
+	if (Define::Input->GetKeyPress(KeyCode::Space))
+		Define::RecvInputPack(KEY_SPACE);
 }
 
 void MouseControl()
 {
-	if (Define::Input->IsMoveAxis())
-	{
-		POINT mouseAxis = Define::Input->GetMouseAxis();
-		EVENT e{ MOUSE_LEFT, Define::ClientIndex, mouseAxis };
-		send(Define::sock, (char*)&e, sizeof(EVENT), 0);
-	}
+
+	POINT mouseAxis = Define::Input->GetMouseAxis();
+	if (mouseAxis.x == 0 && mouseAxis.y == 0) return;
+
+	EVENT e{ MOUSE_MOVE, Define::ClientIndex, mouseAxis };
+	send(Define::sock, (char*)&e, sizeof(EVENT), 0);
+
 }
 
 ATOM MyRegisterClass(HINSTANCE hInstance)

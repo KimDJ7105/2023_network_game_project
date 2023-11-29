@@ -100,16 +100,16 @@ DWORD WINAPI RecvThread(LPVOID arg)
 	WaitForSingleObject(hRecvReadyEvent, INFINITE);
 
 	while (true) {
-		cs_player_input_packet pack;
-		int retval = recv(Define::sock[c_id], (char*)&pack, sizeof(cs_player_input_packet), MSG_WAITALL);
+		EVENT pack;
+		int retval = recv(Define::sock[c_id], (char*)&pack, sizeof(EVENT), MSG_WAITALL);
 		if (retval == 0) return 0;
 		if (retval == SOCKET_ERROR) err_quit("recv()");
-		else {
-			printf("%d : recv Input data. Input Type : %d\n", c_id, pack.input_event);
+		else if (pack.event_id == MOUSE_MOVE){
+			printf("%d : recv Input data. Input Type : %d\n", pack.client_id, pack.event_id);
 		}
 
 		EnterCriticalSection(&cs);
-		InputEvent.push_back({ pack.input_event, c_id });
+		InputEvent.push_back(pack);
 		LeaveCriticalSection(&cs);
 	}
 }

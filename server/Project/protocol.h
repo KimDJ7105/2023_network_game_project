@@ -13,8 +13,9 @@ constexpr int KEY_UP = 0;
 constexpr int KEY_DOWN = 1;
 constexpr int KEY_LEFT = 2;
 constexpr int KEY_RIGHT = 3;
+constexpr int KEY_SPACE = 4;
 
-constexpr int MOUSE_LEFT = 11;
+constexpr int MOUSE_MOVE = 11;
 
 // Packet ID
 constexpr int SC_CREATE_OBJECT = 0;
