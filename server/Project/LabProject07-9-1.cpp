@@ -6,6 +6,9 @@
 #define MAX_LOADSTRING 100
 #pragma comment(lib,"ws2_32")
 
+#define SHOW_RECV_DEBUG false
+#define SHOW_SEND_DEBUG false
+
 HINSTANCE						ghAppInstance;
 TCHAR							szTitle[MAX_LOADSTRING];
 TCHAR							szWindowClass[MAX_LOADSTRING];
@@ -104,7 +107,7 @@ DWORD WINAPI RecvThread(LPVOID arg)
 		int retval = recv(Define::sock[c_id], (char*)&pack, sizeof(EVENT), MSG_WAITALL);
 		if (retval == 0) return 0;
 		if (retval == SOCKET_ERROR) err_quit("recv()");
-		else if (pack.event_id == MOUSE_MOVE){
+		else if (SHOW_RECV_DEBUG){
 			printf("%d : recv Input data. Input Type : %d\n", pack.client_id, pack.event_id);
 		}
 
@@ -124,11 +127,11 @@ DWORD WINAPI SendThread(LPVOID arg)
 	{
 		auto createPack = objmgr->GetCreatePack();
 		int createPackSize = createPack->size();
-		if (createPackSize != 0) printf("(createpacket)%d socket : %d EA\n", c_id, createPackSize);
+		if (SHOW_SEND_DEBUG) printf("(createpacket)%d socket : %d EA\n", c_id, createPackSize);
 		send(Define::sock[c_id], (char*)&createPackSize, sizeof(int), 0);
 		for (auto pack : *createPack)
 		{
-			printf("Client %d : Create Object %d\n", c_id, pack.object_type);
+			//printf("Client %d : Create Object %d\n", c_id, pack.object_type);
 			send(Define::sock[c_id], (char*)&pack, sizeof(sc_create_object_packet), 0);
 		}
 	}
@@ -139,7 +142,7 @@ DWORD WINAPI SendThread(LPVOID arg)
 		{
 			auto packList = Define::SyncObjectManager->GetAllTransformPack();
 			int objectSize = packList.size();
-			//printf("(transformpacket)%d socket : %d EA\n", c_id, objectSize);
+			if(SHOW_SEND_DEBUG) printf("(transformpacket)%d socket : %d EA\n", c_id, objectSize);
 			send(Define::sock[c_id], (char*)&objectSize, sizeof(int), 0);
 			for (auto pack : packList)
 				send(Define::sock[c_id], (char*)&pack, sizeof(sc_object_transform_packet), 0);
