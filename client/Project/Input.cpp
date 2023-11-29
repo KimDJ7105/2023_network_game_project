@@ -126,6 +126,14 @@ POINT CMouse::GetMouseAxis()
 	return Axis;
 }
 
+bool CMouse::IsMoveAxis()
+{
+	if (nowCursorPos.x == oldCursorPos.x &&
+		nowCursorPos.y == oldCursorPos.y)
+		return false;
+	return true;
+}
+
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // 
 

@@ -23,6 +23,7 @@ HANDLE hWoker;
 DWORD WINAPI RecvThread(LPVOID arg);
 void RecvInitObject();
 void KeyControl();
+void MouseControl();
 
 ATOM MyRegisterClass(HINSTANCE hInstance);
 BOOL InitInstance(HINSTANCE, int);
@@ -92,6 +93,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 
 			gGameFramework.FrameAdvance();
 			KeyControl();
+			MouseControl();
 
 			ResetEvent(hWoker);
 			SetEvent(hRecvHandle);
@@ -148,6 +150,16 @@ void KeyControl()
 		Define::RecvInputPack(KEY_RIGHT);
 	if (Define::Input->GetKeyPress(KeyCode::A))
 		Define::RecvInputPack(KEY_LEFT);
+}
+
+void MouseControl()
+{
+	if (Define::Input->IsMoveAxis())
+	{
+		POINT mouseAxis = Define::Input->GetMouseAxis();
+		EVENT e{ MOUSE_LEFT, Define::ClientIndex, mouseAxis };
+		send(Define::sock, (char*)&e, sizeof(EVENT), 0);
+	}
 }
 
 ATOM MyRegisterClass(HINSTANCE hInstance)

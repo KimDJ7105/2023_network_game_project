@@ -26,7 +26,7 @@ typedef struct threadarg
 } threadarg;
 
 //----전역변수
-std::queue<EVENT> InputEventQueue;
+std::deque<EVENT> InputEvent;
 extern CRITICAL_SECTION cs;
 
 //sendthread와 workerthread 동기화를 위한 이벤트 핸들
@@ -69,6 +69,15 @@ DWORD WINAPI WorkerThread(LPVOID arg)
 	gGameFramework.BuildObjects();
 	while (1)
 	{
+		if (!InputEvent.empty())
+		{
+			EnterCriticalSection(&cs);
+			for (auto input : InputEvent)
+				Define::Players[input.client_id]->AddEvent(input);
+			InputEvent.clear();
+			LeaveCriticalSection(&cs);
+		}
+
 		gGameFramework.FrameAdvance();
 		SetEvent(hWorkerEvent[0]);
 		SetEvent(hWorkerEvent[1]);
@@ -100,7 +109,7 @@ DWORD WINAPI RecvThread(LPVOID arg)
 		}
 
 		EnterCriticalSection(&cs);
-		InputEventQueue.push({ pack.input_event, c_id });
+		InputEvent.push_back({ pack.input_event, c_id });
 		LeaveCriticalSection(&cs);
 	}
 }

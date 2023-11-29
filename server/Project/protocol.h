@@ -14,6 +14,8 @@ constexpr int KEY_DOWN = 1;
 constexpr int KEY_LEFT = 2;
 constexpr int KEY_RIGHT = 3;
 
+constexpr int MOUSE_LEFT = 11;
+
 // Packet ID
 constexpr int SC_CREATE_OBJECT = 0;
 constexpr int SC_MOVE_OBJECT = 1;
@@ -62,6 +64,7 @@ struct cs_player_input_packet {
 typedef struct event {
 	int event_id;
 	int client_id;
+	POINT mouseAxis;
 } EVENT;
 
 #pragma pack(pop)

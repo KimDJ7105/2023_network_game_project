@@ -39,9 +39,9 @@ void CPlayer::UpdateShaderVariables(ID3D12GraphicsCommandList *pd3dCommandList)
 {
 }
 
-void CPlayer::AddEventQueue(EVENT e)
+void CPlayer::AddEvent(EVENT e)
 {
-	inputEventQueue.emplace(e);
+	inputEvent.emplace_back(e);
 }
 
 void CPlayer::ReleaseShaderVariables()

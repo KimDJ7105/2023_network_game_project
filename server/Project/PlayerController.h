@@ -21,6 +21,7 @@ private:
 	void IsDie();
 
 private:
+	int playerID;
 	CGameObject* pivotObject;
 	CTank* tank;
 	CStatus* status;

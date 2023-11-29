@@ -156,23 +156,6 @@ void CScene::ReleaseShaderVariables()
 	}
 }
 
-void CScene::HandleInputEvent(queue<EVENT> q)
-{
-	EnterCriticalSection(&cs);
-	while (!q.empty()) {
-		EVENT event = q.front();
-		q.pop();
-		switch (event.event_id)
-		{
-		case KEY_UP:
-			break;
-		case KEY_DOWN:
-			break;
-		}
-	}
-	LeaveCriticalSection(&cs);
-}
-
 void CScene::ReleaseUploadBuffers()
 {
 	//for (const auto& obj : Define::GameObjectList)

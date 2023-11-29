@@ -20,7 +20,11 @@ void CGameScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 
 	Define::Players = new CPlayer*[2];
 	Define::Players[0] = new CTankPlayer(PLAYER);
+	Define::Players[0]->playerID = 0;
+	Define::Players[0]->transform->SetPosition(10, 0, 0);
+
 	Define::Players[1] = new CTankPlayer(PLAYER);
+	Define::Players[1]->playerID = 1;
 
 
 	//player = new CTankPlayer();

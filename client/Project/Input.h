@@ -44,6 +44,7 @@ public:
 	bool GetMousePress(MouseButton button);
 	
 	POINT GetMouseAxis();
+	bool IsMoveAxis();
 
 protected:
 	map<MouseButton, unsigned __int8> MouseState; // 0 : 아무것도 안함, 1 : Mouse Down , 2 : Mouse Up, 3 : Mouse Press

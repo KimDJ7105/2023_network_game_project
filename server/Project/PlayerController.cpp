@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "PlayerController.h"
 #include "GameFramework.h"
-#include "Tank.h"
+#include "CTankPlayer.h"
 
 CPlayerController::CPlayerController(CGameObject* obj) : CComponent(obj)
 {
@@ -9,6 +9,7 @@ CPlayerController::CPlayerController(CGameObject* obj) : CComponent(obj)
 
 void CPlayerController::Start()
 {
+	playerID = ((CPlayer*)gameObject)->playerID;
 	pivotObject = gameObject->root->GetChilde("Pivot");
 	pivotObject->transform->SetRotate(0, 180.0, 0);
 	tank = dynamic_cast<CTank*>(gameObject->root->GetChilde("Tank"));
@@ -23,13 +24,27 @@ void CPlayerController::Update()
 	//if (Define::Input->GetKeyDown(KeyCode::Space))
 	//	tank->FireBullet(nullptr);
 
-	//MouseRotate();
-	//MoveMent();
+	MouseRotate();
+	MoveMent();
+
+	Define::Players[playerID]->ClearInputEventList();
 }
 
 void CPlayerController::MoveMent()
 {
 	XMFLOAT3 dir = XMFLOAT3(0, 0, 0);
+	for (auto input : *Define::Players[playerID]->GetInputEventList())
+	{
+		if (input.event_id == KEY_UP)
+			dir.z += 1;
+		else if (input.event_id == KEY_DOWN)
+			dir.z -= 1;
+		else if (input.event_id == KEY_RIGHT)
+			dir.x += 1;
+		else if (input.event_id == KEY_LEFT)
+			dir.x -= 1;
+	}
+	
 	//if (Define::Input->GetKeyPress(KeyCode::W))
 	//	dir.z += 1;
 	//if (Define::Input->GetKeyPress(KeyCode::S))
@@ -52,9 +67,24 @@ void CPlayerController::MoveMent()
 
 void CPlayerController::MouseRotate()
 {
-	POINT mouseAxis = Define::Input->GetMouseAxis();
-	mouseAxis.x /= 3.0f;
-	mouseAxis.y /= 3.0f;
+	for (auto input : *Define::Players[playerID]->GetInputEventList())
+	{
+		if (input.event_id == MOUSE_LEFT)
+		{
+			POINT mouseAxis = input.mouseAxis;
+			mouseAxis.x /= 3.0f;
+			mouseAxis.y /= 3.0f;
+			
+			pivotObject->transform->Rotate(0.0f, mouseAxis.x, 0.0f);
+			tank->Rotate(0.0f, mouseAxis.x, 0.0f);
+
+			break;
+		}
+	}
+
+	//POINT mouseAxis = Define::Input->GetMouseAxis();
+	//mouseAxis.x /= 3.0f;
+	//mouseAxis.y /= 3.0f;
 
 	//if (Define::Input->GetMousePress(MouseButton::Right))
 	//{
@@ -63,11 +93,11 @@ void CPlayerController::MouseRotate()
 	//	else if (roX < -30.0f) roX -= -30.0f;
 	//}
 
-	if (Define::Input->GetMousePress(MouseButton::Left))
-	{
-		pivotObject->transform->Rotate(0.0f, mouseAxis.x, 0.0f);
-		tank->Rotate(0.0f, mouseAxis.x, 0.0f);
-	}
+	//if (Define::Input->GetMousePress(MouseButton::Left))
+	//{
+	//	pivotObject->transform->Rotate(0.0f, mouseAxis.x, 0.0f);
+	//	tank->Rotate(0.0f, mouseAxis.x, 0.0f);
+	//}
 }
 
 void CPlayerController::IsDie()
