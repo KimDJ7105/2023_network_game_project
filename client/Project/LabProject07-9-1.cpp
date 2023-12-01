@@ -90,13 +90,13 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 		}
 		else
 		{
-			WaitForSingleObject(hWoker, INFINITE);
+			//WaitForSingleObject(hWoker, INFINITE);
 			KeyControl();
 			MouseControl();
 			gGameFramework.FrameAdvance(); 
 
-			ResetEvent(hWoker);
-			SetEvent(hRecvHandle);
+			//ResetEvent(hWoker);
+			//SetEvent(hRecvHandle);
 		}
 	}
 	gGameFramework.OnDestroy();
@@ -107,7 +107,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 DWORD WINAPI RecvThread(LPVOID arg)
 {
 	while (true) {
-		WaitForSingleObject(hRecvHandle, INFINITE);
+		//WaitForSingleObject(hRecvHandle, INFINITE);
 		{
 			int transformPackSize = 0;
 			recv(Define::sock, (char*)&transformPackSize, sizeof(int), 0);
@@ -121,8 +121,8 @@ DWORD WINAPI RecvThread(LPVOID arg)
 
 			Define::SyncObjectManager->SetTransformPack(packList);
 		}
-		ResetEvent(hRecvHandle);
-		SetEvent(hWoker);
+		//ResetEvent(hRecvHandle);
+		//SetEvent(hWoker);
 	}
 }
 
