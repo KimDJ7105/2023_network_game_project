@@ -91,9 +91,9 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 		else
 		{
 			WaitForSingleObject(hWoker, INFINITE);
-			gGameFramework.FrameAdvance();
 			KeyControl();
 			MouseControl();
+			gGameFramework.FrameAdvance(); 
 
 			ResetEvent(hWoker);
 			SetEvent(hRecvHandle);
@@ -148,7 +148,7 @@ void KeyControl()
 		EVENT e{ Define::ClientIndex, -1, -1, {-1,-1} };
 
 		e.event_id = key;
-		e.key_state = key_state;
+		e.state = key_state;
 		send(Define::sock, (char*)&e, sizeof(EVENT), 0);
 	};
 
@@ -185,7 +185,12 @@ void MouseControl()
 	if (Define::Input->GetMousePress(MouseButton::Left))
 	{
 		POINT mouseAxis = Define::Input->GetMouseAxis();
-		EVENT e{ Define::ClientIndex, MOUSE_MOVE, -1, mouseAxis };
+		EVENT e{ Define::ClientIndex, MOUSE_LEFT, MOUSE_DOWN, mouseAxis };
+		send(Define::sock, (char*)&e, sizeof(EVENT), 0);
+	}
+	else if (Define::Input->GetMouseUp(MouseButton::Left))
+	{
+		EVENT e{ Define::ClientIndex, MOUSE_LEFT, MOUSE_UP, {0,0} };
 		send(Define::sock, (char*)&e, sizeof(EVENT), 0);
 	}
 }

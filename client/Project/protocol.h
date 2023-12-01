@@ -11,6 +11,8 @@ constexpr int TERRAIN = 2;
 // Key ID
 constexpr int KEY_UP = 0;
 constexpr int KEY_DOWN = 1;
+constexpr int MOUSE_UP = 2;
+constexpr int MOUSE_DOWN = 3;
 
 constexpr int KEY_W = 0;
 constexpr int KEY_S = 1;
@@ -18,7 +20,8 @@ constexpr int KEY_A = 2;
 constexpr int KEY_D = 3;
 constexpr int KEY_SPACE = 4;
 
-constexpr int MOUSE_MOVE = 11;
+constexpr int MOUSE_LEFT = 10;
+constexpr int MOUSE_RIGHT = 11;
 
 // Packet ID
 constexpr int SC_CREATE_OBJECT = 0;
@@ -67,13 +70,8 @@ struct cs_player_input_packet {
 typedef struct event {
 	int client_id;
 	int event_id;
-	int key_state;
+	int state;
 	POINT mouseAxis;
 } EVENT;
-
-struct mouse_packet {
-	int client_id;
-	POINT mouseAxit;
-};
 
 #pragma pack(pop)

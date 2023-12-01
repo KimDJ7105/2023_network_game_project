@@ -28,4 +28,6 @@ private:
 	CStatus* status;
 
 	bool keyState[5];
+	bool mouseState[2];
+	POINT mouseAxis;
 };

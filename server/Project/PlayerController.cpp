@@ -7,6 +7,8 @@ CPlayerController::CPlayerController(CGameObject* obj) : CComponent(obj)
 {
 	for (int i = 0; i < 5; i++)
 		keyState[i] = false;
+	for (int i = 0; i < 2; i++)
+		mouseState[i] = false;
 }
 
 void CPlayerController::Start()
@@ -39,11 +41,11 @@ void CPlayerController::MoveMent()
 
 	if (keyState[KEY_W])
 		dir.z += 1;
-	else if (keyState[KEY_S])
+	if (keyState[KEY_S])
 		dir.z -= 1;
-	else if (keyState[KEY_D])
+	if (keyState[KEY_D])
 		dir.x += 1;
-	else if (keyState[KEY_A])
+	if (keyState[KEY_A])
 		dir.x -= 1;
 	//if (Define::Input->GetKeyDown(KeyCode::Q))
 	//	status->speed += 1;
@@ -58,19 +60,13 @@ void CPlayerController::MoveMent()
 
 void CPlayerController::MouseRotate()
 {
-	for (const auto input : *Define::Players[playerID]->GetInputEventList())
+	if (mouseState[0])
 	{
-		if (input.event_id == MOUSE_MOVE)
-		{
-			POINT mouseAxis = input.mouseAxis;
-			mouseAxis.x /= 3.0f;
-			mouseAxis.y /= 3.0f;
-			
-			pivotObject->transform->Rotate(0.0f, mouseAxis.x, 0.0f);
-			tank->Rotate(0.0f, mouseAxis.x, 0.0f);
+		mouseAxis.x /= 3.0f;
+		mouseAxis.y /= 3.0f;
 
-			break;
-		}
+		pivotObject->transform->Rotate(0.0f, mouseAxis.x, 0.0f);
+		tank->Rotate(0.0f, mouseAxis.x, 0.0f);
 	}
 
 	//POINT mouseAxis = Define::Input->GetMouseAxis();
@@ -95,10 +91,24 @@ void CPlayerController::KeyUpdate()
 {
 	for (const auto input : *Define::Players[playerID]->GetInputEventList())
 	{
-		if (input.key_state == KEY_DOWN)
+		switch (input.state)
+		{
+		case KEY_DOWN:
 			keyState[input.event_id] = true;
-		else if(input.key_state == KEY_UP)
+			break;
+		case KEY_UP:
 			keyState[input.event_id] = false;
+			break;
+		case MOUSE_DOWN:
+			mouseState[input.event_id - 10] = true;
+			mouseAxis = input.mouseAxis;
+			break;
+		case MOUSE_UP:
+			mouseState[input.event_id - 10] = false;
+			break;
+		default:
+			break;
+		}
 	}
 }
 
