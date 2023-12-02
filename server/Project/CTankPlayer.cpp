@@ -18,7 +18,7 @@ CTankPlayer::CTankPlayer(int type) : CPlayer(type)
 	tank = new CTank();
 	tank->BulletInit(0);
 	tank->AddComponet(status);
-	tank->AddComponet(new SyncObject(this));
+	tank->AddComponet(new SyncObject(tank));
 	SetChild(tank, true);
 
 	string collidertag = "Player";
@@ -30,6 +30,10 @@ CTankPlayer::CTankPlayer(int type) : CPlayer(type)
 	tank->gunFrame->collider->tag = collidertag;
 	tank->gunFrame->AddComponet(new SyncObject(tank->gunFrame));
 	//m_pCamera = ChangeCamera(/*SPACESHIP_CAMERA*/THIRD_PERSON_CAMERA, 0.0f);
+	tank->wheelParent->AddComponet(new SyncObject(tank->wheelParent));
+	for (int i = 0; i < 4; i++)
+		tank->wheelsFrame[i]->AddComponet(new SyncObject(tank->wheelsFrame[i]));
+
 
 	tank->SetAllColor(0.0f, 0.0f, 0.8f);
 
