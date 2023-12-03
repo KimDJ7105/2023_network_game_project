@@ -6,9 +6,13 @@
 CParticleSystem::CParticleSystem(int index) : particleIndex(index)
 {
 	name = "Particle";
-	CGameObject* obj = LoadGeometryFromFile("Model/Particle_Cube.bin");
-	particleObjects = new CGameObject *[ObjectIndex];
-	particleObjects[0] = obj;
+	//CGameObject* obj = LoadGeometryFromFile("Model/Particle_Cube.bin");
+	//particleObjects = new CGameObject *[ObjectIndex];
+	//particleObjects[0] = obj;
+
+	particleObjects = new CGameObject * [ObjectIndex];
+	particleObjects[0] = new CGameObject();
+
 	for (int i = 0; i < ObjectIndex; i++) {
 		particleObjects[i]->ReleaseUploadBuffers();
 		Define::SceneManager->GetCurrentScene()->objectManager->DeleteObjectToList(particleObjects[i]);

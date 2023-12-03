@@ -30,6 +30,10 @@ void CPlayerController::Update()
 
 	KeyUpdate();
 	MouseRotate();
+
+	if (keyState[KEY_SPACE])
+		tank->FireBullet(nullptr);
+
 	MoveMent();
 
 	Define::Players[playerID]->ClearInputEventList();
