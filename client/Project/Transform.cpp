@@ -90,17 +90,17 @@ XMVECTOR CTransform::GetPosition()
 	return XMVectorSet(m_xmf4x4World._41, m_xmf4x4World._42, m_xmf4x4World._43, 1.0f);
 }
 
-XMVECTOR CTransform::GetRotate()
-{
-	XMFLOAT3 rotation;
-
-	// 행렬에서 회전 값을 추출
-	rotation.x = XMConvertToDegrees(atan2f(m_xmf4x4World._32, m_xmf4x4World._33));
-	rotation.y = XMConvertToDegrees(atan2f(-m_xmf4x4World._31, sqrtf(m_xmf4x4World._32 * m_xmf4x4World._32 + m_xmf4x4World._33 * m_xmf4x4World._33)));
-	rotation.z = XMConvertToDegrees(atan2f(m_xmf4x4World._21, m_xmf4x4World._11));
-
-	return XMLoadFloat3(&rotation);
-}
+//XMVECTOR CTransform::GetRotate()
+//{
+//	XMFLOAT3 rotation;
+//
+//	// 행렬에서 회전 값을 추출
+//	rotation.x = XMConvertToDegrees(atan2f(m_xmf4x4World._32, m_xmf4x4World._33));
+//	rotation.y = XMConvertToDegrees(atan2f(-m_xmf4x4World._31, sqrtf(m_xmf4x4World._32 * m_xmf4x4World._32 + m_xmf4x4World._33 * m_xmf4x4World._33)));
+//	rotation.z = XMConvertToDegrees(atan2f(m_xmf4x4World._21, m_xmf4x4World._11));
+//
+//	return XMLoadFloat3(&rotation);
+//}
 
 XMVECTOR CTransform::GetLook()
 {

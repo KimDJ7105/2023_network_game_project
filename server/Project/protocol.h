@@ -46,6 +46,9 @@ struct sc_create_object_packet {
 
 struct sc_object_transform_packet {
 	int object_id;
+	XMVECTOR position;
+	XMVECTOR rotate;
+	XMVECTOR scale;
 	XMFLOAT4X4 matrix;
 
 	sc_object_transform_packet();

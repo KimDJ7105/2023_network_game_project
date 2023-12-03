@@ -36,6 +36,9 @@ vector<sc_object_transform_packet> CSyncObjectManager::GetAllTransformPack()
 	for (int i = 0; i < packSize; i++)
 	{
 		packlist[i].object_id = syncList[i]->id;
+		packlist[i].position = syncList[i]->gameObject->transform->GetLocalPosition();
+		packlist[i].rotate = syncList[i]->gameObject->transform->GetRotate();
+		packlist[i].scale = syncList[i]->gameObject->transform->GetScale();
 		packlist[i].matrix = syncList[i]->gameObject->transform->m_xmf4x4Transform;
 	}
 

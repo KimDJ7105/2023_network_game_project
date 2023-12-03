@@ -57,6 +57,9 @@ void CSyncObjectManager::UpdateAllTransformPack()
 	{
 		if (syncList.size() <= pack.object_id) continue;
 		syncList[pack.object_id]->gameObject->transform->m_xmf4x4Transform = pack.matrix;
+		syncList[pack.object_id]->gameObject->transform->SetPosition(pack.position);
+		syncList[pack.object_id]->gameObject->transform->SetRotate(pack.rotate);
+		syncList[pack.object_id]->gameObject->transform->SetScale(pack.scale);
 	}
 
 	transformPackList.clear();

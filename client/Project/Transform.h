@@ -28,8 +28,8 @@ public: // getter setter
 
 	XMVECTOR GetScale() { return scale; }
 
-	//XMVECTOR GetRotate() { return rotate; }
-	XMVECTOR GetRotate();
+	XMVECTOR GetRotate() { return rotate; }
+	//XMVECTOR GetRotate();
 
 	XMVECTOR GetLook();
 	XMVECTOR GetUp();
