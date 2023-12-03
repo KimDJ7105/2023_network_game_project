@@ -156,7 +156,10 @@
     <ClInclude Include="CSyncObjectManager.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="protocol.h">
+    <ClInclude Include="..\..\PublicLib\NetworkConverter.h">
+      <Filter>Framework\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PublicLib\protocol.h">
       <Filter>Framework\Network</Filter>
     </ClInclude>
   </ItemGroup>
@@ -257,7 +260,10 @@
     <ClCompile Include="CSyncObjectManager.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="protocol.cpp">
+    <ClCompile Include="..\..\PublicLib\NetworkConverter.cpp">
+      <Filter>Framework\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\PublicLib\protocol.cpp">
       <Filter>Framework\Network</Filter>
     </ClCompile>
   </ItemGroup>

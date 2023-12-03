@@ -32,16 +32,17 @@ constexpr int CS_PLAYER_INPUT = 4;
 
 
 #pragma pack(push, 1)
+#include <D3Dcompiler.h>
+#include <DirectXPackedVector.h>
 
+using namespace DirectX;
+using namespace DirectX::PackedVector;
 // 패킷 구조체
 
 //s -> c
 struct sc_create_object_packet {
 	int object_type;
 	XMFLOAT4X4 matrix;
-
-	sc_create_object_packet();
-	sc_create_object_packet(int type, XMFLOAT4X4 _matrix);
 };
 
 struct sc_object_transform_packet {
@@ -51,13 +52,12 @@ struct sc_object_transform_packet {
 	XMVECTOR scale;
 	XMFLOAT4X4 matrix;
 
-	sc_object_transform_packet();
+	bool isActive;
 };
 
 struct sc_delete_object_packet {
 	int object_id;
 
-	sc_delete_object_packet(int id = -1);
 };
 
 struct sc_collision_object_packet {

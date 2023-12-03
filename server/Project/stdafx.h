@@ -73,7 +73,9 @@ using Microsoft::WRL::ComPtr;
 #include "Define.h"
 #include "Input.h"
 #include "SceneManager.h"
-#include "protocol.h"
+//#include "protocol.h"
+#include "../../PublicLib/protocol.h"
+#include "../../PublicLib/NetworkConverter.h"
 #include <array>
 #include <queue>
 
