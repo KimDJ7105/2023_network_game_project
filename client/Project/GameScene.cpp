@@ -36,17 +36,17 @@ void CGameScene::AnimateObjects(float fTimeElapsed)
 
 	if (m_pLights && Define::Players[0] != nullptr)
 	{
-		CTankPlayer* p = (CTankPlayer*)Define::Players[1];
-		XMStoreFloat3(&m_pLights[1].m_xmf3Position, p->tank->gunFrame->transform->GetPosition());
-		XMStoreFloat3(&m_pLights[1].m_xmf3Position, XMLoadFloat3(&m_pLights[0].m_xmf3Position) + p->tank->gunFrame->transform->GetLook());
-		XMStoreFloat3(&m_pLights[1].m_xmf3Direction, p->tank->gunFrame->transform->GetLook());
+		CTankPlayer* p = (CTankPlayer*)Define::Players[0];
+		XMStoreFloat3(&m_pLights[0].m_xmf3Position, p->tank->gunFrame->transform->GetPosition());
+		XMStoreFloat3(&m_pLights[0].m_xmf3Position, XMLoadFloat3(&m_pLights[0].m_xmf3Position) + p->tank->gunFrame->transform->GetLook());
+		XMStoreFloat3(&m_pLights[0].m_xmf3Direction, p->tank->gunFrame->transform->GetLook());
 	}
 
 	if (m_pLights && Define::Players[1] != nullptr)
 	{
 		CTankPlayer* p = (CTankPlayer*)Define::Players[1];
 		XMStoreFloat3(&m_pLights[1].m_xmf3Position, p->tank->gunFrame->transform->GetPosition());
-		XMStoreFloat3(&m_pLights[1].m_xmf3Position, XMLoadFloat3(&m_pLights[0].m_xmf3Position) + p->tank->gunFrame->transform->GetLook());
+		XMStoreFloat3(&m_pLights[1].m_xmf3Position, XMLoadFloat3(&m_pLights[1].m_xmf3Position) + p->tank->gunFrame->transform->GetLook());
 		XMStoreFloat3(&m_pLights[1].m_xmf3Direction, p->tank->gunFrame->transform->GetLook());
 	}
 }

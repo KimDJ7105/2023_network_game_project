@@ -18,6 +18,8 @@ public:
 
 	void SetActive(bool value);
 	bool GetActive() { return isActive; }
+	void ActiveUpdate(bool value);
+
 	virtual void Enable() {}
 	virtual void Disable() {}
 

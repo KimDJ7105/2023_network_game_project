@@ -27,8 +27,8 @@ CGameObject* CGameObjectContainer::CreateGameObject(int typeID)
 	}
 	case BULLET:
 		return new CBulletObject;
-		//case TREE:
-		//	return new CTree;
+	case TREE:
+		return new CTree;
 	default:
 		return nullptr;
 	}

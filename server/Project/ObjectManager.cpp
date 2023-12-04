@@ -147,6 +147,13 @@ void ObjectManager::AllGameObjectLateUpdate()
 		obj->LateUpdate();
 }
 
+void ObjectManager::AllActiveObjectUpdate()
+{
+	for (const auto& item : _ActiveObjectList)
+		item.first->ActiveUpdate(item.second);
+	ClearActiveObjectList();
+}
+
 void ObjectManager::AllGameObjectRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
 {
 	for (const auto& obj : _GameObjectList)

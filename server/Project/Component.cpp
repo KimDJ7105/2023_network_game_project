@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "Component.h"
 #include "Object.h"
+#include "SceneManager.h"
+#include "Scene.h"
 
 CComponent::CComponent(CGameObject* obj) : gameObject(obj)
 {
@@ -8,6 +10,11 @@ CComponent::CComponent(CGameObject* obj) : gameObject(obj)
 }
 
 void CComponent::SetActive(bool value)
+{
+	Define::SceneManager->GetCurrentScene()->objectManager->AddActiveObject(gameObject, value);
+}
+
+void CComponent::ActiveUpdate(bool value)
 {
 	if (isActive == true && value == false)
 		Disable();

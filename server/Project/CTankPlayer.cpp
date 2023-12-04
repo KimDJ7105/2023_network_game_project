@@ -38,25 +38,27 @@ CTankPlayer::CTankPlayer(int type) : CPlayer(type)
 	tank->SetAllColor(0.0f, 0.0f, 0.8f);
 
 	// init collider
-	//collider->CollisionCall = [](CCollider& obj, CCollider& other) {
-	//	if (other.tag == "Enumy Bullet")
-	//	{
-	//		auto status = obj.gameObject->GetComponet<CStatus>();
-	//		status->hp -= dynamic_cast<CBulletObject*>(other.gameObject->m_pParent)->status->damage;
-	//	}
-	//};
+	collider->CollisionCall = [](CCollider& obj, CCollider& other) {
+		if (other.tag == "Bullet")
+		{
+			auto status = obj.gameObject->GetComponent<CStatus>();
+			status->hp -= dynamic_cast<CBulletObject*>(other.gameObject->m_pParent)->status->damage;
+			printf("%s hp : %f", obj.gameObject->name.data(), status->hp);
+			if (status->CheckDie())
+				printf("%s Die", obj.gameObject->name.data());
+		}
+	};
 
 	for (int i = 0; i < tank->bulletIndex; i++)
 	{
-		//tank->bullets[i]->collider->tag = "Player Bullet";
-		tank->bullets[i]->missile->collider->tag = "Player Bullet";
+		//tank->bullets[i]->collider->tag = "Bullet";
+		tank->bullets[i]->missile->collider->tag = "Bullet";
 		tank->bullets[i]->missile->collider->CollisionCall = [](CCollider& obj, CCollider& other) {
-			if (other.tag != "Player")
-				dynamic_cast<CBulletObject*>(obj.gameObject->root)->Reset();
+			dynamic_cast<CBulletObject*>(obj.gameObject->root)->Reset();
 		};
 	}
 
-	status->maxHP = status->hp = 1000;
+	status->maxHP = status->hp = 100;
 	status->speed = 3.0f;
 	AddComponet(new CRigidBody(this));
 	AddComponet(new CPlayerController(this));

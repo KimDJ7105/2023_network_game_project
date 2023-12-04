@@ -7,6 +7,7 @@ constexpr int BUFSIZE = 256;
 constexpr int PLAYER = 0;
 constexpr int BULLET = 1;
 constexpr int TERRAIN = 2;
+constexpr int TREE = 3;
 
 // Key ID
 constexpr int KEY_UP = 0;

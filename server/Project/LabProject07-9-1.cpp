@@ -110,9 +110,9 @@ DWORD WINAPI RecvThread(LPVOID arg)
 			if (c_id == 0) err_quit("recv()0");
 			if (c_id == 1) err_quit("recv()1");
 		}
-		else if (SHOW_RECV_DEBUG){
-			printf("%d : recv Input data. Input Type : %d\n", pack.client_id, pack.event_id);
-		}
+		//else if (SHOW_RECV_DEBUG){
+		//	printf("%d : recv Input data. Input Type : %d\n", pack.client_id, pack.event_id);
+		//}
 
 		EnterCriticalSection(&cs);
 		InputEvent.push_back(pack);
