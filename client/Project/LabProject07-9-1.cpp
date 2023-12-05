@@ -185,6 +185,7 @@ void MouseControl()
 	if (Define::Input->GetMousePress(MouseButton::Left))
 	{
 		POINT mouseAxis = Define::Input->GetMouseAxis();
+		if (mouseAxis.x == 0 && mouseAxis.y == 0) return;
 		EVENT e{ Define::ClientIndex, MOUSE_LEFT, MOUSE_DOWN, mouseAxis };
 		send(Define::sock, (char*)&e, sizeof(EVENT), 0);
 	}
