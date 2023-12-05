@@ -6,7 +6,7 @@
 #define MAX_LOADSTRING 100
 #pragma comment(lib,"ws2_32")
 
-#define SHOW_RECV_DEBUG true
+#define SHOW_RECV_DEBUG false
 #define SHOW_SEND_DEBUG false
 
 HINSTANCE						ghAppInstance;
@@ -110,9 +110,10 @@ DWORD WINAPI RecvThread(LPVOID arg)
 			if (c_id == 0) err_quit("recv()0");
 			if (c_id == 1) err_quit("recv()1");
 		}
-		//else if (SHOW_RECV_DEBUG){
-		//	printf("%d : recv Input data. Input Type : %d\n", pack.client_id, pack.event_id);
-		//}
+		else if (SHOW_RECV_DEBUG){
+			printf("%d : recv Input data. Input Type : %d\n", pack.client_id, pack.event_id);
+		}
+		//if (pack.event_id == MOUSE_LEFT) printf("Mouse Moved Left : %d, %d\n", pack.mouseAxis.x, pack.mouseAxis.y);
 
 		EnterCriticalSection(&cs);
 		InputEvent.push_back(pack);

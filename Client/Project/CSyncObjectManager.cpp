@@ -6,6 +6,7 @@
 CSyncObjectManager::CSyncObjectManager()
 {
 	Define::SyncObjectManager = this;
+	InitializeCriticalSection(&sync_cs);
 }
 
 CSyncObjectManager::~CSyncObjectManager()
@@ -13,6 +14,7 @@ CSyncObjectManager::~CSyncObjectManager()
 	_CreatePack.clear();
 	transformPackList.clear();
 	syncList.clear();
+	DeleteCriticalSection(&sync_cs);
 }
 
 void CSyncObjectManager::AddSyncObject(SyncObject* sync)
@@ -48,11 +50,14 @@ vector<sc_object_transform_packet> CSyncObjectManager::GetAllTransformPack()
 
 void CSyncObjectManager::SetTransformPack(vector<sc_object_transform_packet> packList)
 {
+	EnterCriticalSection(&sync_cs);
 	transformPackList = packList;
+	LeaveCriticalSection(&sync_cs);
 }
 
 void CSyncObjectManager::UpdateAllTransformPack()
 {
+	EnterCriticalSection(&sync_cs);
 	for (auto pack : transformPackList)
 	{
 		if (syncList.size() <= pack.object_id) continue;
@@ -65,6 +70,7 @@ void CSyncObjectManager::UpdateAllTransformPack()
 	}
 
 	transformPackList.clear();
+	LeaveCriticalSection(&sync_cs);
 }
 
 void CSyncObjectManager::AddRangeCreatePack(vector<sc_create_object_packet>* list)
