@@ -453,27 +453,27 @@ void CGameFramework::ProcessInput()
 		if (pKeysBuffer[VK_PRIOR] & 0xF0) dwDirection |= DIR_UP;
 		if (pKeysBuffer[VK_NEXT] & 0xF0) dwDirection |= DIR_DOWN;
 
-		float cxDelta = 0.0f, cyDelta = 0.0f;
-		POINT ptCursorPos;
+		//float cxDelta = 0.0f, cyDelta = 0.0f;
+		//POINT ptCursorPos;
 		if (GetCapture() == m_hWnd)
 		{
 			SetCursor(NULL);
-			GetCursorPos(&ptCursorPos);
-			cxDelta = (float)(ptCursorPos.x - m_ptOldCursorPos.x) / 3.0f;
-			cyDelta = (float)(ptCursorPos.y - m_ptOldCursorPos.y) / 3.0f;
+			//GetCursorPos(&ptCursorPos);
+			//cxDelta = (float)(ptCursorPos.x - m_ptOldCursorPos.x) / 3.0f;
+			//cyDelta = (float)(ptCursorPos.y - m_ptOldCursorPos.y) / 3.0f;
 			SetCursorPos(m_ptOldCursorPos.x, m_ptOldCursorPos.y);
 		}
 
-		if ((dwDirection != 0) || (cxDelta != 0.0f) || (cyDelta != 0.0f))
-		{
-			//if (cxDelta || cyDelta)
-			//{
-			//	if (pKeysBuffer[VK_RBUTTON] & 0xF0)
-			//		dynamic_cast<CTankPlayer*>(Define::Player)->pivotObject->transform->Rotate(cyDelta, 0.0f, 0.0f);
-			//	else
-			//		dynamic_cast<CTankPlayer*>(Define::Player)->pivotObject->transform->Rotate(0.0f, cxDelta, 0.0f);
-			//}
-		}
+		//if ((dwDirection != 0) || (cxDelta != 0.0f) || (cyDelta != 0.0f))
+		//{
+		//	//if (cxDelta || cyDelta)
+		//	//{
+		//	//	if (pKeysBuffer[VK_RBUTTON] & 0xF0)
+		//	//		dynamic_cast<CTankPlayer*>(Define::Player)->pivotObject->transform->Rotate(cyDelta, 0.0f, 0.0f);
+		//	//	else
+		//	//		dynamic_cast<CTankPlayer*>(Define::Player)->pivotObject->transform->Rotate(0.0f, cxDelta, 0.0f);
+		//	//}
+		//}
 	}
 }
 

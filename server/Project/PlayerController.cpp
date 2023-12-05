@@ -66,12 +66,24 @@ void CPlayerController::MouseRotate()
 {
 	if (mouseState[0])
 	{
-		mouseAxis.x /= 3.0f;
-		mouseAxis.y /= 3.0f;
+		float x = (float)mouseAxis.x / 2.0f;
+		//printf("y : %f\n", tank->upperBodyFrame->transform->GetPosition().m128_f32[2]);
 
-		pivotObject->transform->Rotate(0.0f, mouseAxis.x, 0.0f);
-		tank->Rotate(0.0f, mouseAxis.x, 0.0f);
+		pivotObject->transform->Rotate(0.0f, x, 0.0f);
+		tank->Rotate(0.0f, x, 0.0f);
 	}
+
+	if (mouseState[1])
+	{
+		float y = (float)mouseAxis.y / 3.0f;
+		float roX = XMVectorGetX(pivotObject->transform->GetRotate()) + y;
+		if (roX > 30.0f) roX = -30.0f;
+		else if (roX < -30.0f) roX -= -30.0f;
+
+		tank->Rotate(roX, 0.0f, 0.0f);
+	}
+
+	mouseAxis.x = mouseAxis.y = 0;
 
 	//POINT mouseAxis = Define::Input->GetMouseAxis();
 	//mouseAxis.x /= 3.0f;

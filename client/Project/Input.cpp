@@ -87,17 +87,21 @@ void CMouse::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam,
 	{
 	case WM_LBUTTONDOWN:
 		MouseState[MouseButton::Left] = 1;
+		SetCapture(hWnd);
 		GetCursorPos(&oldCursorPos);
 		break;
 	case WM_RBUTTONDOWN:
 		MouseState[MouseButton::Right] = 1;
+		SetCapture(hWnd);
 		GetCursorPos(&oldCursorPos);
 		break;
 	case WM_LBUTTONUP:
 		MouseState[MouseButton::Left] = 2;
+		ReleaseCapture();
 		break;
 	case WM_RBUTTONUP:
 		MouseState[MouseButton::Right] = 2;
+		ReleaseCapture();
 		break;
 	case WM_MOUSEMOVE:
 		GetCursorPos(&oldCursorPos);

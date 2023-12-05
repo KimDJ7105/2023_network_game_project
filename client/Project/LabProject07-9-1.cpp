@@ -200,6 +200,19 @@ void MouseControl()
 		EVENT e{ Define::ClientIndex, MOUSE_LEFT, MOUSE_UP, {0,0} };
 		send(Define::sock, (char*)&e, sizeof(EVENT), 0);
 	}
+
+	if (Define::Input->GetMousePress(MouseButton::Right))
+	{
+		POINT mouseAxis = Define::Input->GetMouseAxis();
+		if (mouseAxis.x == 0 && mouseAxis.y == 0) return;
+		EVENT e{ Define::ClientIndex, MOUSE_RIGHT, MOUSE_DOWN, mouseAxis };
+		send(Define::sock, (char*)&e, sizeof(EVENT), 0);
+	}
+	else if (Define::Input->GetMouseUp(MouseButton::Right))
+	{
+		EVENT e{ Define::ClientIndex, MOUSE_RIGHT, MOUSE_UP, {0,0} };
+		send(Define::sock, (char*)&e, sizeof(EVENT), 0);
+	}
 }
 
 ATOM MyRegisterClass(HINSTANCE hInstance)
