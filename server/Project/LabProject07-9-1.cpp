@@ -113,6 +113,7 @@ DWORD WINAPI RecvThread(LPVOID arg)
 		else if (SHOW_RECV_DEBUG){
 			printf("%d : recv Input data. Input Type : %d\n", pack.client_id, pack.event_id);
 		}
+		//if (pack.event_id == MOUSE_LEFT) printf("Mouse Moved Left : %d, %d\n", pack.mouseAxis.x, pack.mouseAxis.y);
 
 		EnterCriticalSection(&cs);
 		InputEvent.push_back(pack);

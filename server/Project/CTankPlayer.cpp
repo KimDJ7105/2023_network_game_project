@@ -43,9 +43,9 @@ CTankPlayer::CTankPlayer(int type) : CPlayer(type)
 		{
 			auto status = obj.gameObject->GetComponent<CStatus>();
 			status->hp -= dynamic_cast<CBulletObject*>(other.gameObject->m_pParent)->status->damage;
-			printf("%s hp : %f", obj.gameObject->name.data(), status->hp);
+			printf("%s hp : %f\n", obj.gameObject->name.data(), status->hp);
 			if (status->CheckDie())
-				printf("%s Die", obj.gameObject->name.data());
+				printf("%s Die\n", obj.gameObject->name.data());
 		}
 	};
 
