@@ -137,6 +137,12 @@ void RecvInitObject()
 		recv(Define::sock, (char*)&pack, sizeof(sc_create_object_packet), 0);
 		Define::SyncObjectManager->AddCreatePack(pack);
 	}
+
+	//NetworkConverter nc;
+	//nc.Recv(Define::sock);
+	//
+	//auto* packList = nc.ReadBuffer<sc_create_object_packet>();
+	//Define::SyncObjectManager->AddRangeCreatePack(packList);
 }
 
 void KeyControl()

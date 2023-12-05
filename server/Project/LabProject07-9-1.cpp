@@ -126,7 +126,7 @@ DWORD WINAPI SendThread(LPVOID arg)
 	int retval;
 
 	auto objmgr = Define::SceneManager->GetCurrentScene()->objectManager;
-
+	
 	{
 		auto createPack = objmgr->GetCreatePack();
 		int createPackSize = createPack->size();
@@ -137,6 +137,13 @@ DWORD WINAPI SendThread(LPVOID arg)
 			//printf("Client %d : Create Object %d\n", c_id, pack.object_type);
 			send(Define::sock[c_id], (char*)&pack, sizeof(sc_create_object_packet), 0);
 		}
+
+		//NetworkConverter nc;
+		//auto packList = objmgr->GetCreatePack();
+		//int packListSize = packList->size();
+		//nc.AddBufferIndex((char*)&SC_CREATE_OBJECT);
+		//nc.AddBuffer(*packList);
+		//nc.Send(Define::sock[c_id]);
 	}
 
 	while (true) {

@@ -260,12 +260,6 @@
     <ClCompile Include="CSyncObjectManager.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\PublicLib\NetworkConverter.cpp">
-      <Filter>Framework\Network</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\PublicLib\protocol.cpp">
-      <Filter>Framework\Network</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="LabProject07-9-1.rc">

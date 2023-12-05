@@ -19,6 +19,7 @@ public: // transform packet
 
 public: // create Pack
 	void AddCreatePack(sc_create_object_packet pack) { _CreatePack.emplace_back(pack); }
+	void AddRangeCreatePack(vector<sc_create_object_packet>* list);
 	void AllCreatePackUpdate();
 
 private:

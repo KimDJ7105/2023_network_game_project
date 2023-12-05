@@ -67,6 +67,11 @@ void CSyncObjectManager::UpdateAllTransformPack()
 	transformPackList.clear();
 }
 
+void CSyncObjectManager::AddRangeCreatePack(vector<sc_create_object_packet>* list)
+{
+	_CreatePack.insert(_CreatePack.begin(), list->begin(), list->end());
+}
+
 void CSyncObjectManager::AllCreatePackUpdate()
 {
 	for (const auto pack : _CreatePack)
