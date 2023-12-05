@@ -46,7 +46,6 @@ CTankPlayer::CTankPlayer(int type) : CPlayer(type)
 			printf("%s hp : %f", obj.gameObject->name.data(), status->hp);
 			if (status->CheckDie())
 				printf("%s Die", obj.gameObject->name.data());
-
 		}
 	};
 
@@ -64,7 +63,6 @@ CTankPlayer::CTankPlayer(int type) : CPlayer(type)
 	AddComponet(new CRigidBody(this));
 	AddComponet(new CPlayerController(this));
 	AddComponet(new SyncObject(this));
-	AddComponet(status);
 }
 
 CTankPlayer::~CTankPlayer()
