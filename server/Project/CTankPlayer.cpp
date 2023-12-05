@@ -63,6 +63,7 @@ CTankPlayer::CTankPlayer(int type) : CPlayer(type)
 	AddComponet(new CRigidBody(this));
 	AddComponet(new CPlayerController(this));
 	AddComponet(new SyncObject(this));
+	AddComponet(status);
 }
 
 CTankPlayer::~CTankPlayer()
