@@ -72,19 +72,20 @@ DWORD WINAPI WorkerThread(LPVOID arg)
 	gGameFramework.BuildObjects();
 	while (1)
 	{
+		EnterCriticalSection(&cs);
 		if (!InputEvent.empty())
 		{
-			EnterCriticalSection(&cs);
 			for (auto input : InputEvent)
 				Define::Players[input.client_id]->AddEvent(input);
 			InputEvent.clear();
-			LeaveCriticalSection(&cs);
 		}
+		LeaveCriticalSection(&cs);
 
 		gGameFramework.FrameAdvance();
 		SetEvent(hWorkerEvent[0]);
 		SetEvent(hWorkerEvent[1]);
 		WaitForMultipleObjects(2, hSendEvent,true, INFINITE);
+		WaitForMultipleObjects(2, hSendEvent, true, INFINITE);
 		{
 			auto objMgr = Define::SceneManager->GetCurrentScene()->objectManager;
 			objMgr->GetCreatePack()->clear();
