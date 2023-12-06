@@ -29,7 +29,7 @@ void CPlayerController::Update()
 	//	tank->FireBullet(nullptr);
 
 	KeyUpdate();
-	MouseRotate();
+	//MouseRotate();
 
 	if (keyState[KEY_SPACE])
 		tank->FireBullet(nullptr);
@@ -66,7 +66,7 @@ void CPlayerController::MouseRotate()
 {
 	if (mouseState[0])
 	{
-		float x = (float)mouseAxis.x / 2.0f;
+		float x = (float)mouseAxis.x * 100.0f * Define::GameTimer->GetTimeElapsed();
 		//printf("y : %f\n", tank->upperBodyFrame->transform->GetPosition().m128_f32[2]);
 
 		pivotObject->transform->Rotate(0.0f, x, 0.0f);
@@ -118,6 +118,7 @@ void CPlayerController::KeyUpdate()
 		case MOUSE_DOWN:
 			mouseState[input.event_id - 10] = true;
 			mouseAxis = input.mouseAxis;
+			MouseRotate();
 			break;
 		case MOUSE_UP:
 			mouseState[input.event_id - 10] = false;

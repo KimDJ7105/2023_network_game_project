@@ -358,29 +358,29 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 {
 	switch (nMessageID)
 	{
-		case WM_ACTIVATE:
-		{
-			if (LOWORD(wParam) == WA_INACTIVE)
-				m_GameTimer.Stop();
-			else
-				m_GameTimer.Start();
-			break;
-		}
-		case WM_SIZE:
-			break;
-		case WM_LBUTTONDOWN:
-        case WM_RBUTTONDOWN:
-        case WM_LBUTTONUP:
-        case WM_RBUTTONUP:
-        case WM_MOUSEMOVE:
-			OnProcessingMouseMessage(hWnd, nMessageID, wParam, lParam);
-            break;
-        case WM_KEYDOWN:
-			OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);
-			break;
-        case WM_KEYUP:
-			OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);
-			break;
+		//case WM_ACTIVATE:
+		//{
+		//	if (LOWORD(wParam) == WA_INACTIVE)
+		//		m_GameTimer.Stop();
+		//	else
+		//		m_GameTimer.Start();
+		//	break;
+		//}
+		//case WM_SIZE:
+		//	break;
+		//case WM_LBUTTONDOWN:
+  //      case WM_RBUTTONDOWN:
+  //      case WM_LBUTTONUP:
+  //      case WM_RBUTTONUP:
+  //      case WM_MOUSEMOVE:
+		//	OnProcessingMouseMessage(hWnd, nMessageID, wParam, lParam);
+  //          break;
+  //      case WM_KEYDOWN:
+		//	OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);
+		//	break;
+  //      case WM_KEYUP:
+		//	OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);
+		//	break;
 	}
 	return(0);
 }
@@ -516,10 +516,10 @@ void CGameFramework::MoveToNextFrame()
 
 void CGameFramework::FrameAdvance()
 {    
-	m_GameTimer.Tick(0.0f);
+	m_GameTimer.Tick(120.0f);
+	int fps = m_GameTimer.GetFrameRate(m_pszFrameRate + 12, 37);
+	//cout << fps << endl;
 
     AnimateObjects();
 
-	m_GameTimer.GetFrameRate(m_pszFrameRate + 12, 37);
-	size_t nLength = _tcslen(m_pszFrameRate);
 }

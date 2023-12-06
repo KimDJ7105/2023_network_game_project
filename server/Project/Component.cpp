@@ -22,6 +22,6 @@ void CComponent::ActiveUpdate(bool value)
 		Enable();
 	isActive = value;
 
-	if (gameObject->m_pSibling) gameObject->m_pSibling->SetActive(value);
-	if (gameObject->m_pChild) gameObject->m_pChild->SetActive(value);
+	if (gameObject->m_pSibling) gameObject->m_pSibling->ActiveUpdate(value);
+	if (gameObject->m_pChild) gameObject->m_pChild->ActiveUpdate(value);
 }

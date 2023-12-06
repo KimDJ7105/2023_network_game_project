@@ -191,9 +191,12 @@ void MouseControl()
 	if (Define::Input->GetMousePress(MouseButton::Left))
 	{
 		POINT mouseAxis = Define::Input->GetMouseAxis();
-		if (mouseAxis.x == 0 && mouseAxis.y == 0) return;
-		EVENT e{ Define::ClientIndex, MOUSE_LEFT, MOUSE_DOWN, mouseAxis };
-		send(Define::sock, (char*)&e, sizeof(EVENT), 0);
+		mouseAxis.x *= 10;
+		if (mouseAxis.x != 0)
+		{
+			EVENT e{ Define::ClientIndex, MOUSE_LEFT, MOUSE_DOWN, mouseAxis };
+			send(Define::sock, (char*)&e, sizeof(EVENT), 0);
+		}
 	}
 	else if (Define::Input->GetMouseUp(MouseButton::Left))
 	{
@@ -204,9 +207,11 @@ void MouseControl()
 	if (Define::Input->GetMousePress(MouseButton::Right))
 	{
 		POINT mouseAxis = Define::Input->GetMouseAxis();
-		if (mouseAxis.x == 0 && mouseAxis.y == 0) return;
-		EVENT e{ Define::ClientIndex, MOUSE_RIGHT, MOUSE_DOWN, mouseAxis };
-		send(Define::sock, (char*)&e, sizeof(EVENT), 0);
+		if (mouseAxis.y != 0)
+		{
+			EVENT e{ Define::ClientIndex, MOUSE_RIGHT, MOUSE_DOWN, mouseAxis };
+			send(Define::sock, (char*)&e, sizeof(EVENT), 0);
+		}
 	}
 	else if (Define::Input->GetMouseUp(MouseButton::Right))
 	{
