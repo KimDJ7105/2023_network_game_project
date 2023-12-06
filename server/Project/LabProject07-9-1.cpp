@@ -84,7 +84,6 @@ DWORD WINAPI WorkerThread(LPVOID arg)
 		gGameFramework.FrameAdvance();
 		SetEvent(hWorkerEvent[0]);
 		SetEvent(hWorkerEvent[1]);
-		WaitForMultipleObjects(2, hSendEvent,true, INFINITE);
 		WaitForMultipleObjects(2, hSendEvent, true, INFINITE);
 		{
 			auto objMgr = Define::SceneManager->GetCurrentScene()->objectManager;
