@@ -5,6 +5,7 @@
 CSceneManager* Define::SceneManager = nullptr;
 CSyncObjectManager* Define::SyncObjectManager = nullptr;
 
+bool Define::GameRunnig = true;
 CGameFramework* Define::Framework = nullptr;
 CGameTimer* Define::GameTimer = nullptr;
 CInput* Define::Input = nullptr;

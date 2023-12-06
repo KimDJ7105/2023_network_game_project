@@ -172,6 +172,7 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerController.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="resource1.h" />
     <ClInclude Include="RigidBody.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />
@@ -185,6 +186,7 @@
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Tree.h" />
+    <ClInclude Include="WindowDialog.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\PublicLib\NetworkConverter.cpp">
@@ -233,9 +235,11 @@
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Tree.cpp" />
+    <ClCompile Include="WindowDialog.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="LabProject07-9-1.rc" />
+    <ResourceCompile Include="Resource.rc" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="LabProject07-9-1.ico" />

@@ -16,6 +16,7 @@ public: // Manager
 	static CSyncObjectManager* SyncObjectManager;
 
 public: // Framework
+	static bool GameRunnig;
 	static CGameFramework* Framework;
 	static CGameTimer* GameTimer;
 	static CInput* Input;

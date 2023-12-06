@@ -5,6 +5,7 @@
 #include "LabProject07-9-1.h"
 #include "GameFramework.h"
 #include "CSyncObjectManager.h"
+#include "WindowDialog.h"
 
 #pragma comment(lib,"ws2_32")
 #define MAX_LOADSTRING 100
@@ -19,6 +20,9 @@ CGameFramework					gGameFramework;
 
 HANDLE hRecvHandle;
 HANDLE hWoker;
+
+HINSTANCE hInst; // 인스턴스 핸들
+HWND hEdit; // 에디트 컨트롤
 
 DWORD WINAPI RecvThread(LPVOID arg);
 void RecvInitObject();
@@ -37,6 +41,8 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 {
 	int retval;
 	// 윈속 초기화
+	hInst = hInstance;
+
 	WSADATA wsa;
 	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
 		return 1;
@@ -76,7 +82,8 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	hAccelTable = ::LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_LABPROJECT0791));
 
 	CreateThread(NULL, 0, RecvThread, NULL, 0, NULL);
-	while (1)
+	bool end = false;
+	while (Define::GameRunnig)
 	{
 		
 		if (::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
@@ -94,6 +101,28 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 			KeyControl();
 			MouseControl();
 			gGameFramework.FrameAdvance(); 
+
+			if (!end)
+			{
+				if (Define::Players[0]->GetRoot()->GetActive() == false)
+				{
+					DialogBox(hInstance, MAKEINTRESOURCE(IDD_DIALOG1), NULL, DlgProc);
+					if (Define::ClientIndex == 0)
+						SetWindowTextW(handleDictionary["Text"], L"YOU LOSE");
+					else
+						SetWindowTextW(handleDictionary["Text"], L"YOU WIN");
+					end = true;
+				}
+				else if (Define::Players[1]->GetRoot()->GetActive() == false)
+				{
+					DialogBox(hInstance, MAKEINTRESOURCE(IDD_DIALOG1), NULL, DlgProc);
+					if (Define::ClientIndex == 1)
+						SetWindowTextW(handleDictionary["Text"], L"YOU LOSE");
+					else
+						SetWindowTextW(handleDictionary["Text"], L"YOU WIN");
+					end = true;
+				}
+			}
 
 			//ResetEvent(hWoker);
 			//SetEvent(hRecvHandle);

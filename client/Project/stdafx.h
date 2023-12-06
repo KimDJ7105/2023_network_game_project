@@ -77,6 +77,7 @@ using Microsoft::WRL::ComPtr;
 #include "../../PublicLib/NetworkConverter.h"
 #include <array>
 #include <queue>
+#include <windows.h>
 
 extern UINT gnCbvSrvDescriptorIncrementSize;
 
