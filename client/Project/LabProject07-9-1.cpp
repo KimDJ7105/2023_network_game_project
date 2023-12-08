@@ -22,8 +22,8 @@ CGameFramework					gGameFramework;
 HANDLE hRecvHandle;
 HANDLE hWoker;
 
-HINSTANCE hInst; // �ν��Ͻ� �ڵ�
-HWND hEdit; // ����Ʈ ��Ʈ��
+HINSTANCE hInst; // 인스턴스 핸들
+HWND hEdit; // 에디트 컨트롤
 
 DWORD WINAPI RecvThread(LPVOID arg);
 DWORD WINAPI SendThread(LPVOID arg);
@@ -42,7 +42,7 @@ void err_display(const char* msg);
 int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow)
 {
 	int retval;
-	// ���� �ʱ�ȭ
+	
 	hInst = hInstance;
 
 	WSADATA wsa;
@@ -52,7 +52,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	hRecvHandle = CreateEvent(NULL, true, true, NULL);
 	hWoker = CreateEvent(NULL, true, false, NULL);
 
-	// ���� ����
+	// 소켓 생성
 	Define::sock = socket(AF_INET, SOCK_STREAM, 0);
 	if (Define::sock == INVALID_SOCKET) err_quit("socket()");
 
@@ -65,7 +65,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	retval = connect(Define::sock, (struct sockaddr*)&serveraddr, sizeof(serveraddr));
 	if (retval == SOCKET_ERROR) err_quit("connect()");
 
-	// ���° Ŭ������ ���Źޱ�
+	// 몇 번째 클라이언트인지 수신
 	recv(Define::sock, (char*)&Define::ClientIndex, sizeof(int), 0);
 
 	UNREFERENCED_PARAMETER(hPrevInstance);
@@ -200,7 +200,6 @@ void RecvInitObject()
 void KeyControl()
 {
 	//if (Define::Input->GetKeyAny()) return;
-	//�� �ڵ尡 ������ ���� �۵���.
 
 	auto recvKey = [](int key, int key_state) {
 		EVENT e{ Define::ClientIndex, -1, -1, {-1,-1} };
