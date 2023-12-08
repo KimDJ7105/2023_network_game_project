@@ -141,7 +141,8 @@ DWORD WINAPI RecvThread(LPVOID arg)
 		//WaitForSingleObject(hRecvHandle, INFINITE);
 		{
 			int transformPackSize = 0;
-			recv(Define::sock, (char*)&transformPackSize, sizeof(int), 0);
+			reval = recv(Define::sock, (char*)&transformPackSize, sizeof(int), 0);
+			if (reval == SOCKET_ERROR) continue;
 			for (int i = 0; i < transformPackSize; i++)
 			{
 				sc_object_transform_packet pack;
