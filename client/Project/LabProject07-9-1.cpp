@@ -136,23 +136,23 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 DWORD WINAPI RecvThread(LPVOID arg)
 {
 	int reval;
-
+	vector<sc_object_transform_packet> packList;
 	while (true) {
 		//WaitForSingleObject(hRecvHandle, INFINITE);
 		{
 			int transformPackSize = 0;
 			recv(Define::sock, (char*)&transformPackSize, sizeof(int), 0);
-			vector<sc_object_transform_packet> packList(transformPackSize);
 			for (int i = 0; i < transformPackSize; i++)
 			{
 				sc_object_transform_packet pack;
 				reval = recv(Define::sock, (char*)&pack, sizeof(sc_object_transform_packet), 0);
 				if (reval == SOCKET_ERROR) continue;
 
-				packList[i] = pack;
+				packList.emplace_back(pack);
 			}
 
 			Define::SyncObjectManager->SetTransformPack(packList);
+			packList.clear();
 		}
 		//ResetEvent(hRecvHandle);
 		//SetEvent(hWoker);
