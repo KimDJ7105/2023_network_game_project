@@ -135,7 +135,6 @@ DWORD WINAPI SendThread(LPVOID arg)
 	auto objmgr = Define::SceneManager->GetCurrentScene()->objectManager;
 	
 	{
-		flag[c_id] = false;
 		auto createPack = objmgr->GetCreatePack();
 		int createPackSize = createPack->size();
 		if (SHOW_SEND_DEBUG) printf("(createpacket)%d socket : %d EA\n", c_id, createPackSize);
@@ -145,8 +144,6 @@ DWORD WINAPI SendThread(LPVOID arg)
 			//printf("Client %d : Create Object %d\n", c_id, pack.object_type);
 			send(Define::sock[c_id], (char*)&pack, sizeof(sc_create_object_packet), 0);
 		}
-
-		while (flag[c_id]);
 
 		//NetworkConverter nc;
 		//auto packList = objmgr->GetCreatePack();
@@ -160,6 +157,7 @@ DWORD WINAPI SendThread(LPVOID arg)
 		WaitForSingleObject(hWorkerEvent[c_id], INFINITE);
 
 		{
+			flag[c_id] = false;
 			auto packList = Define::SyncObjectManager->GetAllTransformPack();
 			int objectSize = packList.size();
 			if(SHOW_SEND_DEBUG) printf("(transformpacket)%d socket : %d EA\n", c_id, objectSize);
@@ -167,6 +165,8 @@ DWORD WINAPI SendThread(LPVOID arg)
 			send(Define::sock[c_id], (char*)&objectSize, sizeof(int), 0);
 			for (auto pack : packList)
 				send(Define::sock[c_id], (char*)&pack, sizeof(sc_object_transform_packet), 0);
+
+			while (flag[c_id]);
 		}
 
 		SetEvent(hSendEvent[c_id]);
