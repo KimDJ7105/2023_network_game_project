@@ -31,6 +31,7 @@ typedef struct threadarg
 //----전역변수
 std::deque<EVENT> InputEvent;
 extern CRITICAL_SECTION cs;
+atomic_bool flag[2];
 
 //sendthread와 workerthread 동기화를 위한 이벤트 핸들
 HANDLE hWorkerEvent[2];
@@ -104,11 +105,15 @@ DWORD WINAPI RecvThread(LPVOID arg)
 
 	while (true) {
 		EVENT pack;
-		int retval = recv(Define::sock[c_id], (char*)&pack, sizeof(EVENT), MSG_WAITALL);
+		int retval = recv(Define::sock[c_id], (char*)&pack, sizeof(EVENT), 0);
 		if (retval == 0) return 0;
 		if (retval == SOCKET_ERROR) {
 			if (c_id == 0) err_quit("recv()0");
 			if (c_id == 1) err_quit("recv()1");
+		}
+		if (retval == 1) {
+			flag[c_id] = true;
+			continue;
 		}
 		else if (SHOW_RECV_DEBUG){
 			printf("%d : recv Input data. Input Type : %d\n", pack.client_id, pack.event_id);
@@ -129,6 +134,7 @@ DWORD WINAPI SendThread(LPVOID arg)
 	auto objmgr = Define::SceneManager->GetCurrentScene()->objectManager;
 	
 	{
+		flag[c_id] = false;
 		auto createPack = objmgr->GetCreatePack();
 		int createPackSize = createPack->size();
 		if (SHOW_SEND_DEBUG) printf("(createpacket)%d socket : %d EA\n", c_id, createPackSize);
@@ -138,6 +144,8 @@ DWORD WINAPI SendThread(LPVOID arg)
 			//printf("Client %d : Create Object %d\n", c_id, pack.object_type);
 			send(Define::sock[c_id], (char*)&pack, sizeof(sc_create_object_packet), 0);
 		}
+
+		while (flag[c_id]);
 
 		//NetworkConverter nc;
 		//auto packList = objmgr->GetCreatePack();
