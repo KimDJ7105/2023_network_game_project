@@ -7,7 +7,7 @@
 #pragma comment(lib,"ws2_32")
 
 #define SHOW_RECV_DEBUG false
-#define SHOW_SEND_DEBUG false
+#define SHOW_SEND_DEBUG true
 
 HINSTANCE						ghAppInstance;
 TCHAR							szTitle[MAX_LOADSTRING];
@@ -85,7 +85,8 @@ DWORD WINAPI WorkerThread(LPVOID arg)
 		gGameFramework.FrameAdvance();
 		SetEvent(hWorkerEvent[0]);
 		SetEvent(hWorkerEvent[1]);
-		WaitForMultipleObjects(2, hSendEvent, true, INFINITE);
+		//WaitForMultipleObjects(2, hSendEvent, true, INFINITE);
+		WaitForSingleObject(hSendEvent[0], INFINITE);
 		{
 			auto objMgr = Define::SceneManager->GetCurrentScene()->objectManager;
 			objMgr->GetCreatePack()->clear();
@@ -162,6 +163,7 @@ DWORD WINAPI SendThread(LPVOID arg)
 			auto packList = Define::SyncObjectManager->GetAllTransformPack();
 			int objectSize = packList.size();
 			if(SHOW_SEND_DEBUG) printf("(transformpacket)%d socket : %d EA\n", c_id, objectSize);
+
 			send(Define::sock[c_id], (char*)&objectSize, sizeof(int), 0);
 			for (auto pack : packList)
 				send(Define::sock[c_id], (char*)&pack, sizeof(sc_object_transform_packet), 0);
@@ -227,7 +229,7 @@ int main(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCm
 	SetEvent(hWorkerEvent[0]);
 	SetEvent(hWorkerEvent[1]);
 
-	for (int i = 0; i < 2; i++)
+	for (int i = 0; i < 1; i++)
 	{
 		//accept
 		addrlen = sizeof(clientaddr);

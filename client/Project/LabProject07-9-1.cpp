@@ -1,4 +1,4 @@
-// LabProject07-9-1.cpp : ÀÀ¿ë ÇÁ·Î±×·¥¿¡ ´ëÇÑ ÁøÀÔÁ¡À» Á¤ÀÇÇÕ´Ï´Ù.
+// LabProject07-9-1.cpp : ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Î±×·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
 //
 
 #include "stdafx.h"
@@ -10,6 +10,7 @@
 #pragma comment(lib,"ws2_32")
 #define MAX_LOADSTRING 100
 
+//#define SERVERIP "61.77.126.164"
 #define SERVERIP "127.0.0.1"
 
 HINSTANCE						ghAppInstance;
@@ -21,10 +22,11 @@ CGameFramework					gGameFramework;
 HANDLE hRecvHandle;
 HANDLE hWoker;
 
-HINSTANCE hInst; // ÀÎ½ºÅÏ½º ÇÚµé
-HWND hEdit; // ¿¡µðÆ® ÄÁÆ®·Ñ
+HINSTANCE hInst; // ï¿½Î½ï¿½ï¿½Ï½ï¿½ ï¿½Úµï¿½
+HWND hEdit; // ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½Æ®ï¿½ï¿½
 
 DWORD WINAPI RecvThread(LPVOID arg);
+DWORD WINAPI SendThread(LPVOID arg);
 void RecvInitObject();
 void KeyControl();
 void MouseControl();
@@ -40,7 +42,7 @@ void err_display(const char* msg);
 int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow)
 {
 	int retval;
-	// À©¼Ó ÃÊ±âÈ­
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­
 	hInst = hInstance;
 
 	WSADATA wsa;
@@ -50,7 +52,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	hRecvHandle = CreateEvent(NULL, true, true, NULL);
 	hWoker = CreateEvent(NULL, true, false, NULL);
 
-	// ¼ÒÄÏ »ý¼º
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	Define::sock = socket(AF_INET, SOCK_STREAM, 0);
 	if (Define::sock == INVALID_SOCKET) err_quit("socket()");
 
@@ -63,7 +65,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	retval = connect(Define::sock, (struct sockaddr*)&serveraddr, sizeof(serveraddr));
 	if (retval == SOCKET_ERROR) err_quit("connect()");
 
-	// ¸î¹øÂ° Å¬¶óÀÎÁö ¼ö½Å¹Þ±â
+	// ï¿½ï¿½ï¿½Â° Å¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Å¹Þ±ï¿½
 	recv(Define::sock, (char*)&Define::ClientIndex, sizeof(int), 0);
 
 	UNREFERENCED_PARAMETER(hPrevInstance);
@@ -82,6 +84,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	hAccelTable = ::LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_LABPROJECT0791));
 
 	CreateThread(NULL, 0, RecvThread, NULL, 0, NULL);
+	CreateThread(NULL, 0, SendThread, NULL, 0, NULL);
 	bool end = false;
 	while (Define::GameRunnig)
 	{
@@ -98,8 +101,8 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 		else
 		{
 			//WaitForSingleObject(hWoker, INFINITE);
-			KeyControl();
-			MouseControl();
+			//KeyControl();
+			//MouseControl();
 			gGameFramework.FrameAdvance(); 
 
 			if (!end)
@@ -144,7 +147,7 @@ DWORD WINAPI RecvThread(LPVOID arg)
 	while (true) {
 		//WaitForSingleObject(hRecvHandle, INFINITE);
 		{
-			int transformPackSize = 0;
+			int transformPackSize = 0;	
 			reval = recv(Define::sock, (char*)&transformPackSize, sizeof(int), 0);
 			if (reval == SOCKET_ERROR) continue;
 			for (int i = 0; i < transformPackSize; i++)
@@ -163,6 +166,15 @@ DWORD WINAPI RecvThread(LPVOID arg)
 		}
 		//ResetEvent(hRecvHandle);
 		//SetEvent(hWoker);
+	}
+}
+
+DWORD WINAPI SendThread(LPVOID arg)
+{
+	while (true)
+	{
+		KeyControl();
+		MouseControl();
 	}
 }
 
@@ -188,7 +200,7 @@ void RecvInitObject()
 void KeyControl()
 {
 	//if (Define::Input->GetKeyAny()) return;
-	//ÀÌ ÄÚµå°¡ ¾øÀ¸¸é Á¤»ó ÀÛµ¿ÇÔ.
+	//ï¿½ï¿½ ï¿½Úµå°¡ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ûµï¿½ï¿½ï¿½.
 
 	auto recvKey = [](int key, int key_state) {
 		EVENT e{ Define::ClientIndex, -1, -1, {-1,-1} };
@@ -231,7 +243,7 @@ void MouseControl()
 	if (Define::Input->GetMousePress(MouseButton::Left))
 	{
 		POINT mouseAxis = Define::Input->GetMouseAxis();
-		mouseAxis.x *= 10;
+		//mouseAxis.x = 10;
 		if (mouseAxis.x != 0)
 		{
 			EVENT e{ Define::ClientIndex, MOUSE_LEFT, MOUSE_DOWN, mouseAxis };

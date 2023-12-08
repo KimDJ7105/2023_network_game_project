@@ -63,7 +63,6 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 	CreateDepthStencilView();
 
 	BuildObjects();
-
 	return(true);
 }
 
@@ -373,7 +372,8 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
         case WM_LBUTTONUP:
         case WM_RBUTTONUP:
         case WM_MOUSEMOVE:
-			OnProcessingMouseMessage(hWnd, nMessageID, wParam, lParam);
+			//OnProcessingMouseMessage(hWnd, nMessageID, wParam, lParam);
+			Define::Input->OnProcessingMouseMessage(hWnd, nMessageID, wParam, lParam);
             break;
         case WM_KEYDOWN:
 			OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);
@@ -453,16 +453,20 @@ void CGameFramework::ProcessInput()
 		if (pKeysBuffer[VK_PRIOR] & 0xF0) dwDirection |= DIR_UP;
 		if (pKeysBuffer[VK_NEXT] & 0xF0) dwDirection |= DIR_DOWN;
 
+		Define::Input->SetHWND(GetCapture());
 		//float cxDelta = 0.0f, cyDelta = 0.0f;
 		//POINT ptCursorPos;
-		if (GetCapture() == m_hWnd)
-		{
-			SetCursor(NULL);
-			//GetCursorPos(&ptCursorPos);
-			//cxDelta = (float)(ptCursorPos.x - m_ptOldCursorPos.x) / 3.0f;
-			//cyDelta = (float)(ptCursorPos.y - m_ptOldCursorPos.y) / 3.0f;
-			SetCursorPos(m_ptOldCursorPos.x, m_ptOldCursorPos.y);
-		}
+		//if (GetCapture() == m_hWnd)
+		//{
+		//	SetCursor(NULL);
+		//	GetCursorPos(&ptCursorPos);
+		//	//cxDelta = (float)(ptCursorPos.x - m_ptOldCursorPos.x) / 3.0f;
+		//	//cyDelta = (float)(ptCursorPos.y - m_ptOldCursorPos.y) / 3.0f;
+		//	ptCursorPos.x = (float)(ptCursorPos.x - m_ptOldCursorPos.x) / 3.0f;
+		//	ptCursorPos.y = (float)(ptCursorPos.y - m_ptOldCursorPos.y) / 3.0f;
+		//	Define::Input->axis = ptCursorPos;
+		//	SetCursorPos(m_ptOldCursorPos.x, m_ptOldCursorPos.y);
+		//}
 
 		//if ((dwDirection != 0) || (cxDelta != 0.0f) || (cyDelta != 0.0f))
 		//{

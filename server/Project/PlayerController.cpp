@@ -74,7 +74,8 @@ void CPlayerController::MouseRotate()
 {
 	if (mouseState[0])
 	{
-		float x = (float)mouseAxis.x * 100.0f * Define::GameTimer->GetTimeElapsed();
+		float x = (float)mouseAxis.x * Define::GameTimer->GetTimeElapsed();
+		//float x = (float)mouseAxis.x;
 		//printf("y : %f\n", tank->upperBodyFrame->transform->GetPosition().m128_f32[2]);
 
 		pivotObject->transform->Rotate(0.0f, x, 0.0f);

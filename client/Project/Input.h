@@ -52,11 +52,16 @@ public:
 	POINT GetMouseAxis();
 	bool IsMoveAxis();
 
+public:
+	void SetHWND(HWND hwnd) { m_hWnd = hwnd; }
+
 protected:
 	map<MouseButton, unsigned __int8> MouseState; // 0 : 아무것도 안함, 1 : Mouse Down , 2 : Mouse Up, 3 : Mouse Press
 
 	POINT oldCursorPos;
 	POINT nowCursorPos;
+
+	HWND m_hWnd;
 };
 
 class CInput : public CKey, public CMouse
