@@ -189,14 +189,6 @@
     <ClInclude Include="WindowDialog.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\PublicLib\NetworkConverter.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\PublicLib\protocol.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="BigMissile.cpp" />
     <ClCompile Include="BulletObject.cpp" />
     <ClCompile Include="Camera.cpp" />

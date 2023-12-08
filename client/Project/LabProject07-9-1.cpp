@@ -10,7 +10,7 @@
 #pragma comment(lib,"ws2_32")
 #define MAX_LOADSTRING 100
 
-#define SERVERIP "127.0.0.1"
+#define SERVERIP "61.77.126.164"
 
 HINSTANCE						ghAppInstance;
 TCHAR							szTitle[MAX_LOADSTRING];
@@ -135,6 +135,8 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 
 DWORD WINAPI RecvThread(LPVOID arg)
 {
+	int reval;
+
 	while (true) {
 		//WaitForSingleObject(hRecvHandle, INFINITE);
 		{
@@ -144,7 +146,9 @@ DWORD WINAPI RecvThread(LPVOID arg)
 			for (int i = 0; i < transformPackSize; i++)
 			{
 				sc_object_transform_packet pack;
-				recv(Define::sock, (char*)&pack, sizeof(sc_object_transform_packet), 0);
+				reval = recv(Define::sock, (char*)&pack, sizeof(sc_object_transform_packet), 0);
+				if (reval == SOCKET_ERROR) continue;
+
 				packList[i] = pack;
 			}
 
