@@ -126,7 +126,7 @@ DWORD WINAPI SendThread(LPVOID arg)
 {
 	int c_id = *((int*)arg);
 	int retval;
-
+	int count = 0;
 	auto objmgr = Define::SceneManager->GetCurrentScene()->objectManager;
 	
 	{
@@ -134,6 +134,7 @@ DWORD WINAPI SendThread(LPVOID arg)
 		int createPackSize = createPack->size();
 		if (SHOW_SEND_DEBUG) printf("(createpacket)%d socket : %d EA\n", c_id, createPackSize);
 		send(Define::sock[c_id], (char*)&createPackSize, sizeof(int), 0);
+		count++;
 		for (auto pack : *createPack)
 		{
 			//printf("Client %d : Create Object %d\n", c_id, pack.object_type);
@@ -156,6 +157,8 @@ DWORD WINAPI SendThread(LPVOID arg)
 			int objectSize = packList.size();
 			if(SHOW_SEND_DEBUG) printf("(transformpacket)%d socket : %d EA\n", c_id, objectSize);
 			send(Define::sock[c_id], (char*)&objectSize, sizeof(int), 0);
+			count++;
+			printf("%d\n", count);
 			for (int i = 0; i < objectSize; ++i) {
 				send(Define::sock[c_id], (char*)&packList[i], sizeof(sc_object_transform_packet), 0);
 			}
