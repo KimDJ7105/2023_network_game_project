@@ -140,9 +140,6 @@ DWORD WINAPI RecvThread(LPVOID arg)
 {
 	int reval;
 	vector<sc_object_transform_packet> packList;
-	EVENT flag;
-	flag.client_id = Define::ClientIndex;
-	flag.event_id = RECV_DONE;
 	
 	while (true) {
 		//WaitForSingleObject(hRecvHandle, INFINITE);
@@ -158,8 +155,6 @@ DWORD WINAPI RecvThread(LPVOID arg)
 
 				packList.emplace_back(pack);
 			}
-
-			send(Define::sock, (char*)&flag, sizeof(EVENT), 0);
 
 			Define::SyncObjectManager->SetTransformPack(packList);
 			packList.clear();

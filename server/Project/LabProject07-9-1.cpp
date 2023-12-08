@@ -31,7 +31,6 @@ typedef struct threadarg
 //----전역변수
 std::deque<EVENT> InputEvent;
 extern CRITICAL_SECTION cs;
-atomic_bool flag[2];
 
 //sendthread와 workerthread 동기화를 위한 이벤트 핸들
 HANDLE hWorkerEvent[2];
@@ -85,8 +84,8 @@ DWORD WINAPI WorkerThread(LPVOID arg)
 		gGameFramework.FrameAdvance();
 		SetEvent(hWorkerEvent[0]);
 		SetEvent(hWorkerEvent[1]);
-		//WaitForMultipleObjects(2, hSendEvent, true, INFINITE);
-		WaitForSingleObject(hSendEvent[0], INFINITE);
+		WaitForMultipleObjects(2, hSendEvent, true, INFINITE);
+		//WaitForSingleObject(hSendEvent[0], INFINITE);
 		{
 			auto objMgr = Define::SceneManager->GetCurrentScene()->objectManager;
 			objMgr->GetCreatePack()->clear();
@@ -114,10 +113,6 @@ DWORD WINAPI RecvThread(LPVOID arg)
 		}
 		else if (SHOW_RECV_DEBUG){
 			printf("%d : recv Input data. Input Type : %d\n", pack.client_id, pack.event_id);
-		}
-		if (pack.event_id == RECV_DONE) {
-			flag[c_id] = true;
-			continue;
 		}
 		//if (pack.event_id == MOUSE_LEFT) printf("Mouse Moved Left : %d, %d\n", pack.mouseAxis.x, pack.mouseAxis.y);
 
@@ -157,7 +152,6 @@ DWORD WINAPI SendThread(LPVOID arg)
 		WaitForSingleObject(hWorkerEvent[c_id], INFINITE);
 
 		{
-			flag[c_id] = false;
 			auto packList = Define::SyncObjectManager->GetAllTransformPack();
 			int objectSize = packList.size();
 			if(SHOW_SEND_DEBUG) printf("(transformpacket)%d socket : %d EA\n", c_id, objectSize);
@@ -166,7 +160,6 @@ DWORD WINAPI SendThread(LPVOID arg)
 			for (auto pack : packList)
 				send(Define::sock[c_id], (char*)&pack, sizeof(sc_object_transform_packet), 0);
 
-			while (flag[c_id]);
 		}
 
 		SetEvent(hSendEvent[c_id]);
@@ -229,7 +222,7 @@ int main(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCm
 	SetEvent(hWorkerEvent[0]);
 	SetEvent(hWorkerEvent[1]);
 
-	for (int i = 0; i < 1; i++)
+	for (int i = 0; i < 2; i++)
 	{
 		//accept
 		addrlen = sizeof(clientaddr);
