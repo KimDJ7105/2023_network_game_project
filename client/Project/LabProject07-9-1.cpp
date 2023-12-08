@@ -10,7 +10,7 @@
 #pragma comment(lib,"ws2_32")
 #define MAX_LOADSTRING 100
 
-#define SERVERIP "61.77.126.164"
+#define SERVERIP "127.0.0.1"
 
 HINSTANCE						ghAppInstance;
 TCHAR							szTitle[MAX_LOADSTRING];
@@ -137,7 +137,10 @@ DWORD WINAPI RecvThread(LPVOID arg)
 {
 	int reval;
 	vector<sc_object_transform_packet> packList;
-	bool flag = true;
+	EVENT flag;
+	flag.client_id = Define::ClientIndex;
+	flag.event_id = RECV_DONE;
+	
 	while (true) {
 		//WaitForSingleObject(hRecvHandle, INFINITE);
 		{
@@ -153,7 +156,7 @@ DWORD WINAPI RecvThread(LPVOID arg)
 				packList.emplace_back(pack);
 			}
 
-			send(Define::sock, (char*)&flag, sizeof(bool), 0);
+			send(Define::sock, (char*)&flag, sizeof(EVENT), 0);
 
 			Define::SyncObjectManager->SetTransformPack(packList);
 			packList.clear();

@@ -24,6 +24,8 @@ constexpr int KEY_SPACE = 4;
 constexpr int MOUSE_LEFT = 10;
 constexpr int MOUSE_RIGHT = 11;
 
+constexpr int RECV_DONE = 100;
+
 // Packet ID
 constexpr int SC_CREATE_OBJECT = 0;
 constexpr int SC_MOVE_OBJECT = 1;
