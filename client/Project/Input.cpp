@@ -86,25 +86,26 @@ void CMouse::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam,
 	switch (nMessageID)
 	{
 	case WM_LBUTTONDOWN:
+		//::SetCapture(hWnd);
 		MouseState[MouseButton::Left] = 1;
-		SetCapture(hWnd);
 		GetCursorPos(&oldCursorPos);
 		break;
 	case WM_RBUTTONDOWN:
+		//::SetCapture(hWnd);
 		MouseState[MouseButton::Right] = 1;
-		SetCapture(hWnd);
 		GetCursorPos(&oldCursorPos);
 		break;
 	case WM_LBUTTONUP:
 		MouseState[MouseButton::Left] = 2;
-		ReleaseCapture();
+		SetCursorPos(oldCursorPos.x, oldCursorPos.y);
+		//::ReleaseCapture();
 		break;
 	case WM_RBUTTONUP:
 		MouseState[MouseButton::Right] = 2;
-		ReleaseCapture();
+		SetCursorPos(oldCursorPos.x, oldCursorPos.y);
+		//::ReleaseCapture();
 		break;
 	case WM_MOUSEMOVE:
-		GetCursorPos(&oldCursorPos);
 		break;
 	default:
 		break;
@@ -129,12 +130,13 @@ bool CMouse::GetMousePress(MouseButton button)
 POINT CMouse::GetMouseAxis()
 {
 	POINT Axis{ 0,0 };
-	if (GetCapture() == Define::Framework->m_hWnd)
+	if (::GetCapture() == m_hWnd)
 	{
-		SetCursor(NULL);
+		::SetCursor(NULL);
 		GetCursorPos(&nowCursorPos);
 		Axis.x = (float)(nowCursorPos.x - oldCursorPos.x);
 		Axis.y = (float)(nowCursorPos.y - oldCursorPos.y);
+		SetCursorPos(oldCursorPos.x, oldCursorPos.y);
 	}
 	return Axis;
 }

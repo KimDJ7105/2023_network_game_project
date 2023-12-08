@@ -10,7 +10,8 @@
 #pragma comment(lib,"ws2_32")
 #define MAX_LOADSTRING 100
 
-#define SERVERIP "61.77.126.164"
+//#define SERVERIP "61.77.126.164"
+#define SERVERIP "127.0.0.1"
 
 HINSTANCE						ghAppInstance;
 TCHAR							szTitle[MAX_LOADSTRING];
@@ -25,6 +26,7 @@ HINSTANCE hInst; // 인스턴스 핸들
 HWND hEdit; // 에디트 컨트롤
 
 DWORD WINAPI RecvThread(LPVOID arg);
+DWORD WINAPI SendThread(LPVOID arg);
 void RecvInitObject();
 void KeyControl();
 void MouseControl();
@@ -82,6 +84,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	hAccelTable = ::LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_LABPROJECT0791));
 
 	CreateThread(NULL, 0, RecvThread, NULL, 0, NULL);
+	CreateThread(NULL, 0, SendThread, NULL, 0, NULL);
 	bool end = false;
 	while (Define::GameRunnig)
 	{
@@ -98,8 +101,8 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 		else
 		{
 			//WaitForSingleObject(hWoker, INFINITE);
-			KeyControl();
-			MouseControl();
+			//KeyControl();
+			//MouseControl();
 			gGameFramework.FrameAdvance(); 
 
 			if (!end)
@@ -140,7 +143,7 @@ DWORD WINAPI RecvThread(LPVOID arg)
 	while (true) {
 		//WaitForSingleObject(hRecvHandle, INFINITE);
 		{
-			int transformPackSize = 0;
+			int transformPackSize = 0;	
 			reval = recv(Define::sock, (char*)&transformPackSize, sizeof(int), 0);
 			if (reval == SOCKET_ERROR) continue;
 			for (int i = 0; i < transformPackSize; i++)
@@ -157,6 +160,15 @@ DWORD WINAPI RecvThread(LPVOID arg)
 		}
 		//ResetEvent(hRecvHandle);
 		//SetEvent(hWoker);
+	}
+}
+
+DWORD WINAPI SendThread(LPVOID arg)
+{
+	while (true)
+	{
+		KeyControl();
+		MouseControl();
 	}
 }
 
@@ -225,7 +237,7 @@ void MouseControl()
 	if (Define::Input->GetMousePress(MouseButton::Left))
 	{
 		POINT mouseAxis = Define::Input->GetMouseAxis();
-		mouseAxis.x *= 10;
+		//mouseAxis.x = 10;
 		if (mouseAxis.x != 0)
 		{
 			EVENT e{ Define::ClientIndex, MOUSE_LEFT, MOUSE_DOWN, mouseAxis };
