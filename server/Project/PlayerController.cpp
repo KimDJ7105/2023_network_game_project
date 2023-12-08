@@ -9,6 +9,8 @@ CPlayerController::CPlayerController(CGameObject* obj) : CComponent(obj)
 		keyState[i] = false;
 	for (int i = 0; i < 2; i++)
 		mouseState[i] = false;
+
+	prevTime = std::chrono::high_resolution_clock::now();
 }
 
 void CPlayerController::Start()
@@ -31,8 +33,14 @@ void CPlayerController::Update()
 	KeyUpdate();
 	//MouseRotate();
 
-	if (keyState[KEY_SPACE])
+	auto currentTime = std::chrono::high_resolution_clock::now();
+
+	auto elapsedTime = std::chrono::duration_cast<std::chrono::seconds>(currentTime - prevTime).count();
+
+	if (keyState[KEY_SPACE] && elapsedTime > 5) {
 		tank->FireBullet(nullptr);
+		prevTime = currentTime;
+	}
 
 	MoveMent();
 

@@ -30,4 +30,6 @@ private:
 	bool keyState[5];
 	bool mouseState[2];
 	POINT mouseAxis;
+
+	std::chrono::steady_clock::time_point prevTime;
 };
