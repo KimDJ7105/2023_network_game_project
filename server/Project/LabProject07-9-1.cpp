@@ -156,7 +156,7 @@ DWORD WINAPI SendThread(LPVOID arg)
 			int objectSize = packList.size();
 			if(SHOW_SEND_DEBUG) printf("(transformpacket)%d socket : %d EA\n", c_id, objectSize);
 
-			send(Define::sock[c_id], (char*)&objectSize, sizeof(int), 0);
+			//send(Define::sock[c_id], (char*)&objectSize, sizeof(int), 0);
 			for (auto pack : packList)
 				send(Define::sock[c_id], (char*)&pack, sizeof(sc_object_transform_packet), 0);
 
