@@ -8,6 +8,7 @@ public:
 	~CSyncObjectManager();
 
 public:
+	deque<SyncObject*>* GetSyncList() { return &syncList; }
 	void AddSyncObject(SyncObject* sync);
 	bool DeleteSyncObject(SyncObject* sync);
 
@@ -26,7 +27,6 @@ private:
 	deque<SyncObject*> syncList;
 	deque<sc_create_object_packet> _CreatePack;
 	vector<sc_object_transform_packet> transformPackList;
-	CRITICAL_SECTION sync_cs;
-
+	CRITICAL_SECTION cs;
 };
 

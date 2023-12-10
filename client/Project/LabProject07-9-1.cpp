@@ -11,7 +11,7 @@
 #define MAX_LOADSTRING 100
 
 //#define SERVERIP "61.77.126.164"
-#define SERVERIP "127.0.0.1"
+#define SERVERIP "222.99.104.73"
 
 HINSTANCE						ghAppInstance;
 TCHAR							szTitle[MAX_LOADSTRING];
@@ -23,6 +23,7 @@ HANDLE hRecvHandle;
 HANDLE hWoker;
 
 HINSTANCE hInst; // 인스턴스 핸들
+CRITICAL_SECTION cs;
 HWND hEdit; // 에디트 컨트롤
 
 DWORD WINAPI RecvThread(LPVOID arg);
@@ -42,7 +43,7 @@ void err_display(const char* msg);
 int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow)
 {
 	int retval;
-	
+	InitializeCriticalSection(&cs);
 	hInst = hInstance;
 
 	WSADATA wsa;
@@ -103,7 +104,9 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 			//WaitForSingleObject(hWoker, INFINITE);
 			//KeyControl();
 			//MouseControl();
+			//EnterCriticalSection(&cs);
 			gGameFramework.FrameAdvance(); 
+			//LeaveCriticalSection(&cs);
 
 			if (!end)
 			{
@@ -132,7 +135,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 		}
 	}
 	gGameFramework.OnDestroy();
-
+	//DeleteCriticalSection(&cs);
 	return((int)msg.wParam);
 }
 
@@ -144,10 +147,11 @@ DWORD WINAPI RecvThread(LPVOID arg)
 	while (true) {
 		//WaitForSingleObject(hRecvHandle, INFINITE);
 		{
-			int transformPackSize = 0;	
-			reval = recv(Define::sock, (char*)&transformPackSize, sizeof(int), 0);
-			if (reval == SOCKET_ERROR) continue;
-			for (int i = 0; i < transformPackSize; i++)
+			//EnterCriticalSection(&cs);
+			//int transformPackSize = 0;	
+			//reval = recv(Define::sock, (char*)&transformPackSize, sizeof(int), 0);
+			//if (reval == SOCKET_ERROR) continue;
+			for (int i = 0; i < Define::SyncObjectManager->GetSyncList()->size(); i++)
 			{
 				sc_object_transform_packet pack;
 				reval = recv(Define::sock, (char*)&pack, sizeof(sc_object_transform_packet), 0);
@@ -158,6 +162,7 @@ DWORD WINAPI RecvThread(LPVOID arg)
 
 			Define::SyncObjectManager->SetTransformPack(packList);
 			packList.clear();
+			//LeaveCriticalSection(&cs);
 		}
 		//ResetEvent(hRecvHandle);
 		//SetEvent(hWoker);
