@@ -156,23 +156,6 @@ void CScene::ReleaseShaderVariables()
 	}
 }
 
-void CScene::HandleInputEvent(queue<EVENT> q)
-{
-	EnterCriticalSection(&cs);
-	while (!q.empty()) {
-		EVENT event = q.front();
-		q.pop();
-		switch (event.event_id)
-		{
-		case KEY_UP:
-			break;
-		case KEY_DOWN:
-			break;
-		}
-	}
-	LeaveCriticalSection(&cs);
-}
-
 void CScene::ReleaseUploadBuffers()
 {
 	//for (const auto& obj : Define::GameObjectList)
@@ -190,57 +173,34 @@ void CScene::AnimateObjects(float fTimeElapsed)
 {
 	m_fElapsedTime = fTimeElapsed;
 
-	int numCount[4]{0};
+	//objectManager->AllCreateObjectStart();
 
-	// handle event 처리
-
-	//send 함수 만들기
-
-	//recv(Define::sock, (char*)numCount, sizeof(int) * 4, 0);
-
-	//for (int i = 0; i < 4; i++)
-	//{
-	//	for (int j = 0; j < numCount[i]; j++)
-	//	{
-	//		switch (i) {
-	//		case SC_CREATE_OBJECT:
-	//			objectManager->AddGameObject(CGameObjectContainer::CreateGameObject(0));
-	//			break;
-	//		case SC_DELETE_OBJECT:
-	//			objectManager->DeleteGameObject(0);
-	//			break;
-	//		case SC_MOVE_OBJECT:
-	//			objectManager->GameObjectTransformUpdate(0);
-	//		default:
-	//			break;
-	//		}
-	//	}
-	//}
+	objectManager->AllGameObjectUpdate();
+	objectManager->AllGameObjectLateUpdate();
+	objectManager->AllActiveObjectUpdate();
 
 	objectManager->AllGameObjectUpdateTransform();
 
 	for (const auto& collider : Define::ColliderList)
 		collider->UpdateBoundingBox();
 
-	objectManager->AllGameObjectUpdate();
-	objectManager->AllGameObjectLateUpdate();
 
+	for (auto colliderA : Define::ColliderList)
+	{
+		if (colliderA->gameObject->GetActive() == false) continue;
+		for (auto colliderB : Define::ColliderList)
+		{
+			if (colliderB->gameObject->GetActive() == false) continue;
+			if (colliderA->tag == colliderB->tag) continue;
+			if (colliderA == colliderB) continue;
+			if (colliderA->gameObject->CheckCollision(*colliderB) == false) continue;
 
+ 			if(colliderA->gameObject->root) colliderA->gameObject->root->Collision(*colliderB);
+			else colliderA->gameObject->Collision(*colliderB);
+		}
+	}
 
-	//for (auto colliderA : Define::ColliderList)
-	//{
-	//	if (colliderA->gameObject->GetActive() == false) continue;
-	//	for (auto colliderB : Define::ColliderList)
-	//	{
-	//		if (colliderB->gameObject->GetActive() == false) continue;
-	//		if (colliderA->tag == colliderB->tag) continue;
-	//		if (colliderA == colliderB) continue;
-	//		if (colliderA->gameObject->CheckCollision(*colliderB) == false) continue;
-
- //			if(colliderA->gameObject->root) colliderA->gameObject->root->Collision(*colliderB);
-	//		else colliderA->gameObject->Collision(*colliderB);
-	//	}
-	//}
+	objectManager->AllActiveObjectUpdate();
 }
 
 //void CScene::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera)

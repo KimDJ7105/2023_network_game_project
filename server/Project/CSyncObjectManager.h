@@ -14,7 +14,7 @@ public:
 public: // packet
 	vector<sc_object_transform_packet> GetAllTransformPack();
 	void SetTransformPack(vector<sc_object_transform_packet> packList);
-
+		
 	void UpdateAllTransformPack();
 
 private:

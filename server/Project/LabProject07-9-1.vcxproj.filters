@@ -66,9 +66,6 @@
     <ClInclude Include="CTankPlayer.h">
       <Filter>Object\Contain</Filter>
     </ClInclude>
-    <ClInclude Include="Enumy.h">
-      <Filter>Object\Contain</Filter>
-    </ClInclude>
     <ClInclude Include="Tank.h">
       <Filter>Object\Contain</Filter>
     </ClInclude>
@@ -126,9 +123,6 @@
     <ClInclude Include="Transform.h">
       <Filter>Componet\Default</Filter>
     </ClInclude>
-    <ClInclude Include="CameraController.h">
-      <Filter>Componet</Filter>
-    </ClInclude>
     <ClInclude Include="GameScene.h">
       <Filter>Scene</Filter>
     </ClInclude>
@@ -147,9 +141,6 @@
     <ClInclude Include="BigMissile.h">
       <Filter>Componet</Filter>
     </ClInclude>
-    <ClInclude Include="protocol.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="ObjectManager.h">
       <Filter>Framework\Manager</Filter>
     </ClInclude>
@@ -165,6 +156,12 @@
     <ClInclude Include="CSyncObjectManager.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\PublicLib\NetworkConverter.h">
+      <Filter>Framework\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PublicLib\protocol.h">
+      <Filter>Framework\Network</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LabProject07-9-1.cpp">
@@ -177,9 +174,6 @@
       <Filter>Object\Contain</Filter>
     </ClCompile>
     <ClCompile Include="CTankPlayer.cpp">
-      <Filter>Object\Contain</Filter>
-    </ClCompile>
-    <ClCompile Include="Enumy.cpp">
       <Filter>Object\Contain</Filter>
     </ClCompile>
     <ClCompile Include="Tank.cpp">
@@ -233,9 +227,6 @@
     <ClCompile Include="Transform.cpp">
       <Filter>Componet\Default</Filter>
     </ClCompile>
-    <ClCompile Include="CameraController.cpp">
-      <Filter>Componet</Filter>
-    </ClCompile>
     <ClCompile Include="GameScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
@@ -259,9 +250,6 @@
     </ClCompile>
     <ClCompile Include="CGameObjectContainer.cpp">
       <Filter>Object\Contain</Filter>
-    </ClCompile>
-    <ClCompile Include="protocol.cpp">
-      <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="CMountineTerrain.cpp">
       <Filter>Object\Contain</Filter>

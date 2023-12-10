@@ -16,6 +16,7 @@ public: // Manager
 	static CSyncObjectManager* SyncObjectManager;
 
 public: // Framework
+	static bool GameRunnig;
 	static CGameFramework* Framework;
 	static CGameTimer* GameTimer;
 	static CInput* Input;
@@ -26,14 +27,12 @@ public:
 	static int AddGameObject(CGameObject* addObj);
 	static list<CCollider*> ColliderList;
 	static CCamera* MainCamera;
-	static CPlayer* Player;
+	static CPlayer** Players;
 
 public: // Server Sock
 	static SOCKET sock;
 
-	static void RecvInputPack(int id);
-
 public:
-	Define() {}
+	Define();
 	~Define();
 };

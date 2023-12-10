@@ -90,7 +90,7 @@ void CTank::FireBullet(CGameObject* pLockedObject)
 		CGameObject* gun = gunFrame;
 
 		pBulletObject->transform->m_xmf4x4Transform = gun->transform->m_xmf4x4World;
-		pBulletObject->transform->SetPosition(gun->transform->GetPosition());
+		pBulletObject->transform->SetPosition(gun->transform->GetPosition() + gun->transform->GetLook());
 
 		pBulletObject->SetMoveDirectionSpeed(20.0f);
 		pBulletObject->Fire();

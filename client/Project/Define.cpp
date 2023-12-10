@@ -5,6 +5,7 @@
 CSceneManager* Define::SceneManager = nullptr;
 CSyncObjectManager* Define::SyncObjectManager = nullptr;
 
+bool Define::GameRunnig = true;
 CGameFramework* Define::Framework = nullptr;
 CGameTimer* Define::GameTimer = nullptr;
 CInput* Define::Input = nullptr;
@@ -13,7 +14,7 @@ CInput* Define::Input = nullptr;
 deque<CGameObject*> Define::GameObjectList;
 list<CCollider*> Define::ColliderList;
 CCamera* Define::MainCamera = nullptr;
-CPlayer* Define::Player = nullptr;
+CPlayer** Define::Players = nullptr;
 
 SOCKET Define::sock;
 
@@ -33,12 +34,11 @@ int Define::AddGameObject(CGameObject* addObj)
 	return addObj->id;
 }
 
-Define::~Define()
+Define::Define()
 {
+	
 }
 
-void Define::RecvInputPack(int id)
+Define::~Define()
 {
-	EVENT e{ id, -1 };
-	recv(sock, (char*)&e, sizeof(EVENT), 0);
 }

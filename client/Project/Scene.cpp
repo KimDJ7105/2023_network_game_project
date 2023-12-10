@@ -155,9 +155,6 @@ void CScene::ReleaseShaderVariables()
 
 void CScene::ReleaseUploadBuffers()
 {
-	//for (const auto& obj : Define::GameObjectList)
-	//	obj->ReleaseUploadBuffers();
-
 	objectManager->AllReleaseUploadBuffers();
 }
 
@@ -170,75 +167,16 @@ void CScene::AnimateObjects(float fTimeElapsed)
 {
 	m_fElapsedTime = fTimeElapsed;
 
-	//{
-	//	int createPackSize = 0;
-	//	recv(Define::sock, (char*)createPackSize, sizeof(int), 0);
-	//	for (int i = 0; i < createPackSize; i++)
-	//	{
-	//		sc_create_object_packet pack;
-	//		recv(Define::sock, (char*)&pack, sizeof(sc_create_object_packet), 0);
-	//		objectManager->AddCreatePack(pack);
-	//	}
-	//}
+	//objectManager->AllCreatePackUpdate();
+	//objectManager->AllCreateObjectStart();
 
-	//{
-	//	int deletePackSize = 0;
-	//	recv(Define::sock, (char*)deletePackSize, sizeof(int), 0);
-	//	for (int i = 0; i < deletePackSize; i++)
-	//	{
-	//		sc_delete_object_packet pack;
-	//		recv(Define::sock, (char*)&pack, sizeof(sc_create_object_packet), 0);
-	//		objectManager->AddDeletePack(pack);
-	//	}
-	//}
-
-	//{
-	//	int transformPackSize = 0;
-	//	recv(Define::sock, (char*)transformPackSize, sizeof(int), 0);
-	//	for (int i = 0; i < transformPackSize; i++)
-	//	{
-	//		sc_object_transform_packet pack;
-	//		recv(Define::sock, (char*)&pack, sizeof(sc_object_transform_packet), 0);
-	//		objectManager->AddTransformPack(pack);
-	//	}
-	//}
-
-	objectManager->AllCreatePackUpdate();
-
-	objectManager->AllDeletePackUpdate();
+	//objectManager->AllDeletePackUpdate();
 
 	Define::SyncObjectManager->UpdateAllTransformPack();
+	Define::MainCamera->Update();
+	Define::MainCamera->LateUpdate();
 
-
-	for (const auto& collider : Define::ColliderList)
-		collider->UpdateBoundingBox();
-
-	//for (const auto& obj : Define::GameObjectList)
-	//	obj->transform->UpdateTransform(NULL);
-	//objectManager->AllGameObjectUpdateTransform();
-
-	//objectManager->AllGameObjectUpdate();
-	//objectManager->AllGameObjectLateUpdate();
-
-	//for (const auto& obj : Define::GameObjectList)
-	//	obj->Update();
-	//for (const auto& obj : Define::GameObjectList)
-	//	obj->LateUpdate();
-
-	//for (auto colliderA : Define::ColliderList)
-	//{
-	//	if (colliderA->gameObject->GetActive() == false) continue;
-	//	for (auto colliderB : Define::ColliderList)
-	//	{
-	//		if (colliderB->gameObject->GetActive() == false) continue;
-	//		if (colliderA->tag == colliderB->tag) continue;
-	//		if (colliderA == colliderB) continue;
-	//		if (colliderA->gameObject->CheckCollision(*colliderB) == false) continue;
-
- //			if(colliderA->gameObject->root) colliderA->gameObject->root->Collision(*colliderB);
-	//		else colliderA->gameObject->Collision(*colliderB);
-	//	}
-	//}
+	objectManager->AllGameObjectUpdateTransform();
 }
 
 void CScene::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera)
@@ -254,6 +192,4 @@ void CScene::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera
 	pd3dCommandList->SetGraphicsRootConstantBufferView(2, d3dcbLightsGpuVirtualAddress); //Lights
 
 	objectManager->AllGameObjectRender(pd3dCommandList, pCamera);
-	//for (const auto& obj : Define::GameObjectList)
- //		obj->Render(pd3dCommandList, pCamera);
 }

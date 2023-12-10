@@ -13,14 +13,18 @@ ObjectManager::~ObjectManager()
 	_GameObjectList.clear();
 }
 
+void ObjectManager::AddCreatePack(CGameObject* obj)
+{
+	_CreatePack.emplace_back(sc_create_object_packet{ obj->object_Type, obj->transform->m_xmf4x4Transform });
+}
+
 void ObjectManager::AddGameObject(CGameObject* obj)
 {
 	if (obj == nullptr) return;
+	if (obj->m_pParent != nullptr) return;
 
 	_GameObjectList.emplace_back(obj);
-	obj->Start();
-
-	_CreatePack.emplace_back(sc_create_object_packet{ obj->object_Type, obj->transform->m_xmf4x4World });
+	_CreateObjectList.emplace_back(obj);
 }
 
 bool ObjectManager::DeleteGameObject(CGameObject* obj)
@@ -64,6 +68,18 @@ bool ObjectManager::DeleteObjectToList(CGameObject* obj)
 	return false;
 }
 
+bool ObjectManager::DeleteObjectToStartList(CGameObject* obj)
+{
+	auto p = find(_CreateObjectList.begin(), _CreateObjectList.end(), obj);
+	if (p != _CreateObjectList.end())
+	{
+		_CreateObjectList.erase(p);
+		return true;
+	}
+
+	return false;
+}
+
 void ObjectManager::GameObjectTransformUpdate(int id)
 {
 	auto obj = FindGameObject(id);
@@ -101,13 +117,22 @@ void ObjectManager::AllReleaseUploadBuffers()
 void ObjectManager::AllGameObjectUpdateTransform()
 {
 	for (const auto& obj : _GameObjectList)
+	{
 		obj->transform->UpdateTransform(NULL);
+	}
 }
 
 void ObjectManager::AllGameObjectStart()
 {
 	for (const auto& obj : _GameObjectList)
 		obj->Start();
+}
+
+void ObjectManager::AllCreateObjectStart()
+{
+	for (const auto& obj : _CreateObjectList)
+		obj->Start();
+	_CreateObjectList.clear();
 }
 
 void ObjectManager::AllGameObjectUpdate()
@@ -120,6 +145,13 @@ void ObjectManager::AllGameObjectLateUpdate()
 {
 	for (const auto& obj : _GameObjectList)
 		obj->LateUpdate();
+}
+
+void ObjectManager::AllActiveObjectUpdate()
+{
+	for (const auto& item : _ActiveObjectList)
+		item.first->ActiveUpdate(item.second);
+	ClearActiveObjectList();
 }
 
 void ObjectManager::AllGameObjectRender(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)

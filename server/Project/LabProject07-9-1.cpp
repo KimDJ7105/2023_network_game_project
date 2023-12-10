@@ -6,6 +6,9 @@
 #define MAX_LOADSTRING 100
 #pragma comment(lib,"ws2_32")
 
+#define SHOW_RECV_DEBUG false
+#define SHOW_SEND_DEBUG false
+
 HINSTANCE						ghAppInstance;
 TCHAR							szTitle[MAX_LOADSTRING];
 TCHAR							szWindowClass[MAX_LOADSTRING];
@@ -26,9 +29,8 @@ typedef struct threadarg
 } threadarg;
 
 //----전역변수
-std::queue<EVENT> InputEventQueue;
+std::deque<EVENT> InputEvent;
 extern CRITICAL_SECTION cs;
-SOCKET sock[2];
 
 //sendthread와 workerthread 동기화를 위한 이벤트 핸들
 HANDLE hWorkerEvent[2];
@@ -67,21 +69,28 @@ DWORD WINAPI WorkerThread(LPVOID arg)
 	MSG msg;
 	int retval;
 
-	auto objmgr = Define::SceneManager->GetCurrentScene()->objectManager;
-
 	gGameFramework.BuildObjects();
 	while (1)
 	{
+		EnterCriticalSection(&cs);
+		if (!InputEvent.empty())
+		{
+			for (auto input : InputEvent)
+				Define::Players[input.client_id]->AddEvent(input);
+			InputEvent.clear();
+		}
+		LeaveCriticalSection(&cs);
+
 		gGameFramework.FrameAdvance();
 		SetEvent(hWorkerEvent[0]);
 		SetEvent(hWorkerEvent[1]);
-		WaitForMultipleObjects(2, hSendEvent,true, INFINITE);
+		WaitForMultipleObjects(2, hSendEvent, true, INFINITE);
+		//WaitForSingleObject(hSendEvent[0], INFINITE);
 		{
 			auto objMgr = Define::SceneManager->GetCurrentScene()->objectManager;
 			objMgr->GetCreatePack()->clear();
 			objMgr->GetDeletePack()->clear();
 		}
-		
 	}
 	gGameFramework.OnDestroy();
 
@@ -95,12 +104,20 @@ DWORD WINAPI RecvThread(LPVOID arg)
 	WaitForSingleObject(hRecvReadyEvent, INFINITE);
 
 	while (true) {
-		cs_player_input_packet pack;
-		int retval = recv(sock[c_id], (char*)&pack, sizeof(cs_player_input_packet), MSG_WAITALL);
+		EVENT pack;
+		int retval = recv(Define::sock[c_id], (char*)&pack, sizeof(EVENT), 0);
 		if (retval == 0) return 0;
+		if (retval == SOCKET_ERROR) {
+			if (c_id == 0) err_quit("recv()0");
+			if (c_id == 1) err_quit("recv()1");
+		}
+		else if (SHOW_RECV_DEBUG){
+			printf("%d : recv Input data. Input Type : %d\n", pack.client_id, pack.event_id);
+		}
+		//if (pack.event_id == MOUSE_LEFT) printf("Mouse Moved Left : %d, %d\n", pack.mouseAxis.x, pack.mouseAxis.y);
 
 		EnterCriticalSection(&cs);
-		InputEventQueue.push({ pack.input_event, c_id });
+		InputEvent.push_back(pack);
 		LeaveCriticalSection(&cs);
 	}
 }
@@ -111,54 +128,38 @@ DWORD WINAPI SendThread(LPVOID arg)
 	int retval;
 
 	auto objmgr = Define::SceneManager->GetCurrentScene()->objectManager;
+	
+	{
+		auto createPack = objmgr->GetCreatePack();
+		int createPackSize = createPack->size();
+		if (SHOW_SEND_DEBUG) printf("(createpacket)%d socket : %d EA\n", c_id, createPackSize);
+		send(Define::sock[c_id], (char*)&createPackSize, sizeof(int), 0);
+		for (auto pack : *createPack)
+		{
+			//printf("Client %d : Create Object %d\n", c_id, pack.object_type);
+			send(Define::sock[c_id], (char*)&pack, sizeof(sc_create_object_packet), 0);
+		}
+
+		//NetworkConverter nc;
+		//auto packList = objmgr->GetCreatePack();
+		//int packListSize = packList->size();
+		//nc.AddBufferIndex((char*)&SC_CREATE_OBJECT);
+		//nc.AddBuffer(*packList);
+		//nc.Send(Define::sock[c_id]);
+	}
 
 	while (true) {
 		WaitForSingleObject(hWorkerEvent[c_id], INFINITE);
 
 		{
-			auto createPack = objmgr->GetCreatePack();
-			int createPackSize = createPack->size();
-			//printf("(createpacket)%d socket : %d EA\n", c_id, createPackSize);
-			retval = send(sock[c_id], reinterpret_cast<const char*>(&createPackSize), sizeof(int), 0);
-			if (retval == SOCKET_ERROR) err_quit("send()1 - 1");
-
-			for (auto pack : *createPack) {
-				retval = send(sock[c_id], reinterpret_cast<const char*>(&pack), sizeof(sc_create_object_packet), 0);
-				if (retval == SOCKET_ERROR) err_quit("send()1 - 2");
-			// int createPackSize = createPack->size();
-			// send(Define::sock[c_id], (char*)&createPackSize, sizeof(int), 0);
-			// for (auto pack : *createPack)
-			// {
-			// 	printf("(createpacket)%d socket : %d\n", c_id, pack.object_type);
-			// 	send(Define::sock[c_id], (char*)&pack, sizeof(sc_create_object_packet), 0);
-			}
-		}
-
-		{
-			auto deletePack = objmgr->GetDeletePack();
-			int deletePackSize = deletePack->size();
-			//printf("(deletepacket)%d socket : %d EA\n", c_id, deletePackSize);
-			retval = send(sock[c_id], reinterpret_cast<const char*>(&deletePackSize), sizeof(int), 0);
-			if(retval == SOCKET_ERROR) err_quit("send()2 - 1");
-			for (auto pack : *deletePack) {
-				retval = send(sock[c_id], reinterpret_cast<const char*>(&pack), sizeof(sc_delete_object_packet), 0);
-				if (retval == SOCKET_ERROR) err_quit("send()2 - 2");
-			}
-			// send(Define::sock[c_id], (char*)&deletePackSize, sizeof(int), 0);
-			// for (auto pack : *deletePack)
-			// 	send(Define::sock[c_id], (char*)&pack, sizeof(sc_delete_object_packet), 0);
-		}
-
-		{
 			auto packList = Define::SyncObjectManager->GetAllTransformPack();
 			int objectSize = packList.size();
-			//printf("(transformpacket)%d socket : %d EA\n", c_id, objectSize);
-			retval = send(sock[c_id], reinterpret_cast<const char*>(&objectSize), sizeof(int), 0);
-			if (retval == SOCKET_ERROR) err_quit("send()3 - 1");
-			for (auto pack : packList) {
-				retval = send(sock[c_id], reinterpret_cast<const char*>(&pack), sizeof(sc_object_transform_packet), 0);
-				if (retval == SOCKET_ERROR) err_quit("send()3 - 2");
-			}
+			if(SHOW_SEND_DEBUG) printf("(transformpacket)%d socket : %d EA\n", c_id, objectSize);
+
+			//send(Define::sock[c_id], (char*)&objectSize, sizeof(int), 0);
+			for (auto pack : packList)
+				send(Define::sock[c_id], (char*)&pack, sizeof(sc_object_transform_packet), 0);
+
 		}
 
 		SetEvent(hSendEvent[c_id]);
@@ -203,15 +204,37 @@ int main(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCm
 	struct sockaddr_in clientaddr;
 	std::array<HANDLE, 2> handle_arry;
 
+	// 워커 스레드 생성
+	struct threadarg arg;
+	arg.hInstance = &hInstance;
+	arg.hPrevInstance = &hPrevInstance;
+	arg.lpCmdLine = &lpCmdLine;
+	arg.nCmdShow = &nCmdShow;
+
+	HANDLE WorkerHandle = CreateThread(NULL, 0, WorkerThread, &arg, 0, NULL);
+
+	if (WorkerHandle == NULL) {
+		printf("WorkerThread Fail");
+		return 1;
+	}
+
+	WaitForMultipleObjects(2, hWorkerEvent, true, INFINITE);
+	SetEvent(hWorkerEvent[0]);
+	SetEvent(hWorkerEvent[1]);
+
 	for (int i = 0; i < 2; i++)
 	{
 		//accept
 		addrlen = sizeof(clientaddr);
-		sock[i] = accept(listen_sock, (struct sockaddr*)&clientaddr, &addrlen);
-		if (sock[i] == INVALID_SOCKET) {
+		Define::sock[i] = accept(listen_sock, (struct sockaddr*)&clientaddr, &addrlen);
+		if (Define::sock[i] == INVALID_SOCKET) {
 			err_display("accept()");
 			break;
 		}
+
+		// 클라이언트에게 자신이 몇번쨰로 접속했는지 알려주기
+		int clientIndex = i;
+		send(Define::sock[i], (char*)&clientIndex, sizeof(int), 0);
 
 		// 접속한 클라이언트 정보 출력
 		char addr[INET_ADDRSTRLEN];
@@ -232,19 +255,6 @@ int main(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCm
 	}
 
 	SetEvent(hRecvReadyEvent);
-
-
-	struct threadarg arg;
-	arg.hInstance = &hInstance;
-	arg.hPrevInstance = &hPrevInstance;
-	arg.lpCmdLine = &lpCmdLine;
-	arg.nCmdShow = &nCmdShow;
-	HANDLE WorkerHandle = CreateThread(NULL, 0, WorkerThread, &arg, 0, NULL);
-
-	if (WorkerHandle == NULL) {
-		printf("WorkerThread Fail");
-		return 1;
-	}
 
 	WaitForSingleObject(WorkerHandle, INFINITE);
 	WaitForSingleObject(handle_arry[0], INFINITE);

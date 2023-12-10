@@ -69,4 +69,14 @@ public:
 
 	virtual void ReleaseShaderVariables();
 	virtual void UpdateShaderVariables(ID3D12GraphicsCommandList *pd3dCommandList);
+
+public: // event
+	void AddEvent(EVENT e);
+	deque<EVENT>* GetInputEventList() { return &inputEvent; }
+	void ClearInputEventList() { inputEvent.clear(); }
+
+public:
+	int playerID;
+private:
+	deque<EVENT> inputEvent;
 };

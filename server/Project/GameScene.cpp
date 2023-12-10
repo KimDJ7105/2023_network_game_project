@@ -1,9 +1,7 @@
 #include "stdafx.h"
 #include "GameScene.h"
-#include "CameraController.h"
 #include "Tree.h"
 #include "CTankPlayer.h"
-#include "Enumy.h"
 #include "BigMissile.h"
 #include "CMountineTerrain.h"
 
@@ -20,13 +18,24 @@ void CGameScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 
 	CTerrain* terrain = new CMountineTerrain();
 
+	Define::Players = new CPlayer*[2];
+	Define::Players[0] = new CTankPlayer(PLAYER);
+	Define::Players[0]->name = "First Player";
+	Define::Players[0]->playerID = 0;
+	Define::Players[0]->transform->SetPosition(10, 0, 0);
+
+	Define::Players[1] = new CTankPlayer(PLAYER);
+	Define::Players[1]->name = "Second Player";
+	Define::Players[1]->playerID = 1;
+
+
 	//player = new CTankPlayer();
 
 	//for (int i = 0; i < 6; i++)
 	//	new CEnumy(); 
 
-	//for (int i = 0; i < 10; i++)
-	//	CTree* tree = new CTree();
+	for (int i = 0; i < 10; i++)
+		CTree* tree = new CTree();
 
 	//for (int i = 0; i < 3; ++i)
 	//{
@@ -39,6 +48,7 @@ void CGameScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 	//}
 
 	objectManager->AllGameObjectStart();
+	objectManager->ClearCreateObjectList();
 
 	//for (const auto& obj : Define::GameObjectList)
 	//	obj->Start();

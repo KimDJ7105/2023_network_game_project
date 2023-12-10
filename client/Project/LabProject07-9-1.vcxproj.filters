@@ -66,9 +66,6 @@
     <ClInclude Include="CTankPlayer.h">
       <Filter>Object\Contain</Filter>
     </ClInclude>
-    <ClInclude Include="Enumy.h">
-      <Filter>Object\Contain</Filter>
-    </ClInclude>
     <ClInclude Include="Tank.h">
       <Filter>Object\Contain</Filter>
     </ClInclude>
@@ -153,9 +150,6 @@
     <ClInclude Include="Common.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="protocol.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="CGameObjectContainer.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -167,6 +161,18 @@
     </ClInclude>
     <ClInclude Include="SyncObject.h">
       <Filter>Framework\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PublicLib\NetworkConverter.h">
+      <Filter>Framework\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PublicLib\protocol.h">
+      <Filter>Framework\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="resource1.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowDialog.h">
+      <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -180,9 +186,6 @@
       <Filter>Object\Contain</Filter>
     </ClCompile>
     <ClCompile Include="CTankPlayer.cpp">
-      <Filter>Object\Contain</Filter>
-    </ClCompile>
-    <ClCompile Include="Enumy.cpp">
       <Filter>Object\Contain</Filter>
     </ClCompile>
     <ClCompile Include="Tank.cpp">
@@ -263,9 +266,6 @@
     <ClCompile Include="CGameObjectContainer.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="protocol.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="CMountineTerrain.cpp">
       <Filter>Object\Contain</Filter>
     </ClCompile>
@@ -275,9 +275,15 @@
     <ClCompile Include="SyncObject.cpp">
       <Filter>Framework\Network</Filter>
     </ClCompile>
+    <ClCompile Include="WindowDialog.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="LabProject07-9-1.rc">
+      <Filter>리소스 파일</Filter>
+    </ResourceCompile>
+    <ResourceCompile Include="Resource.rc">
       <Filter>리소스 파일</Filter>
     </ResourceCompile>
   </ItemGroup>

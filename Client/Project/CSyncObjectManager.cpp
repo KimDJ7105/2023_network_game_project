@@ -1,14 +1,20 @@
 #include "stdafx.h"
 #include "Object.h"
 #include "CSyncObjectManager.h"
+#include "CGameObjectContainer.h"
 
 CSyncObjectManager::CSyncObjectManager()
 {
 	Define::SyncObjectManager = this;
+	InitializeCriticalSection(&cs);
 }
 
 CSyncObjectManager::~CSyncObjectManager()
 {
+	_CreatePack.clear();
+	transformPackList.clear();
+	syncList.clear();
+	DeleteCriticalSection(&cs);
 }
 
 void CSyncObjectManager::AddSyncObject(SyncObject* sync)
@@ -44,16 +50,41 @@ vector<sc_object_transform_packet> CSyncObjectManager::GetAllTransformPack()
 
 void CSyncObjectManager::SetTransformPack(vector<sc_object_transform_packet> packList)
 {
+	EnterCriticalSection(&cs);
 	transformPackList = packList;
+	LeaveCriticalSection(&cs);
 }
 
 void CSyncObjectManager::UpdateAllTransformPack()
 {
+	EnterCriticalSection(&cs);
 	for (auto pack : transformPackList)
 	{
 		if (syncList.size() <= pack.object_id) continue;
-		syncList[pack.object_id]->gameObject->transform->m_xmf4x4World = pack.matrix;
+		auto snycObject = syncList[pack.object_id];
+		snycObject->gameObject->transform->m_xmf4x4Transform = pack.matrix;
+		snycObject->gameObject->transform->SetPosition(pack.position);
+		snycObject->gameObject->transform->SetRotate(pack.rotate);
+		snycObject->gameObject->transform->SetScale(pack.scale);
+		snycObject->gameObject->SetActive(pack.isActive);
 	}
 
 	transformPackList.clear();
+	LeaveCriticalSection(&cs);
+}
+
+void CSyncObjectManager::AddRangeCreatePack(vector<sc_create_object_packet>* list)
+{
+	_CreatePack.insert(_CreatePack.begin(), list->begin(), list->end());
+}
+
+void CSyncObjectManager::AllCreatePackUpdate()
+{
+	for (const auto pack : _CreatePack)
+	{
+		if (pack.object_type < 0) continue;
+		auto obj = CGameObjectContainer::CreateGameObject(pack.object_type);
+		obj->transform->m_xmf4x4Transform = pack.matrix;
+	}
+	_CreatePack.clear();
 }

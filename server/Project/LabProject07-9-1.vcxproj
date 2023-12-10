@@ -140,10 +140,16 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\PublicLib\NetworkConverter.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\..\PublicLib\protocol.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="BigMissile.h" />
     <ClInclude Include="BulletObject.h" />
     <ClInclude Include="Camera.h" />
-    <ClInclude Include="CameraController.h" />
     <ClInclude Include="CGameObjectContainer.h" />
     <ClInclude Include="CMountineTerrain.h" />
     <ClInclude Include="Collider.h" />
@@ -151,7 +157,6 @@
     <ClInclude Include="CSyncObjectManager.h" />
     <ClInclude Include="CTankPlayer.h" />
     <ClInclude Include="Define.h" />
-    <ClInclude Include="Enumy.h" />
     <ClInclude Include="GameFramework.h" />
     <ClInclude Include="GameScene.h" />
     <ClInclude Include="Input.h" />
@@ -163,7 +168,6 @@
     <ClInclude Include="Particlelib.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerController.h" />
-    <ClInclude Include="protocol.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="RigidBody.h" />
     <ClInclude Include="Scene.h" />
@@ -183,7 +187,6 @@
     <ClCompile Include="BigMissile.cpp" />
     <ClCompile Include="BulletObject.cpp" />
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="CameraController.cpp" />
     <ClCompile Include="CGameObjectContainer.cpp" />
     <ClCompile Include="CMountineTerrain.cpp" />
     <ClCompile Include="Collider.cpp" />
@@ -191,7 +194,6 @@
     <ClCompile Include="CSyncObjectManager.cpp" />
     <ClCompile Include="CTankPlayer.cpp" />
     <ClCompile Include="Define.cpp" />
-    <ClCompile Include="Enumy.cpp" />
     <ClCompile Include="GameFramework.cpp" />
     <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="Input.cpp" />
@@ -202,7 +204,6 @@
     <ClCompile Include="Particle.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerController.cpp" />
-    <ClCompile Include="protocol.cpp" />
     <ClCompile Include="RigidBody.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneManager.cpp" />

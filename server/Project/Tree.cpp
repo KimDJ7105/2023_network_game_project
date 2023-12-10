@@ -1,9 +1,9 @@
 #include "stdafx.h"
 #include "Tree.h"
 #include "CTankPlayer.h"
-#include "Enumy.h"
+#include "SyncObject.h"
 
-CTree::CTree()
+CTree::CTree() : CGameObject(TREE)
 {
 	name = "Tree";
 
@@ -19,6 +19,7 @@ CTree::CTree()
 	transform->SetPosition(dis * sin(radian), 0.0f, dis * cos(radian));
 	
 	isDie = false;
+	AddComponet(new SyncObject(this));
 }
 
 void CTree::Collision(CCollider& other)

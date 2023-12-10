@@ -36,7 +36,14 @@ vector<sc_object_transform_packet> CSyncObjectManager::GetAllTransformPack()
 	for (int i = 0; i < packSize; i++)
 	{
 		packlist[i].object_id = syncList[i]->id;
-		packlist[i].matrix = syncList[i]->gameObject->transform->m_xmf4x4World;
+		XMStoreFloat3(&packlist[i].position, syncList[i]->gameObject->transform->GetLocalPosition());
+		XMStoreFloat3(&packlist[i].rotate, syncList[i]->gameObject->transform->GetRotate());
+		XMStoreFloat3(&packlist[i].scale, syncList[i]->gameObject->transform->GetScale());
+		//packlist[i].position = syncList[i]->gameObject->transform->GetLocalPosition();
+		//packlist[i].rotate = syncList[i]->gameObject->transform->GetRotate();
+		//packlist[i].scale = syncList[i]->gameObject->transform->GetScale();
+		packlist[i].matrix = syncList[i]->gameObject->transform->m_xmf4x4Transform;
+		packlist[i].isActive = syncList[i]->gameObject->GetActive();
 	}
 
 	return packlist;

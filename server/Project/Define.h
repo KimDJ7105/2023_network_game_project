@@ -26,7 +26,7 @@ public:
 	static int AddGameObject(CGameObject* addObj);
 	static list<CCollider*> ColliderList;
 	static CCamera* MainCamera;
-	static CPlayer* Player;
+	static CPlayer** Players;
 
 public: // Server Sock
 

@@ -11,7 +11,7 @@ CCameraController::CCameraController(CGameObject* obj) : CComponent(obj)
 
 void CCameraController::Start()
 {
-	target = Define::Player->GetChilde("Pivot");
+	target = Define::Players[Define::ClientIndex]->GetChilde("Pivot");
 	terrain = (CTerrain*)CGameObject::FindObject("Terrain");
 }
 

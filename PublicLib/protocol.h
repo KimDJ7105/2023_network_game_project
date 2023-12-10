@@ -7,12 +7,24 @@ constexpr int BUFSIZE = 256;
 constexpr int PLAYER = 0;
 constexpr int BULLET = 1;
 constexpr int TERRAIN = 2;
+constexpr int TREE = 3;
 
 // Key ID
 constexpr int KEY_UP = 0;
 constexpr int KEY_DOWN = 1;
-constexpr int KEY_LEFT = 2;
-constexpr int KEY_RIGHT = 3;
+constexpr int MOUSE_UP = 2;
+constexpr int MOUSE_DOWN = 3;
+
+constexpr int KEY_W = 0;
+constexpr int KEY_S = 1;
+constexpr int KEY_A = 2;
+constexpr int KEY_D = 3;
+constexpr int KEY_SPACE = 4;
+
+constexpr int MOUSE_LEFT = 10;
+constexpr int MOUSE_RIGHT = 11;
+
+constexpr int RECV_DONE = 100;
 
 // Packet ID
 constexpr int SC_CREATE_OBJECT = 0;
@@ -23,30 +35,32 @@ constexpr int CS_PLAYER_INPUT = 4;
 
 
 #pragma pack(push, 1)
+#include <D3Dcompiler.h>
+#include <DirectXPackedVector.h>
 
+using namespace DirectX;
+using namespace DirectX::PackedVector;
 // 패킷 구조체
 
 //s -> c
 struct sc_create_object_packet {
 	int object_type;
 	XMFLOAT4X4 matrix;
-
-	sc_create_object_packet();
-	sc_create_object_packet(int type, XMFLOAT4X4 _matrix);
 };
 
 struct sc_object_transform_packet {
 	int object_id;
+	XMFLOAT3 position;
+	XMFLOAT3 rotate;
+	XMFLOAT3 scale;
 	XMFLOAT4X4 matrix;
 
-	sc_object_transform_packet();
-	sc_object_transform_packet(int id, XMFLOAT4X4 m) : object_id(id), matrix(m) {}
+	bool isActive;
 };
 
 struct sc_delete_object_packet {
 	int object_id;
 
-	sc_delete_object_packet(int id = -1);
 };
 
 struct sc_collision_object_packet {
@@ -60,8 +74,10 @@ struct cs_player_input_packet {
 };
 
 typedef struct event {
-	int event_id;
 	int client_id;
+	int event_id;
+	int state;
+	POINT mouseAxis;
 } EVENT;
 
 #pragma pack(pop)

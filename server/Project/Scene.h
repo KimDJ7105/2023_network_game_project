@@ -69,8 +69,6 @@ public:
     virtual void AnimateObjects(float fTimeElapsed);
     //virtual void Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera=NULL);
 
-	void HandleInputEvent(queue<EVENT> q);
-
 	void ReleaseUploadBuffers();
 	virtual void LoadScene() {}
 

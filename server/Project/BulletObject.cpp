@@ -1,31 +1,34 @@
 #include "stdafx.h"
 #include "BulletObject.h"
+#include "SyncObject.h"
 
 CBulletObject::CBulletObject()
 {
 	name = "Bullet";
 
 	missile = CGameObject::LoadGeometryFromFile("Model/Missile.bin");
+	missile->AddComponet(new SyncObject(missile));
 	missile->collider = new CCollider(missile);
 	missile->name = "Missile";
 	missile->collider->tag = "Bullet";
 	SetChild(missile);
 
-	collisionParticle = new CParticleSystem(10);
-	collisionParticle->duration = 5.0f;
-	collisionParticle->SetSpeed(1.5f, 4.0f);
-	
-	shotParticle = new CParticleSystem(4);
-	shotParticle->duration = 0.3f;
-	shotParticle->SetSpeed(1.0f, 3.0f);
+	//collisionParticle = new CParticleSystem(10);
+	//collisionParticle->duration = 5.0f;
+	//collisionParticle->SetSpeed(1.5f, 4.0f);
+	//
+	//shotParticle = new CParticleSystem(4);
+	//shotParticle->duration = 0.3f;
+	//shotParticle->SetSpeed(1.0f, 3.0f);
 
 	SetActive(false);
-	collisionParticle->SetActive(false);
-	shotParticle->SetActive(false);
+	//collisionParticle->SetActive(false);
+	//shotParticle->SetActive(false);
 
 	status->damage = 10;
 
 	missile->AddComponet(status);
+	AddComponet(new SyncObject(this));
 }
 
 CBulletObject::~CBulletObject()
@@ -51,10 +54,10 @@ void CBulletObject::Update()
 void CBulletObject::Fire()
 {
 	SetActive(true);
-	collisionParticle->Stop();
+	//collisionParticle->Stop();
 
-	shotParticle->transform->SetPosition(transform->GetPosition() + transform->GetLook());
-	shotParticle->Play();
+	//shotParticle->transform->SetPosition(transform->GetPosition() + transform->GetLook());
+	//shotParticle->Play();
 }
 
 void CBulletObject::Reset()
@@ -63,9 +66,9 @@ void CBulletObject::Reset()
 	moveDirectionSpeed = 0;
 
 	//missile->UpdateTransform();
-	collisionParticle->transform->SetPosition(transform->GetPosition() + transform->GetLook() * 1.5f);
-	collisionParticle->Play();
-	shotParticle->Stop();
+	//collisionParticle->transform->SetPosition(transform->GetPosition() + transform->GetLook() * 1.5f);
+	//collisionParticle->Play();
+	//shotParticle->Stop();
 
 	SetActive(false);
 }

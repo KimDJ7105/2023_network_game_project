@@ -1,31 +1,35 @@
 #include "stdafx.h"
 #include "BulletObject.h"
+#include "SyncObject.h"
 
 CBulletObject::CBulletObject()
 {
 	name = "Bullet";
 
 	missile = CGameObject::LoadGeometryFromFile("Model/Missile.bin");
-	missile->collider = new CCollider(missile);
+	//missile = new CGameObject();
+	missile->AddComponet(new SyncObject(missile));
 	missile->name = "Missile";
-	missile->collider->tag = "Bullet";
+	//missile->collider = new CCollider(missile);
+	//missile->collider->tag = "Bullet";
 	SetChild(missile);
 
-	collisionParticle = new CParticleSystem(10);
-	collisionParticle->duration = 5.0f;
-	collisionParticle->SetSpeed(1.5f, 4.0f);
-	
-	shotParticle = new CParticleSystem(4);
-	shotParticle->duration = 0.3f;
-	shotParticle->SetSpeed(1.0f, 3.0f);
+	//collisionParticle = new CParticleSystem(10);
+	//collisionParticle->duration = 5.0f;
+	//collisionParticle->SetSpeed(1.5f, 4.0f);
+	//
+	//shotParticle = new CParticleSystem(4);
+	//shotParticle->duration = 0.3f;
+	//shotParticle->SetSpeed(1.0f, 3.0f);
 
+	//collisionParticle->SetActive(false);
+	//shotParticle->SetActive(false);
 	SetActive(false);
-	collisionParticle->SetActive(false);
-	shotParticle->SetActive(false);
 
 	status->damage = 10;
 
 	missile->AddComponet(status);
+	AddComponet(new SyncObject(this));
 }
 
 CBulletObject::~CBulletObject()

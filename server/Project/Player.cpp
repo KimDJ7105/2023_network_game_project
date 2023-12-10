@@ -39,6 +39,11 @@ void CPlayer::UpdateShaderVariables(ID3D12GraphicsCommandList *pd3dCommandList)
 {
 }
 
+void CPlayer::AddEvent(EVENT e)
+{
+	inputEvent.emplace_back(e);
+}
+
 void CPlayer::ReleaseShaderVariables()
 {
 	//if (m_pCamera) m_pCamera->ReleaseShaderVariables();

@@ -1,14 +1,16 @@
-// LabProject07-9-1.cpp : ÀÀ¿ë ÇÁ·Î±×·¥¿¡ ´ëÇÑ ÁøÀÔÁ¡À» Á¤ÀÇÇÕ´Ï´Ù.
+// LabProject07-9-1.cpp : ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Î±×·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
 //
 
 #include "stdafx.h"
 #include "LabProject07-9-1.h"
 #include "GameFramework.h"
 #include "CSyncObjectManager.h"
+#include "WindowDialog.h"
 
 #pragma comment(lib,"ws2_32")
 #define MAX_LOADSTRING 100
 
+//#define SERVERIP "61.77.126.164"
 #define SERVERIP "127.0.0.1"
 
 HINSTANCE						ghAppInstance;
@@ -20,7 +22,15 @@ CGameFramework					gGameFramework;
 HANDLE hRecvHandle;
 HANDLE hWoker;
 
+HINSTANCE hInst; // ì¸ìŠ¤í„´ìŠ¤ í•¸ë“¤
+CRITICAL_SECTION cs;
+HWND hEdit; // ì—ë””íŠ¸ ì»¨íŠ¸ë¡¤
+
 DWORD WINAPI RecvThread(LPVOID arg);
+DWORD WINAPI SendThread(LPVOID arg);
+void RecvInitObject();
+void KeyControl();
+void MouseControl();
 
 ATOM MyRegisterClass(HINSTANCE hInstance);
 BOOL InitInstance(HINSTANCE, int);
@@ -33,7 +43,9 @@ void err_display(const char* msg);
 int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow)
 {
 	int retval;
-	// À©¼Ó ÃÊ±âÈ­
+	InitializeCriticalSection(&cs);
+	hInst = hInstance;
+
 	WSADATA wsa;
 	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
 		return 1;
@@ -41,7 +53,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	hRecvHandle = CreateEvent(NULL, true, true, NULL);
 	hWoker = CreateEvent(NULL, true, false, NULL);
 
-	// ¼ÒÄÏ »ý¼º
+	// ì†Œì¼“ ìƒì„±
 	Define::sock = socket(AF_INET, SOCK_STREAM, 0);
 	if (Define::sock == INVALID_SOCKET) err_quit("socket()");
 
@@ -54,6 +66,9 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	retval = connect(Define::sock, (struct sockaddr*)&serveraddr, sizeof(serveraddr));
 	if (retval == SOCKET_ERROR) err_quit("connect()");
 
+	// ëª‡ ë²ˆì§¸ í´ë¼ì´ì–¸íŠ¸ì¸ì§€ ìˆ˜ì‹ 
+	recv(Define::sock, (char*)&Define::ClientIndex, sizeof(int), 0);
+
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
@@ -64,13 +79,17 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	::LoadString(hInstance, IDC_LABPROJECT0791, szWindowClass, MAX_LOADSTRING);
 	MyRegisterClass(hInstance);
 
+	RecvInitObject();
 	if (!InitInstance(hInstance, nCmdShow)) return(FALSE);
 
 	hAccelTable = ::LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_LABPROJECT0791));
 
 	CreateThread(NULL, 0, RecvThread, NULL, 0, NULL);
-	while (1)
+	CreateThread(NULL, 0, SendThread, NULL, 0, NULL);
+	bool end = false;
+	while (Define::GameRunnig)
 	{
+		
 		if (::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 		{
 			if (msg.message == WM_QUIT) break;
@@ -82,62 +101,174 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 		}
 		else
 		{
-			WaitForSingleObject(hWoker, INFINITE);
-			gGameFramework.FrameAdvance();
-			ResetEvent(hWoker);
-			SetEvent(hRecvHandle);
+			//WaitForSingleObject(hWoker, INFINITE);
+			//KeyControl();
+			//MouseControl();
+			//EnterCriticalSection(&cs);
+			gGameFramework.FrameAdvance(); 
+			//LeaveCriticalSection(&cs);
+
+			if (!end)
+			{
+				if (Define::Players[0]->GetRoot()->GetActive() == false)
+				{
+					
+					if (Define::ClientIndex == 0)
+						DialogBox(hInstance, MAKEINTRESOURCE(IDD_DIALOG2), NULL, DlgProc);
+					else
+						DialogBox(hInstance, MAKEINTRESOURCE(IDD_DIALOG1), NULL, DlgProc);
+					end = true;
+				}
+				else if (Define::Players[1]->GetRoot()->GetActive() == false)
+				{
+					
+					if (Define::ClientIndex == 1)
+						DialogBox(hInstance, MAKEINTRESOURCE(IDD_DIALOG2), NULL, DlgProc);
+					else 
+						DialogBox(hInstance, MAKEINTRESOURCE(IDD_DIALOG1), NULL, DlgProc);
+					
+					end = true;
+				}
+			}
+
+			//ResetEvent(hWoker);
+			//SetEvent(hRecvHandle);
 		}
 	}
 	gGameFramework.OnDestroy();
-
+	//DeleteCriticalSection(&cs);
 	return((int)msg.wParam);
 }
 
 DWORD WINAPI RecvThread(LPVOID arg)
 {
-	auto objMgr = Define::SceneManager->GetCurrentScene()->objectManager;
-
+	int reval;
+	vector<sc_object_transform_packet> packList;
+	
 	while (true) {
-		WaitForSingleObject(hRecvHandle, INFINITE);
+		//WaitForSingleObject(hRecvHandle, INFINITE);
 		{
-			int createPackSize = 0;
-			int s = recv(Define::sock, (char*)&createPackSize, sizeof(int), 0);
-			if (s == -1) err_display("recv()");
-
-			for (int i = 0; i < createPackSize; i++)
-			{
-				sc_create_object_packet pack;
-				recv(Define::sock, (char*)&pack, sizeof(sc_create_object_packet), 0);
-				objMgr->AddCreatePack(pack);
-			}
-		}
-
-		{
-			int deletePackSize = 0;
-			recv(Define::sock, (char*)&deletePackSize, sizeof(int), 0);
-			for (int i = 0; i < deletePackSize; i++)
-			{
-				sc_delete_object_packet pack;
-				recv(Define::sock, (char*)&pack, sizeof(sc_create_object_packet), 0);
-				objMgr->AddDeletePack(pack);
-			}
-		}
-
-		{
-			int transformPackSize = 0;
-			recv(Define::sock, (char*)&transformPackSize, sizeof(int), 0);
-			vector<sc_object_transform_packet> packList(transformPackSize);
-			for (int i = 0; i < transformPackSize; i++)
+			//EnterCriticalSection(&cs);
+			//int transformPackSize = 0;	
+			//reval = recv(Define::sock, (char*)&transformPackSize, sizeof(int), 0);
+			//if (reval == SOCKET_ERROR) continue;
+			for (int i = 0; i < Define::SyncObjectManager->GetSyncList()->size(); i++)
 			{
 				sc_object_transform_packet pack;
-				recv(Define::sock, (char*)&pack, sizeof(sc_object_transform_packet), 0);
-				packList[i] = pack;
+				reval = recv(Define::sock, (char*)&pack, sizeof(sc_object_transform_packet), 0);
+				if (reval == SOCKET_ERROR) continue;
+
+				packList.emplace_back(pack);
 			}
 
 			Define::SyncObjectManager->SetTransformPack(packList);
+			packList.clear();
+			//LeaveCriticalSection(&cs);
 		}
-		ResetEvent(hRecvHandle);
-		SetEvent(hWoker);
+		//ResetEvent(hRecvHandle);
+		//SetEvent(hWoker);
+	}
+}
+
+DWORD WINAPI SendThread(LPVOID arg)
+{
+	while (true)
+	{
+		KeyControl();
+		MouseControl();
+	}
+}
+
+void RecvInitObject()
+{
+	int createPackSize = 0;
+	recv(Define::sock, (char*)&createPackSize, sizeof(int), 0);
+
+	for (int i = 0; i < createPackSize; i++)
+	{
+		sc_create_object_packet pack;
+		recv(Define::sock, (char*)&pack, sizeof(sc_create_object_packet), 0);
+		Define::SyncObjectManager->AddCreatePack(pack);
+	}
+
+	//NetworkConverter nc;
+	//nc.Recv(Define::sock);
+	//
+	//auto* packList = nc.ReadBuffer<sc_create_object_packet>();
+	//Define::SyncObjectManager->AddRangeCreatePack(packList);
+}
+
+void KeyControl()
+{
+	//if (Define::Input->GetKeyAny()) return;
+
+	auto recvKey = [](int key, int key_state) {
+		EVENT e{ Define::ClientIndex, -1, -1, {-1,-1} };
+
+		e.event_id = key;
+		e.state = key_state;
+		send(Define::sock, (char*)&e, sizeof(EVENT), 0);
+	};
+
+	if (Define::Input->IsKeyDown())
+	{
+		if (Define::Input->GetKeyDown(KeyCode::W))
+			recvKey(KEY_W, KEY_DOWN);
+		if (Define::Input->GetKeyDown(KeyCode::S))
+			recvKey(KEY_S, KEY_DOWN);
+		if (Define::Input->GetKeyDown(KeyCode::D))
+			recvKey(KEY_D, KEY_DOWN);
+		if (Define::Input->GetKeyDown(KeyCode::A))
+			recvKey(KEY_A, KEY_DOWN);
+		if (Define::Input->GetKeyDown(KeyCode::Space))
+			recvKey(KEY_SPACE, KEY_DOWN);
+	}
+	if (Define::Input->IsKeyUp())
+	{
+		if (Define::Input->GetKeyUp(KeyCode::W))
+			recvKey(KEY_W, KEY_UP);
+		if (Define::Input->GetKeyUp(KeyCode::S))
+			recvKey(KEY_S, KEY_UP);
+		if (Define::Input->GetKeyUp(KeyCode::D))
+			recvKey(KEY_D, KEY_UP);
+		if (Define::Input->GetKeyUp(KeyCode::A))
+			recvKey(KEY_A, KEY_UP);
+		if (Define::Input->GetKeyUp(KeyCode::Space))
+			recvKey(KEY_SPACE, KEY_UP);
+	}
+}
+
+void MouseControl()
+{
+	if (Define::Input->GetMousePress(MouseButton::Left))
+	{
+		POINT mouseAxis = Define::Input->GetMouseAxis();
+		//mouseAxis.x = 10;
+		if (mouseAxis.x != 0)
+		{
+			EVENT e{ Define::ClientIndex, MOUSE_LEFT, MOUSE_DOWN, mouseAxis };
+			send(Define::sock, (char*)&e, sizeof(EVENT), 0);
+		}
+	}
+	else if (Define::Input->GetMouseUp(MouseButton::Left))
+	{
+		EVENT e{ Define::ClientIndex, MOUSE_LEFT, MOUSE_UP, {0,0} };
+		send(Define::sock, (char*)&e, sizeof(EVENT), 0);
+	}
+
+	if (Define::Input->GetMousePress(MouseButton::Right))
+	{
+		POINT mouseAxis = Define::Input->GetMouseAxis();
+		if (mouseAxis.y != 0)
+		{
+			EVENT e{ Define::ClientIndex, MOUSE_RIGHT, MOUSE_DOWN, mouseAxis };
+			send(Define::sock, (char*)&e, sizeof(EVENT), 0);
+		}
+	}
+	else if (Define::Input->GetMouseUp(MouseButton::Right))
+	{
+		EVENT e{ Define::ClientIndex, MOUSE_RIGHT, MOUSE_UP, {0,0} };
+		send(Define::sock, (char*)&e, sizeof(EVENT), 0);
 	}
 }
 

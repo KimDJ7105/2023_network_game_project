@@ -349,8 +349,8 @@ CTerrain::CTerrain(string filePath, int type) : CGameObject(type)
 	pShader->CreateShader(Define::Framework->m_pd3dDevice, Define::Framework->m_pd3dCommandList, Define::SceneManager->GetCurrentScene()->m_pd3dGraphicsRootSignature);
 	SetShader(pShader);
 
-	collider = new CCollider(this);
-	collider->tag = "Terrain";
+	//collider = new CCollider(this);
+	//collider->tag = "Terrain";
 }
 
 CTerrain::~CTerrain(void)

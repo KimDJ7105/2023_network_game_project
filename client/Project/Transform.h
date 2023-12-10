@@ -29,6 +29,7 @@ public: // getter setter
 	XMVECTOR GetScale() { return scale; }
 
 	XMVECTOR GetRotate() { return rotate; }
+	//XMVECTOR GetRotate();
 
 	XMVECTOR GetLook();
 	XMVECTOR GetUp();
@@ -39,6 +40,7 @@ public: // getter setter
 	void SetPosition(float x, float y, float z) { SetPosition(XMVectorSet(x, y, z, 1.0f)); }
 
 	void SetRotate(XMVECTOR& RotateVector);
+	void SetRotate(XMFLOAT3& RotateVector) { SetRotate(XMLoadFloat3(&RotateVector)); }
 	void SetRotate(float x, float y, float z) {SetRotate(XMVectorSet(x, y, z, 1.0f));}
 
 	void SetScale(XMVECTOR& Scale);

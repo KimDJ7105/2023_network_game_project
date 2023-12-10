@@ -63,7 +63,6 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 	CreateDepthStencilView();
 
 	BuildObjects();
-
 	return(true);
 }
 
@@ -373,7 +372,8 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
         case WM_LBUTTONUP:
         case WM_RBUTTONUP:
         case WM_MOUSEMOVE:
-			OnProcessingMouseMessage(hWnd, nMessageID, wParam, lParam);
+			//OnProcessingMouseMessage(hWnd, nMessageID, wParam, lParam);
+			Define::Input->OnProcessingMouseMessage(hWnd, nMessageID, wParam, lParam);
             break;
         case WM_KEYDOWN:
 			OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);
@@ -453,27 +453,31 @@ void CGameFramework::ProcessInput()
 		if (pKeysBuffer[VK_PRIOR] & 0xF0) dwDirection |= DIR_UP;
 		if (pKeysBuffer[VK_NEXT] & 0xF0) dwDirection |= DIR_DOWN;
 
-		float cxDelta = 0.0f, cyDelta = 0.0f;
-		POINT ptCursorPos;
-		if (GetCapture() == m_hWnd)
-		{
-			SetCursor(NULL);
-			GetCursorPos(&ptCursorPos);
-			cxDelta = (float)(ptCursorPos.x - m_ptOldCursorPos.x) / 3.0f;
-			cyDelta = (float)(ptCursorPos.y - m_ptOldCursorPos.y) / 3.0f;
-			SetCursorPos(m_ptOldCursorPos.x, m_ptOldCursorPos.y);
-		}
+		Define::Input->SetHWND(GetCapture());
+		//float cxDelta = 0.0f, cyDelta = 0.0f;
+		//POINT ptCursorPos;
+		//if (GetCapture() == m_hWnd)
+		//{
+		//	SetCursor(NULL);
+		//	GetCursorPos(&ptCursorPos);
+		//	//cxDelta = (float)(ptCursorPos.x - m_ptOldCursorPos.x) / 3.0f;
+		//	//cyDelta = (float)(ptCursorPos.y - m_ptOldCursorPos.y) / 3.0f;
+		//	ptCursorPos.x = (float)(ptCursorPos.x - m_ptOldCursorPos.x) / 3.0f;
+		//	ptCursorPos.y = (float)(ptCursorPos.y - m_ptOldCursorPos.y) / 3.0f;
+		//	Define::Input->axis = ptCursorPos;
+		//	SetCursorPos(m_ptOldCursorPos.x, m_ptOldCursorPos.y);
+		//}
 
-		if ((dwDirection != 0) || (cxDelta != 0.0f) || (cyDelta != 0.0f))
-		{
-			//if (cxDelta || cyDelta)
-			//{
-			//	if (pKeysBuffer[VK_RBUTTON] & 0xF0)
-			//		dynamic_cast<CTankPlayer*>(Define::Player)->pivotObject->transform->Rotate(cyDelta, 0.0f, 0.0f);
-			//	else
-			//		dynamic_cast<CTankPlayer*>(Define::Player)->pivotObject->transform->Rotate(0.0f, cxDelta, 0.0f);
-			//}
-		}
+		//if ((dwDirection != 0) || (cxDelta != 0.0f) || (cyDelta != 0.0f))
+		//{
+		//	//if (cxDelta || cyDelta)
+		//	//{
+		//	//	if (pKeysBuffer[VK_RBUTTON] & 0xF0)
+		//	//		dynamic_cast<CTankPlayer*>(Define::Player)->pivotObject->transform->Rotate(cyDelta, 0.0f, 0.0f);
+		//	//	else
+		//	//		dynamic_cast<CTankPlayer*>(Define::Player)->pivotObject->transform->Rotate(0.0f, cxDelta, 0.0f);
+		//	//}
+		//}
 	}
 }
 
@@ -519,8 +523,7 @@ void CGameFramework::FrameAdvance()
 	m_GameTimer.Tick(0.0f);
 	
 	ProcessInput();
-
-    AnimateObjects();
+	AnimateObjects();
 
 	HRESULT hResult = m_pd3dCommandAllocator->Reset();
 	hResult = m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
@@ -583,7 +586,9 @@ void CGameFramework::FrameAdvance()
 	m_GameTimer.GetFrameRate(m_pszFrameRate + 12, 37);
 	size_t nLength = _tcslen(m_pszFrameRate);
 	XMFLOAT3 xmf3Position(0,10,0);
-	//XMStoreFloat3(&xmf3Position, Define::Player->GetChilde("Pivot")->transform->GetPosition());
+
+	if(Define::Players[Define::ClientIndex] != nullptr)
+		XMStoreFloat3(&xmf3Position, Define::Players[Define::ClientIndex]->GetChilde("Pivot")->transform->GetPosition());
 
 	_stprintf_s(m_pszFrameRate + nLength, 70 - nLength, _T("(%4f, %4f, %4f)"), xmf3Position.x, xmf3Position.y, xmf3Position.z);
 	::SetWindowText(m_hWnd, m_pszFrameRate);

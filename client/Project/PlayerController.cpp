@@ -20,11 +20,11 @@ void CPlayerController::Update()
 {
 	IsDie();
 
-	if (Define::Input->GetKeyDown(KeyCode::Space))
-		tank->FireBullet(nullptr);
+	//if (Define::Input->GetKeyDown(KeyCode::Space))
+	//	tank->FireBullet(nullptr);
 
-	MouseRotate();
-	MoveMent();
+	//MouseRotate();
+	//MoveMent();
 }
 
 void CPlayerController::MoveMent()

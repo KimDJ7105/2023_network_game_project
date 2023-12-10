@@ -1,11 +1,11 @@
 #include "stdafx.h"
 #include "GameScene.h"
-#include "Terrain.h"
 #include "CameraController.h"
 #include "Tree.h"
 #include "CTankPlayer.h"
-#include "Enumy.h"
 #include "BigMissile.h"
+#include "CMountineTerrain.h"
+#include "CSyncObjectManager.h"
 
 CGameScene::CGameScene(int index) : CScene(index)
 {
@@ -16,53 +16,38 @@ void CGameScene::BuildObjects(ID3D12Device* pd3dDevice, ID3D12GraphicsCommandLis
 	CScene::BuildObjects(pd3dDevice, pd3dCommandList);
 
 	mainCamera = new CCamera();
-	localPlayer = nullptr;
-	remotePlayer = nullptr;
-	//mainCamera->AddComponet(new CCameraController(mainCamera));
+	mainCamera->AddComponet(new CCameraController(mainCamera));
+	Define::Players = new CPlayer * [2];
 
-	//CTerrain* terrain = new CTerrain("Image/terrain.raw");
+	//CTerrain* terrain = new CMountineTerrain();
 	//terrain->name = "Terrain";
-
-	//player = new CTankPlayer();
-
-	//for (int i = 0; i < 6; i++)
-	//	new CEnumy();
 
 	//for (int i = 0; i < 10; i++)
 	//	CTree* tree = new CTree();
 
-	//for (int i = 0; i < 3; ++i)
-	//{
-	//	CGameObject* obj = CGameObject::LoadGeometryFromFile("Model/BigMissile.bin");
-	//	obj->collider = new CCollider(obj);
-	//	obj->collider->tag = "Big Missile";
-	//	CBigMissile* bigMissile = new CBigMissile(obj);
-	//	bigMissile->light = &m_pLights[i + 2];
-	//	obj->AddComponet(bigMissile);
-	//}
-
-	objectManager->AllGameObjectStart();
-
-	//for (const auto& obj : Define::GameObjectList)
-	//	obj->Start();
+	Define::SyncObjectManager->AllCreatePackUpdate();
+	objectManager->AllCreateObjectStart();
+	objectManager->ClearCreateObjectList();
 }
 
 void CGameScene::AnimateObjects(float fTimeElapsed)
 {
 	CScene::AnimateObjects(fTimeElapsed);
 
-	if (m_pLights && localPlayer != nullptr)
+	if (m_pLights && Define::Players[0] != nullptr)
 	{
-		XMStoreFloat3(&m_pLights[0].m_xmf3Position, localPlayer->tank->gunFrame->transform->GetPosition());
-		XMStoreFloat3(&m_pLights[0].m_xmf3Position, XMLoadFloat3(&m_pLights[0].m_xmf3Position) + localPlayer->tank->gunFrame->transform->GetLook());
-		XMStoreFloat3(&m_pLights[0].m_xmf3Direction, localPlayer->tank->gunFrame->transform->GetLook());
+		CTankPlayer* p = (CTankPlayer*)Define::Players[0];
+		XMStoreFloat3(&m_pLights[0].m_xmf3Position, p->tank->gunFrame->transform->GetPosition());
+		XMStoreFloat3(&m_pLights[0].m_xmf3Position, XMLoadFloat3(&m_pLights[0].m_xmf3Position) + p->tank->gunFrame->transform->GetLook());
+		XMStoreFloat3(&m_pLights[0].m_xmf3Direction, p->tank->gunFrame->transform->GetLook());
 	}
 
-	if (m_pLights && remotePlayer != nullptr)
+	if (m_pLights && Define::Players[1] != nullptr)
 	{
-		XMStoreFloat3(&m_pLights[1].m_xmf3Position, remotePlayer->tank->gunFrame->transform->GetPosition());
-		XMStoreFloat3(&m_pLights[1].m_xmf3Position, XMLoadFloat3(&m_pLights[0].m_xmf3Position) + remotePlayer->tank->gunFrame->transform->GetLook());
-		XMStoreFloat3(&m_pLights[1].m_xmf3Direction, remotePlayer->tank->gunFrame->transform->GetLook());
+		CTankPlayer* p = (CTankPlayer*)Define::Players[1];
+		XMStoreFloat3(&m_pLights[1].m_xmf3Position, p->tank->gunFrame->transform->GetPosition());
+		XMStoreFloat3(&m_pLights[1].m_xmf3Position, XMLoadFloat3(&m_pLights[1].m_xmf3Position) + p->tank->gunFrame->transform->GetLook());
+		XMStoreFloat3(&m_pLights[1].m_xmf3Direction, p->tank->gunFrame->transform->GetLook());
 	}
 }
 

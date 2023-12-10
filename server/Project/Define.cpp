@@ -13,7 +13,7 @@ CInput* Define::Input = nullptr;
 deque<CGameObject*> Define::GameObjectList;
 list<CCollider*> Define::ColliderList;
 CCamera* Define::MainCamera = nullptr;
-CPlayer* Define::Player = nullptr;
+CPlayer** Define::Players = nullptr;
 
 int Define::AddGameObject(CGameObject* addObj)
 {

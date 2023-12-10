@@ -4,6 +4,8 @@
 
 CKey::CKey()
 {
+	isKeyDown = isKeyUp = false;
+
 	key[KeyCode::Q] = 'Q'; key[KeyCode::W] = 'W'; key[KeyCode::E] = 'E'; key[KeyCode::R] = 'R';
 	key[KeyCode::A] = 'A'; key[KeyCode::S] = 'S'; key[KeyCode::D] = 'D'; key[KeyCode::F] = 'F';
 	key[KeyCode::Space] = VK_SPACE;
@@ -20,13 +22,16 @@ void CKey::KeyStateUpdate()
 
 void CKey::OnProceesingKeyBoardMassage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
 {
+	isKeyDown = isKeyUp = false;
 	switch (nMessageID)
 	{
 	case WM_KEYDOWN:
-		KeyState[wParam] = 1;	
+		KeyState[wParam] = 1;
+		isKeyDown = true;
 		break;
 	case WM_KEYUP:
 		KeyState[wParam] = 2;
+		isKeyUp = true;
 		break;
 	}
 }
@@ -34,6 +39,11 @@ void CKey::OnProceesingKeyBoardMassage(HWND hWnd, UINT nMessageID, WPARAM wParam
 bool CKey::GetKeyDown(KeyCode code)
 {
 	return (KeyState[key[code]] == 1 ) ? true : false;
+}
+
+bool CKey::GetKeyUp(KeyCode code)
+{
+	return (KeyState[key[code]] == 2) ? true : false;
 }
 
 bool CKey::GetKeyPress(KeyCode code)
@@ -67,21 +77,26 @@ void CMouse::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam,
 	switch (nMessageID)
 	{
 	case WM_LBUTTONDOWN:
+		//::SetCapture(hWnd);
 		MouseState[MouseButton::Left] = 1;
 		GetCursorPos(&oldCursorPos);
 		break;
 	case WM_RBUTTONDOWN:
+		//::SetCapture(hWnd);
 		MouseState[MouseButton::Right] = 1;
 		GetCursorPos(&oldCursorPos);
 		break;
 	case WM_LBUTTONUP:
 		MouseState[MouseButton::Left] = 2;
+		SetCursorPos(oldCursorPos.x, oldCursorPos.y);
+		//::ReleaseCapture();
 		break;
 	case WM_RBUTTONUP:
 		MouseState[MouseButton::Right] = 2;
+		SetCursorPos(oldCursorPos.x, oldCursorPos.y);
+		//::ReleaseCapture();
 		break;
 	case WM_MOUSEMOVE:
-		GetCursorPos(&oldCursorPos);
 		break;
 	default:
 		break;
@@ -106,15 +121,22 @@ bool CMouse::GetMousePress(MouseButton button)
 POINT CMouse::GetMouseAxis()
 {
 	POINT Axis{ 0,0 };
-	if (GetCapture() == Define::Framework->m_hWnd)
+	if (::GetCapture() == m_hWnd)
 	{
-		SetCursor(NULL);
+		::SetCursor(NULL);
 		GetCursorPos(&nowCursorPos);
 		Axis.x = (float)(nowCursorPos.x - oldCursorPos.x);
 		Axis.y = (float)(nowCursorPos.y - oldCursorPos.y);
+		SetCursorPos(oldCursorPos.x, oldCursorPos.y);
 	}
-
 	return Axis;
+}
+
+bool CMouse::IsMoveAxis()
+{
+	if (nowCursorPos.x == oldCursorPos.x && nowCursorPos.y == oldCursorPos.y)
+		return false;
+	return true;
 }
 
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
