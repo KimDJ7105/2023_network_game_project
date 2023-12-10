@@ -11,7 +11,7 @@
 #define MAX_LOADSTRING 100
 
 //#define SERVERIP "61.77.126.164"
-#define SERVERIP "222.99.104.73"
+#define SERVERIP "127.0.0.1"
 
 HINSTANCE						ghAppInstance;
 TCHAR							szTitle[MAX_LOADSTRING];
@@ -112,20 +112,21 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 			{
 				if (Define::Players[0]->GetRoot()->GetActive() == false)
 				{
-					DialogBox(hInstance, MAKEINTRESOURCE(IDD_DIALOG1), NULL, DlgProc);
+					
 					if (Define::ClientIndex == 0)
-						SetWindowTextW(handleDictionary["Text"], L"YOU LOSE");
+						DialogBox(hInstance, MAKEINTRESOURCE(IDD_DIALOG1), NULL, DlgProc);
 					else
-						SetWindowTextW(handleDictionary["Text"], L"YOU WIN");
+						DialogBox(hInstance, MAKEINTRESOURCE(IDD_DIALOG2), NULL, DlgProc);
 					end = true;
 				}
 				else if (Define::Players[1]->GetRoot()->GetActive() == false)
 				{
-					DialogBox(hInstance, MAKEINTRESOURCE(IDD_DIALOG1), NULL, DlgProc);
+					
 					if (Define::ClientIndex == 1)
-						SetWindowTextW(handleDictionary["Text"], L"YOU LOSE");
-					else
-						SetWindowTextW(handleDictionary["Text"], L"YOU WIN");
+						DialogBox(hInstance, MAKEINTRESOURCE(IDD_DIALOG1), NULL, DlgProc);
+					else 
+						DialogBox(hInstance, MAKEINTRESOURCE(IDD_DIALOG2), NULL, DlgProc);
+					
 					end = true;
 				}
 			}

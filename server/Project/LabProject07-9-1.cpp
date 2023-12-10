@@ -7,7 +7,7 @@
 #pragma comment(lib,"ws2_32")
 
 #define SHOW_RECV_DEBUG false
-#define SHOW_SEND_DEBUG true
+#define SHOW_SEND_DEBUG false
 
 HINSTANCE						ghAppInstance;
 TCHAR							szTitle[MAX_LOADSTRING];

@@ -3,6 +3,7 @@
 // Resource.rc에서 사용되고 있습니다.
 //
 #define IDD_DIALOG1                     101
+#define IDD_DIALOG2                     102
 #define IDC_BUTTON1                     1002
 #define IDC_BUTTON2                     1003
 #define IDC_STATIC1                     1004
