@@ -37,7 +37,7 @@ void CPlayerController::Update()
 
 	auto elapsedTime = std::chrono::duration_cast<std::chrono::seconds>(currentTime - prevTime).count();
 
-	if (keyState[KEY_SPACE] && elapsedTime > 5) {
+	if (keyState[KEY_SPACE] && elapsedTime > 1) {
 		tank->FireBullet(nullptr);
 		prevTime = currentTime;
 	}
